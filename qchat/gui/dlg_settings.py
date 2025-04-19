@@ -177,7 +177,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
             self.cbb_qchat_avatar.setCurrentIndex(4)
 
         instance_index = self.cbb_qchat_instance_uri.findText(
-            settings.qchat_instance_uri, Qt.MatchFixedString
+            settings.qchat_instance_uri, Qt.MatchFlag.MatchFixedString
         )
         if instance_index >= 0:
             self.cbb_qchat_instance_uri.setCurrentIndex(instance_index)
@@ -193,7 +193,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         self.ckb_play_sounds.setChecked(settings.qchat_play_sounds)
         self.hsl_sound_volume.setValue(settings.qchat_sound_volume)
         beep_index = self.cbb_ring_tone.findText(
-            settings.qchat_ring_tone, Qt.MatchFixedString
+            settings.qchat_ring_tone, Qt.MatchFlag.MatchFixedString
         )
         if beep_index >= 0:
             self.cbb_ring_tone.setCurrentIndex(beep_index)

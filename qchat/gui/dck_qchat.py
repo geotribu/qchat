@@ -136,7 +136,7 @@ class QChatWidget(QgsDockWidget):
         )
         self.twg_chat.itemClicked.connect(self.on_message_clicked)
         self.twg_chat.itemDoubleClicked.connect(self.on_message_double_clicked)
-        self.twg_chat.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.twg_chat.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.twg_chat.customContextMenuRequested.connect(
             self.on_custom_context_menu_requested
         )
@@ -601,7 +601,7 @@ Rooms:
                     liker_author=message.liker_author, message=message.message
                 ),
                 application=self.tr("QChat"),
-                log_level=Qgis.Success,
+                log_level=Qgis.MessageLevel.Success,
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
             )
@@ -967,7 +967,7 @@ Rooms:
     def on_renew_clicked(self) -> None:
         msg_box = QMessageBox()
         msg_box.setWindowTitle("QGIS")
-        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setIcon(QMessageBox.Icon.Information)
         msg_box.setText(
             self.tr(
                 """No... it was a joke!
@@ -979,9 +979,9 @@ Visit the website ?
 """
             )
         )
-        msg_box.setStandardButtons(QMessageBox.Yes)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes)
         return_value = msg_box.exec()
-        if return_value == QMessageBox.Yes:
+        if return_value == QMessageBox.StandardButton.Yes:
             open_url_in_browser("https://qgis.org/funding/donate/")
 
     def generate_qaction_send_geojson_layer(self, menu: QMenu) -> None:
@@ -1016,7 +1016,7 @@ Visit the website ?
                 duration=self.settings.notify_push_duration,
             )
             return
-        if layer.type() != QgsMapLayer.VectorLayer:
+        if layer.type() != QgsMapLayer.LayerType.VectorLayer:
             self.log(
                 message=self.tr("Only vector layers can be sent on QChat"),
                 application=self.tr("QChat"),
@@ -1035,7 +1035,8 @@ Visit the website ?
         # save and read QML style to and from temp file
         save_style_path = Path(tempfile.gettempdir()) / "qchat_layer_style.qml"
         layer.saveNamedStyle(
-            str(save_style_path), categories=QgsMapLayer.AllStyleCategories
+            str(save_style_path),
+            categories=QgsMapLayer.StyleCategory.AllStyleCategories,
         )
         with open(save_style_path, "r", encoding="utf-8") as file:
             qml_style = file.read()
