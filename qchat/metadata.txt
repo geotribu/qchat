@@ -1,6 +1,6 @@
 [general]
 name=QChat
-about=Let''s chat in QGIS!
+about="Let's chat in QGIS!"
 category=Web
 hasProcessingProvider=False
 description=Keep in touch with your GIS fellows
@@ -10,9 +10,9 @@ tags=web,chat
 # credits and contact
 author=Julien Moura (Geotribu), Guilhem Allaman (Geotribu)
 email=geotribu@gmail.com
-homepage=https://gitlab.com/Geotribu/qchat/
-repository=https://gitlab.com/Geotribu/qchat/
-tracker=https://gitlab.com/Geotribu/qchat//issues/
+homepage=https://geotribu.github.io/qchat
+repository=https://github.com/geotribu/qchat
+tracker=https://github.com/geotribu/qchat/issues
 
 # experimental flag
 deprecated=False
