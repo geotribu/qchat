@@ -1,0 +1,99 @@
+name: "🎳 Tester"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.py'
+      - .github/workflows/tester.yml
+      - requirements/testing.txt
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.py'
+      - .github/workflows/tester.yml
+      - requirements/testing.txt
+
+env:
+  PROJECT_FOLDER: "qchat"
+  PYTHON_VERSION: 3.9
+
+
+jobs:
+  tests-unit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          cache: "pip"
+          cache-dependency-path: "requirements/testing.txt"
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Python requirements
+        run: |
+          python -m pip install -U pip setuptools wheel
+          python -m pip install -U -r requirements/testing.txt
+
+      - name: Run Unit tests
+        run: pytest -p no:qgis tests/unit/
+
+  test-qgis:
+    runs-on: ubuntu-latest
+
+    container:
+      image: qgis/qgis:3.28
+      env:
+        CI: true
+        DISPLAY: ":1"
+        MUTE_LOGS: true
+        NO_MODALS: 1
+        PYTHONPATH: "/usr/share/qgis/python/plugins:/usr/share/qgis/python:."
+        QT_QPA_PLATFORM: "offscreen"
+        WITH_PYTHON_PEP: false
+      # be careful, things have changed since QGIS 3.40. So if you are using this setup
+      #  with a QGIS version older than 3.40, you may need to change the way you set up the container
+      volumes:
+        # Mount the X11 socket to allow GUI applications to run
+        - /tmp/.X11-unix:/tmp/.X11-unix
+        # Mount the workspace directory to the container
+        - ${{ github.workspace }}:/home/root/
+
+    steps:
+      - name: Get source code
+        uses: actions/checkout@v4
+
+      - name: Print QGIS version
+        run: qgis --version
+
+      # Uncomment if you need to run a script to set up the plugin in QGIS docker image < 3.40
+      # - name: Setup plugin
+      #   run: qgis_setup.sh ${{ env.PROJECT_FOLDER }}
+
+      - name: Install Python requirements
+        run: |
+          apt update && apt install -y python3-pip python3-venv pipx
+          # Create a virtual environment
+          cd /home/root/
+          pipx run qgis-venv-creator --venv-name ".venv"
+          # Activate the virtual environment
+          . .venv/bin/activate
+          # Install the requirements
+          python3 -m pip install -U -r requirements/testing.txt
+
+      - name: Run Unit tests
+        run: |
+          cd /home/root/
+          # Activate the virtual environment
+          . .venv/bin/activate
+          # Run the tests
+          # xvfb-run is used to run the tests in a virtual framebuffer
+          # This is necessary because QGIS requires a display to run
+          xvfb-run python3 -m pytest tests/qgis --junitxml=junit/test-results-qgis.xml --cov-report=xml:coverage-reports/coverage-qgis.xml
