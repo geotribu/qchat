@@ -171,7 +171,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
                 message="Avatar {} has not been found among available one: {}".format(
                     settings.author_avatar, ", ".join(QCHAT_USER_AVATARS.values())
                 ),
-                log_level=Qgis.Warning,
+                log_level=Qgis.MessageLevel.Warning,
                 push=True,
             )
             self.cbb_qchat_avatar.setCurrentIndex(4)
@@ -236,7 +236,7 @@ Max nickname length: {max_nickname_length}"""
                 ),
             )
         except Exception as e:
-            self.log(message=str(e), log_level=Qgis.Critical)
+            self.log(message=str(e), log_level=Qgis.MessageLevel.Critical)
 
     def discover_instances(self) -> None:
         """
@@ -257,7 +257,7 @@ Max nickname length: {max_nickname_length}"""
                 msg,
             )
         except Exception as e:
-            self.log(message=str(e), log_level=Qgis.Critical)
+            self.log(message=str(e), log_level=Qgis.MessageLevel.Critical)
 
     def on_ring_tone_changed(self) -> None:
         """
