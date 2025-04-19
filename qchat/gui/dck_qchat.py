@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Optional
 
 # PyQGIS
-from PyQt5 import QtWebSockets  # noqa QGS103
 from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
 from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic

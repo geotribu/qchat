@@ -1,10 +1,11 @@
 # standard
 from pathlib import Path
 
-# 3rd party
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer  # noqa QGS103
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtGui import QDesktopServices
+
+# 3rd party
+from qgis.PyQt.QtMultimedia import QMediaContent, QMediaPlayer
 
 # project
 from qchat.__about__ import DIR_PLUGIN_ROOT
