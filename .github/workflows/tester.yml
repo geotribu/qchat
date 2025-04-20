@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: qgis/qgis:3.28
+      image: qgis/qgis:3.40
       env:
         CI: true
         DISPLAY: ":1"

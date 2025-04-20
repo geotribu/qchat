@@ -27,7 +27,7 @@
 | Author name | Guilhem Allaman(Geotribu), Julien Moura(Geotribu) |
 | Author organization | Geotribu |
 | Author email | contact@guilhemallaman.net |
-| Minimum QGIS version | 3.28 |
+| Minimum QGIS version | 3.40 |
 | Maximum QGIS version | 3.99 |
 | Support Qt6 | True |
 | Git repository URL | https://gitlab.com/Geotribu/qchat/ |
