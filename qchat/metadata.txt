@@ -17,7 +17,7 @@ tracker=https://gitlab.com/Geotribu/qchat//issues/
 # experimental flag
 deprecated=False
 experimental=False
-qgisMinimumVersion=3.28
+qgisMinimumVersion=3.40
 qgisMaximumVersion=3.99
 qt6_compatible=True
 
