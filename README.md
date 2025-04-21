@@ -3,8 +3,6 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-
-[![pylint](https://gitlab.com/Geotribu/qchat/lint/pylint.svg)](https://gitlab.com/Geotribu/qchat/lint/)
 [![flake8](https://img.shields.io/badge/linter-flake8-green)](https://flake8.pycqa.org/)
 
 ## Generated options
@@ -30,7 +28,7 @@
 | Minimum QGIS version | 3.40 |
 | Maximum QGIS version | 3.99 |
 | Support Qt6 | True |
-| Git repository URL | https://gitlab.com/Geotribu/qchat/ |
+| Git repository URL | https://github.com/geotribu/qchat |
 | Git default branch | main |
 | License | GPLv2+ |
 | Python linter | both |
@@ -61,9 +59,9 @@ If you mean to deploy it to the [official QGIS plugins repository](https://plugi
 
 The documentation is generated using Sphinx and is automatically generated through the CI and published on Pages.
 
-- homepage: <https://gitlab.com/Geotribu/qchat/>
-- repository: <https://gitlab.com/Geotribu/qchat/>
-- tracker: <https://gitlab.com/Geotribu/qchat//issues/>
+- homepage: <https://geotribu.github.io/qchat>
+- repository: <https://github.com/geotribu/qchat>
+- tracker: <https://github.com/geotribu/qchat/issues>
 
 ----
 
@@ -102,11 +100,11 @@ The documentation is generated using Sphinx and is automatically generated throu
 
 1. If you did not yet, create a remote repository on your Git hosting platform (GitHub, GitLab, etc.)
 1. Create labels listed in [labeler.yml file](.github/labeler.yml) to make PR auto-labelling work.
-1. Switch the source of GitHub Pages to `GitHub Actions` in your repository settings <https://gitlab.com/Geotribu/qchat//settings/pages>
+1. Switch the source of GitHub Pages to `GitHub Actions` in your repository settings <https://github.com/geotribu/qchat/settings/pages>
 1. Add the remote repository to your local repository:
 
     ```sh
-    git remote add origin <https://gitlab.com/Geotribu/qchat/>
+    git remote add origin git@github.com:geotribu/qchat.git
     ```
 
 1. Commit changes:
