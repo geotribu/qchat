@@ -1,0 +1,26 @@
+[general]
+name=QChat
+about=Let''s chat with your fellow GIS mates using QChat!
+category=None
+hasProcessingProvider=False
+description=Plugin allowing one to chat with other QGIS users.
+icon=resources/images/default_icon.png
+tags=geotribu,chat,social
+
+# credits and contact
+author=Guilhem Allaman (Geotribu), Julien Moura (Geotribu)
+email=geotribu@gmail.com
+homepage=https://github.com/geotribu/qchat
+repository=https://github.com/geotribu/qchat
+tracker=https://github.com/geotribu/qchat/issues/
+
+# experimental flag
+deprecated=False
+experimental=True
+qgisMinimumVersion=3.40
+qgisMaximumVersion=4.99
+supportsQt6=True
+
+# versioning
+version=0.1.0
+changelog=
