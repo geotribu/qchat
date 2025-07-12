@@ -4,51 +4,11 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-
 [![flake8](https://img.shields.io/badge/linter-flake8-green)](https://flake8.pycqa.org/)
 
-## Generated options
+:speech_balloon: QChat: let's chat with your GIS fellows in QGIS !
 
-### Plugin
-
-> Here is a list of the options you picked when creating the plugin with the cookiecutter template.
-
-| Cookiecutter option | Picked value |
-| :------------------ | :----------: |
-| Plugin name | QChat |
-| Plugin name slugified | qchat |
-| Plugin name class (used in code) | QChat |
-| Plugin category | None |
-| Plugin description short | Let's chat with your fellow GIS mates using QChat! |
-| Plugin description long | Plugin allowing one to chat with other QGIS users. |
-| Plugin tags | geotribu,chat,social |
-| Plugin icon | default_icon.png |
-| Plugin with processing provider | False |
-| Author name | Guilhem Allaman (Geotribu), Julien Moura (Geotribu) |
-| Author organization | Geotribu |
-| Author email | geotribu@gmail.com |
-| Minimum QGIS version | 3.40 |
-| Maximum QGIS version | 4.99 |
-| Support Qt6 | True |
-| Git repository URL | https://github.com/geotribu/qchat |
-| Git default branch | main |
-| License | GPLv2+ |
-| Python linter | Flake8 |
-| CI/CD platform | GitHub |
-| Publish to <https://plugins.qgis.org> using CI/CD | True |
-| IDE | VSCode |
-
-### Tooling
-
-This project is configured with the following tools:
-
-- [Black](https://black.readthedocs.io/en/stable/) to format the code without any existential question
-- [iSort](https://pycqa.github.io/isort/) to sort the Python imports
-
-Code rules are enforced with [pre-commit](https://pre-commit.com/) hooks.  
-Static code analisis is based on: Flake8
-
-See also: [contribution guidelines](CONTRIBUTING.md).
+:sound: Audio sounds come from [pixabay.com](https://pixabay.com) (see [terms of license](https://pixabay.com/service/license-summary/))
 
 ## CI/CD
 
@@ -65,31 +25,6 @@ The documentation is located in `docs` subfolder, written in Markdown using [mys
 
 ## Next steps post generation
 
-### 1. Set up development environment
-
-> Typical commands on Linux (Ubuntu).
-
-1. If you didn't pick the `git init` option, initialize your local repository:
-
-    ```sh
-    git init
-    ```
-
-1. Follow the [embedded documentation to set up your development environment](./docs/development/environment.md) to create  virtual environment and install development dependencies.
-1. Add all files to git index to prepare initial commit:
-
-    ```sh
-    git add -A
-    ```
-
-1. Run the git hooks to ensure that everything runs OK and to start developing on quality standards:
-
-    ```sh
-    # run all pre-commit hooks on all files
-    pre-commit run -a
-    # don't be shy, run it again until it's all grren
-    ```
-
 ### 2. Adjust URL and build the documentation locally
 
 > [!NOTE]
@@ -101,33 +36,14 @@ The documentation is located in `docs` subfolder, written in Markdown using [mys
 1. Change the plugin's icon stored in `qchat/resources/images`
 1. Follow the [embedded documentation to build plugin documentation locally](./docs/development/documentation.md)
 
-### 3. Prepare your remote repository
-
-1. If you did not yet, create a remote repository on your Git hosting platform (GitHub, GitLab, etc.)
-1. Create labels listed in [labeler.yml file](.github/labeler.yml) to make PR auto-labelling work.
-1. Switch the source of GitHub Pages to `GitHub Actions` in your repository settings <https://github.com/geotribu/qchat/settings/pages>
-1. Add the remote repository to your local repository:
-
-    ```sh
-    git remote add origin https://github.com/geotribu/qchat
-    ```
-
-1. Commit changes:
-
-    ```sh
-    git commit -m "init(plugin): adding first files of QChat" -m "generated with QGIS Plugin Templater (https://oslandia.gitlab.io/qgis/template-qgis-plugin)"
-    ```
-
-1. Push the initial commit to the remote repository:
-
-    ```sh
-    git push -u origin main
-    ```
-
-1. Create a new release following the [packaging/release guide](./docs//development/packaging.md) with the tag `0.1.0-beta1` to trigger the CI/CD pipeline and publish the plugin on the [official QGIS plugins repository](https://plugins.qgis.org/) (if you picked up the option).
-
 ----
 
 ## License
 
 Distributed under the terms of the [`GPLv2+` license](LICENSE).
+
+----
+
+## Contribution
+
+See [contribution guidelines](CONTRIBUTING.md).

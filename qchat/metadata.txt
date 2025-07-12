@@ -1,10 +1,10 @@
 [general]
 name=QChat
-about=Let''s chat with your fellow GIS mates using QChat!
-category=None
+about="Let's chat with your fellow GIS mates using QChat!"
+category=Web
 hasProcessingProvider=False
 description=Plugin allowing one to chat with other QGIS users.
-icon=resources/images/default_icon.png
+icon=resources/images/logo_geotribu_orange.svg
 tags=geotribu,chat,social
 
 # credits and contact
@@ -16,11 +16,11 @@ tracker=https://github.com/geotribu/qchat/issues/
 
 # experimental flag
 deprecated=False
-experimental=True
+experimental=False
 qgisMinimumVersion=3.40
 qgisMaximumVersion=4.99
 supportsQt6=True
 
 # versioning
-version=0.1.0
+version=1.0.0
 changelog=
