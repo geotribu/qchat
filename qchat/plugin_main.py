@@ -7,21 +7,26 @@ from functools import partial
 from pathlib import Path
 
 # PyQGIS
-from qgis.core import QgsApplication, QgsSettings
+from qgis.core import Qgis, QgsApplication, QgsSettings
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtCore import QCoreApplication, QLocale, QTranslator, QUrl
+from qgis.PyQt.QtCore import QCoreApplication, QLocale, Qt, QTranslator, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 # project
-from qchat.__about__ import (
-    DIR_PLUGIN_ROOT,
-    __icon_path__,
-    __title__,
-    __uri_homepage__,
-)
+from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__, __title__, __uri_homepage__
 from qchat.gui.dlg_settings import PlgOptionsFactory
 from qchat.toolbelt import PlgLogger
+from qchat.toolbelt.commons import open_url_in_browser
+from qchat.toolbelt.preferences import PlgOptionsManager
+
+# conditional imports
+try:
+    from qchat.gui.dck_qchat import QChatWidget
+
+    EXTERNAL_DEPENDENCIES_AVAILABLE: bool = True
+except ImportError:
+    EXTERNAL_DEPENDENCIES_AVAILABLE: bool = False
 
 # ############################################################################
 # ########## Classes ###############
@@ -63,7 +68,33 @@ class QChatPlugin:
         self.options_factory = PlgOptionsFactory()
         self.iface.registerOptionsWidgetFactory(self.options_factory)
 
+        # -- Toolbar
+        self.toolbar = self.iface.addToolBar(name=self.tr("Geotribu toolbar"))
+
+        # -- QChat
+        self.qchat_widget = None
+
         # -- Actions
+        self.action_open_chat = QAction(
+            QgsApplication.getThemeIcon("mMessageLog.svg"),
+            self.tr("QChat"),
+            self.iface.mainWindow(),
+        )
+        self.action_open_chat.setToolTip(self.tr("QChat"))
+        self.action_open_chat.triggered.connect(self.open_chat)
+
+        self.action_open_qfield_qchat = QAction(
+            QIcon(str(DIR_PLUGIN_ROOT / "resources/images/qfield.svg")),
+            self.tr("QChat in QField"),
+            self.iface.mainWindow(),
+        )
+        self.action_open_qfield_qchat.setToolTip(self.tr("QChat in QField"))
+        self.action_open_qfield_qchat.triggered.connect(
+            partial(
+                open_url_in_browser,
+                "https://github.com/geotribu/qchat-qfield-plugin",
+            )
+        )
         self.action_help = QAction(
             QgsApplication.getThemeIcon("mActionHelpContents.svg"),
             self.tr("Help"),
@@ -85,10 +116,13 @@ class QChatPlugin:
         )
 
         # -- Menu
-        self.iface.addPluginToMenu(__title__, self.action_settings)
-        self.iface.addPluginToMenu(__title__, self.action_help)
+        self.iface.addPluginToWebMenu(__title__, self.action_open_chat)
+        self.iface.addPluginToWebMenu(__title__, self.action_open_qfield_qchat)
+        self.iface.addPluginToWebMenu(__title__, self.action_settings)
+        self.iface.addPluginToWebMenu(__title__, self.action_help)
 
-        # -- Help menu
+        # -- Toolbar
+        self.toolbar.addAction(self.action_open_chat)
 
         # documentation
         self.iface.pluginHelpMenu().addSeparator()
@@ -105,6 +139,11 @@ class QChatPlugin:
             self.action_help_plugin_menu_documentation
         )
 
+        self.iface.initializationCompleted.connect(self.post_ui_init)
+
+        if not self.check_dependencies():
+            return
+
     def tr(self, message: str) -> str:
         """Get the translation for a string using Qt translation API.
 
@@ -119,8 +158,14 @@ class QChatPlugin:
     def unload(self):
         """Cleans up when plugin is disabled/uninstalled."""
         # -- Clean up menu
-        self.iface.removePluginMenu(__title__, self.action_help)
-        self.iface.removePluginMenu(__title__, self.action_settings)
+        self.iface.removePluginWebMenu(__title__, self.action_open_chat)
+        self.iface.removePluginWebMenu(__title__, self.action_open_qfield_qchat)
+        self.iface.removePluginWebMenu(__title__, self.action_settings)
+        self.iface.removePluginWebMenu(__title__, self.action_help)
+
+        # -- Clean up toolbar
+        del self.toolbar
+        del self.qchat_widget
 
         # -- Clean up preferences panel in QGIS settings
         self.iface.unregisterOptionsWidgetFactory(self.options_factory)
@@ -132,8 +177,29 @@ class QChatPlugin:
             )
 
         # remove actions
+        del self.action_open_chat
+        del self.action_open_qfield_qchat
         del self.action_settings
         del self.action_help
+
+    def post_ui_init(self):
+        """Run after plugin's UI has been initialized.
+
+        :raises Exception: if there is no item in the feed
+        """
+        # auto reconnect to room if needed
+        settings = PlgOptionsManager().get_plg_settings()
+        if settings.qchat_auto_reconnect and settings.qchat_auto_reconnect_room:
+            if not self.qchat_widget:
+                self.qchat_widget = QChatWidget(
+                    iface=self.iface,
+                    parent=self.iface.mainWindow(),
+                    auto_reconnect_room=settings.qchat_auto_reconnect_room,
+                )
+                self.iface.addDockWidget(
+                    Qt.DockWidgetArea.RightDockWidgetArea, self.qchat_widget
+                )
+            self.qchat_widget.show()
 
     def run(self):
         """Main process.
@@ -152,3 +218,49 @@ class QChatPlugin:
                 log_level=2,
                 push=True,
             )
+
+    def check_dependencies(self) -> bool:
+        """Check if all dependencies are satisfied. If not, warn the user and disable plugin.
+
+        :return: dependencies status
+        :rtype: bool
+        """
+        # if import failed
+        if not EXTERNAL_DEPENDENCIES_AVAILABLE:
+            self.log(
+                message=self.tr(
+                    "Error importing some of dependencies. "
+                    "Related functions have been disabled."
+                ),
+                log_level=Qgis.MessageLevel.Critical,
+                push=True,
+                duration=0,
+                button=True,
+                button_connect=partial(
+                    QDesktopServices.openUrl,
+                    QUrl(f"{__uri_homepage__}installation.html"),
+                ),
+            )
+            # disable plugin widgets
+            self.action_open_chat.setEnabled(False)
+
+            # add tooltip over menu
+            msg_disable = self.tr(
+                "Plugin disabled. Please install all dependencies and then restart QGIS."
+                " Refer to the documentation for more information."
+            )
+            self.action_open_chat.setToolTip(msg_disable)
+            return False
+        else:
+            self.log(message=self.tr("Dependencies satisfied"), log_level=3)
+            return True
+
+    def open_chat(self) -> None:
+        if not self.qchat_widget:
+            self.qchat_widget = QChatWidget(
+                iface=self.iface, parent=self.iface.mainWindow()
+            )
+            self.iface.addDockWidget(
+                Qt.DockWidgetArea.RightDockWidgetArea, self.qchat_widget
+            )
+        self.qchat_widget.show()
