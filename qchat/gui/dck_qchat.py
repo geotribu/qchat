@@ -161,6 +161,7 @@ class QChatWidget(QgsDockWidget):
 
         # initialize websocket client
         self.qchat_ws = QChatWebsocket()
+        self.qchat_ws.disconnected.connect(self.on_ws_disconnected)
         self.qchat_ws.error.connect(self.on_ws_error)
         self.qchat_ws.uncompliant_message_received.connect(
             self.on_uncompliant_message_received
@@ -499,7 +500,7 @@ Rooms:
         """
         Action called when websocket is disconnected
         """
-        self.connected = False
+        self.cbb_room.setCurrentText(MARKER_VALUE)
         self.log(message="Websocket disconnected")
 
     def on_ws_error(self, error_code: int) -> None:
