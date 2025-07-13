@@ -5,6 +5,8 @@ from typing import Optional
 @dataclass(init=True, frozen=True)
 class QChatMessage:
     type: str
+    id: str
+    timestamp: int
 
 
 @dataclass(init=True, frozen=True)

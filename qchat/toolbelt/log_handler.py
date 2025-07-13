@@ -115,7 +115,7 @@ class PlgLogger(logging.Handler):
                 push=1,
                 duration=0
                 button=True,
-                button_label=self.tr("See details"),
+                button_text=self.tr("See details"),
                 button_more_text=detailed_error_message
             )
             log(message="Plugin loaded - TEST", log_level=4, push=0)

@@ -2,10 +2,12 @@
 import base64
 import json
 import tempfile
+from datetime import datetime
 from functools import partial
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
+from uuid import uuid4
 
 # PyQGIS
 from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
@@ -383,7 +385,7 @@ Rooms:
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
                 button=True,
-                button_label=self.tr("Open Settings"),
+                button_text=self.tr("Open Settings"),
                 button_connect=self.on_settings_button_clicked,
             )
             return
@@ -426,7 +428,7 @@ Rooms:
                     push=self.settings.notify_push_info,
                     duration=self.settings.notify_push_duration,
                     button=True,
-                    button_label=self.tr("Open Settings"),
+                    button_text=self.tr("Open Settings"),
                     button_connect=self.on_settings_button_clicked,
                 )
                 return
@@ -467,7 +469,10 @@ Rooms:
         # send newcomer message to websocket
         if not self.settings.qchat_incognito_mode:
             message = QChatNewcomerMessage(
-                type=QCHAT_MESSAGE_TYPE_NEWCOMER, newcomer=self.settings.author_nickname
+                type=QCHAT_MESSAGE_TYPE_NEWCOMER,
+                id=str(uuid4()),
+                timestamp=int(datetime.now().timestamp()),
+                newcomer=self.settings.author_nickname,
             )
             self.qchat_ws.send_message(message)
 
@@ -587,9 +592,10 @@ Rooms:
             and message.newcomer != self.settings.author_nickname
         ):
             self.add_admin_message(
-                self.tr("{newcomer} has joined the room").format(
+                text=self.tr("{newcomer} has joined the room").format(
                     newcomer=message.newcomer
-                )
+                ),
+                timestamp=message.timestamp,
             )
 
     def on_exiter_message_received(self, message: QChatExiterMessage) -> None:
@@ -601,7 +607,10 @@ Rooms:
             and message.exiter != self.settings.author_nickname
         ):
             self.add_admin_message(
-                self.tr("{exiter} has left the room").format(exiter=message.exiter)
+                text=self.tr("{exiter} has left the room").format(
+                    exiter=message.exiter
+                ),
+                timestamp=message.timestamp,
             )
 
     def on_like_message_received(self, message: QChatLikeMessage) -> None:
@@ -681,6 +690,8 @@ Rooms:
         """
         message = QChatLikeMessage(
             type=QCHAT_MESSAGE_TYPE_LIKE,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             liker_author=self.settings.author_nickname,
             liked_author=liked_author,
             message=msg,
@@ -823,7 +834,7 @@ Rooms:
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
                 button=True,
-                button_label=self.tr("Open Settings"),
+                button_text=self.tr("Open Settings"),
                 button_connect=self.on_settings_button_clicked,
             )
             return
@@ -837,7 +848,7 @@ Rooms:
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
                 button=True,
-                button_label=self.tr("Open Settings"),
+                button_text=self.tr("Open Settings"),
                 button_connect=self.on_settings_button_clicked,
             )
             return
@@ -848,6 +859,8 @@ Rooms:
         # send message to websocket
         message = QChatTextMessage(
             type=QCHAT_MESSAGE_TYPE_TEXT,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             author=nickname,
             avatar=avatar,
             text=message_text.strip(),
@@ -872,6 +885,8 @@ Rooms:
                 data = file.read()
                 message = QChatImageMessage(
                     type=QCHAT_MESSAGE_TYPE_IMAGE,
+                    id=str(uuid4()),
+                    timestamp=int(datetime.now().timestamp()),
                     author=self.settings.author_nickname,
                     avatar=self.settings.author_avatar,
                     image_data=base64.b64encode(data).decode("utf-8"),
@@ -889,6 +904,8 @@ Rooms:
             data = file.read()
             message = QChatImageMessage(
                 type=QCHAT_MESSAGE_TYPE_IMAGE,
+                id=str(uuid4()),
+                timestamp=int(datetime.now().timestamp()),
                 author=self.settings.author_nickname,
                 avatar=self.settings.author_avatar,
                 image_data=base64.b64encode(data).decode("utf-8"),
@@ -903,6 +920,8 @@ Rooms:
         rect = self.iface.mapCanvas().extent()
         message = QChatBboxMessage(
             type=QCHAT_MESSAGE_TYPE_BBOX,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             author=self.settings.author_nickname,
             avatar=self.settings.author_avatar,
             crs_wkt=crs.toWkt(),
@@ -921,6 +940,8 @@ Rooms:
         crs = QgsProject.instance().crs()
         message = QChatCrsMessage(
             type=QCHAT_MESSAGE_TYPE_CRS,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             author=self.settings.author_nickname,
             avatar=self.settings.author_avatar,
             crs_wkt=crs.toWkt(),
@@ -928,11 +949,11 @@ Rooms:
         )
         self.qchat_ws.send_message(message)
 
-    def add_admin_message(self, text: str) -> None:
+    def add_admin_message(self, text: str, timestamp: Optional[int] = None) -> None:
         """
         Adds an admin message to QTreeWidget chat
         """
-        item = QChatAdminTreeWidgetItem(self.twg_chat, text)
+        item = QChatAdminTreeWidgetItem(self.twg_chat, text, timestamp)
         self.add_tree_widget_item(item)
 
     def add_tree_widget_item(self, item: QTreeWidgetItem) -> None:
@@ -975,7 +996,7 @@ Rooms:
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
                 button=True,
-                button_label=self.tr("Click here to renew it"),
+                button_text=self.tr("Click here to renew it"),
                 button_connect=self.on_renew_clicked,
             )
             return True
@@ -1056,6 +1077,8 @@ Visit the website ?
 
         message = QChatPositionMessage(
             type=QCHAT_MESSAGE_TYPE_POSITION,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             author=self.settings.author_nickname,
             avatar=self.settings.author_avatar,
             crs_wkt="TODO",
@@ -1114,6 +1137,8 @@ Visit the website ?
 
         message = QChatGeojsonMessage(
             type=QCHAT_MESSAGE_TYPE_GEOJSON,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
             author=self.settings.author_nickname,
             avatar=self.settings.author_avatar,
             layer_name=layer.name(),

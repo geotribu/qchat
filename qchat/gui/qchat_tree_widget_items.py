@@ -15,7 +15,7 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtCore import QTime
+from qgis.PyQt.QtCore import QDateTime, QTime
 from qgis.PyQt.QtGui import QBrush, QColor, QIcon, QPixmap
 from qgis.PyQt.QtWidgets import (
     QDialog,
@@ -121,10 +121,12 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
 
 
 class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
-    def __init__(self, parent: QTreeWidget, text: str):
-        super().__init__(
-            parent, QTime.currentTime(), ADMIN_MESSAGES_NICKNAME, ADMIN_MESSAGES_AVATAR
-        )
+    def __init__(self, parent: QTreeWidget, text: str, timestamp: Optional[int] = None):
+        if timestamp is None:
+            time = QTime.currentTime()
+        else:
+            time = QTime.fromSecsSinceEpoch(timestamp).toLocalTime().time()
+        super().__init__(parent, time, ADMIN_MESSAGES_NICKNAME, ADMIN_MESSAGES_AVATAR)
         self.text = text
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, text)
@@ -142,7 +144,12 @@ class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
 
 class QChatTextTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatTextMessage):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, message.text)
@@ -170,7 +177,12 @@ class QChatTextTreeWidgetItem(QChatTreeWidgetItem):
 
 class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatImageMessage):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.init_time_and_author()
 
@@ -212,7 +224,12 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
 
 class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatGeojsonMessage):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, self.liked_message)
@@ -265,7 +282,12 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
 
 class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatCrsMessage):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, self.liked_message)
@@ -297,7 +319,12 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(
         self, parent: QTreeWidget, message: QChatBboxMessage, canvas: QgsMapCanvas
     ):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()
@@ -342,7 +369,12 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(
         self, parent: QTreeWidget, message: QChatPositionMessage, canvas: QgsMapCanvas
     ):
-        super().__init__(parent, QTime.currentTime(), message.author, message.avatar)
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            message.author,
+            message.avatar,
+        )
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()

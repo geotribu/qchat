@@ -53,6 +53,10 @@ class PlgSettingsStructure:
     debug_mode: bool = False
     version: str = __version__
 
+    # usage
+    notify_push_info: bool = True
+    notify_push_duration: int = 10
+
     # network
     network_http_user_agent: str = f"{__title__}/{__version__}"
     request_path: str = (

@@ -55,7 +55,7 @@ class QChatApiClient:
         data = json.loads(str(response, "UTF8"))
         return data
 
-    def get_rules(self) -> dict[str, str]:
+    def get_rules(self) -> dict[str, Any]:
         """
         Get instance rules with an API call
         """
