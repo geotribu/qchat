@@ -28,6 +28,8 @@ try:
 except ImportError:
     EXTERNAL_DEPENDENCIES_AVAILABLE: bool = False
 
+INSTALLATION_URL = "https://geotribu.github.io/qchat/usage/installation.html"
+
 # ############################################################################
 # ########## Classes ###############
 # ##################################
@@ -230,15 +232,16 @@ class QChatPlugin:
             self.log(
                 message=self.tr(
                     "Error importing some of dependencies. "
-                    "Related functions have been disabled."
+                    "QChat related functions have been disabled."
                 ),
                 log_level=Qgis.MessageLevel.Critical,
                 push=True,
                 duration=0,
                 button=True,
+                button_text=self.tr("What to do ?"),
                 button_connect=partial(
                     QDesktopServices.openUrl,
-                    QUrl(f"{__uri_homepage__}installation.html"),
+                    QUrl(INSTALLATION_URL),
                 ),
             )
             # disable plugin widgets
