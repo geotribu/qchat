@@ -2,21 +2,8 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
-<!--
+## 1.0.0-beta1 - 2024-07-14
 
-Unreleased
-
-## version_tag - YYYY-DD-mm
-
-### Added
-
-### Changed
-
-### Removed
-
--->
-
-## 0.1.0 - 2025-07-06
-
-- First release
-- Generated with the [QGIS Plugins templater](https://oslandia.gitlab.io/qgis/template-qgis-plugin/)
+- First release generated with the [QGIS Plugins templater](https://oslandia.gitlab.io/qgis/template-qgis-plugin/)
+- Port QChat code from the [QTribu plugin](https://github.com/geotribu/qtribu)
+- Use `channels` instead of `rooms`
