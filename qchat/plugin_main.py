@@ -187,14 +187,14 @@ class QChatPlugin:
 
         :raises Exception: if there is no item in the feed
         """
-        # auto reconnect to room if needed
+        # auto reconnect to channel if needed
         settings = PlgOptionsManager().get_plg_settings()
-        if settings.qchat_auto_reconnect and settings.qchat_auto_reconnect_room:
+        if settings.auto_reconnect and settings.auto_reconnect_channel:
             if not self.qchat_widget:
                 self.qchat_widget = QChatWidget(
                     iface=self.iface,
                     parent=self.iface.mainWindow(),
-                    auto_reconnect_room=settings.qchat_auto_reconnect_room,
+                    auto_reconnect_channel=settings.auto_reconnect_channel,
                 )
                 self.iface.addDockWidget(
                     Qt.DockWidgetArea.RightDockWidgetArea, self.qchat_widget

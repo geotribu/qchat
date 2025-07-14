@@ -121,9 +121,9 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <layout class="QHBoxLayout" name="hly_room">
+        <layout class="QHBoxLayout" name="hly_channel">
          <item>
-          <widget class="QLabel" name="lbl_room">
+          <widget class="QLabel" name="lbl_channel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -131,12 +131,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Room:</string>
+            <string>Channel:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbb_room">
+          <widget class="QComboBox" name="cbb_channel">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>

@@ -80,7 +80,7 @@ MARKER_VALUE = "---"
 class QChatWidget(QgsDockWidget):
     initialized: bool = False
     connected: bool = False
-    current_room: Optional[str] = None
+    current_channel: Optional[str] = None
 
     qchat_client: QChatApiClient
     qchat_ws: QChatWebsocket
@@ -92,7 +92,7 @@ class QChatWidget(QgsDockWidget):
         self,
         iface: QgisInterface,
         parent: Optional[QWidget] = None,
-        auto_reconnect_room: Optional[str] = None,
+        auto_reconnect_channel: Optional[str] = None,
     ):
         """QWidget to see and post messages on chat
 
@@ -106,8 +106,8 @@ class QChatWidget(QgsDockWidget):
         self.plg_settings = PlgOptionsManager()
         uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
 
-        # set room to autoreconnect to when widget will open
-        self.auto_reconnect_room = auto_reconnect_room
+        # set channel to autoreconnect to when widget will open
+        self.auto_reconnect_channel = auto_reconnect_channel
 
         # rules and status signal listener
         self.btn_rules.pressed.connect(self.on_rules_button_clicked)
@@ -220,16 +220,14 @@ class QChatWidget(QgsDockWidget):
 
     def load_settings(self) -> None:
         """Load options from QgsSettings into UI form."""
-        parsed_instance_url = urlparse(self.settings.qchat_instance_uri)
+        parsed_instance_url = urlparse(self.settings.instance_uri)
         self.grb_instance.setTitle(
             self.tr("Instance: {uri}").format(uri=parsed_instance_url.netloc)
         )
         self.grb_user.setTitle(
-            self.tr("User: {nickname}").format(nickname=self.settings.author_nickname)
+            self.tr("User: {nickname}").format(nickname=self.settings.nickname)
         )
-        self.btn_send.setIcon(
-            QIcon(QgsApplication.iconPath(self.settings.author_avatar))
-        )
+        self.btn_send.setIcon(QIcon(QgsApplication.iconPath(self.settings.avatar)))
 
     def on_widget_opened(self) -> None:
         """
@@ -245,7 +243,7 @@ class QChatWidget(QgsDockWidget):
         self.load_settings()
 
         # initialize QChat API client
-        self.qchat_client = QChatApiClient(self.settings.qchat_instance_uri)
+        self.qchat_client = QChatApiClient(self.settings.instance_uri)
 
         # fetch rules for author min/max length
         try:
@@ -257,22 +255,22 @@ class QChatWidget(QgsDockWidget):
             self.min_author_length = 3
             self.max_author_length = 32
 
-        # clear rooms combobox items
-        self.cbb_room.clear()  # delete all items from comboBox
+        # clear channel combobox items
+        self.cbb_channel.clear()  # delete all items from comboBox
 
-        # load rooms
-        self.cbb_room.addItem(MARKER_VALUE)
+        # load channels
+        self.cbb_channel.addItem(MARKER_VALUE)
         try:
-            rooms = self.qchat_client.get_rooms()
-            for room in rooms:
-                self.cbb_room.addItem(room)
+            channel = self.qchat_client.get_channels()
+            for channel in channel:
+                self.cbb_channel.addItem(channel)
         except Exception as exc:
             self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
             self.log(message=str(exc), log_level=Qgis.MessageLevel.Critical)
         finally:
-            self.current_room = MARKER_VALUE
+            self.current_channel = MARKER_VALUE
 
-        self.cbb_room.currentIndexChanged.connect(self.on_room_changed)
+        self.cbb_channel.currentIndexChanged.connect(self.on_channel_changed)
 
         # context menu on vector layer for sending as geojson in QChat
         self.iface.layerTreeView().contextMenuAboutToShow.connect(
@@ -286,9 +284,9 @@ class QChatWidget(QgsDockWidget):
             self.custom_qchat_position_context_menu
         )
 
-        # auto reconnect to room if needed
-        if self.auto_reconnect_room:
-            self.cbb_room.setCurrentText(self.auto_reconnect_room)
+        # auto reconnect to channel if needed
+        if self.auto_reconnect_channel:
+            self.cbb_channel.setCurrentText(self.auto_reconnect_channel)
 
     def on_rules_button_clicked(self) -> None:
         """
@@ -331,15 +329,15 @@ Max nickname length: {max_nickname_length}"""
             text = self.tr(
                 """Status: {status}
 
-Rooms:
+Channels:
 
-{rooms_status}"""
+{channels_status}"""
             ).format(
                 status=status["status"],
-                rooms_status="\n".join(
+                channels_status="\n".join(
                     [
                         f"- {r['name']} : {r['nb_connected_users']} {user_txt}{'s' if r['nb_connected_users'] > 1 else ''}"
-                        for r in status["rooms"]
+                        for r in status["channels"]
                     ]
                 ),
             )
@@ -352,30 +350,30 @@ Rooms:
         Action called when clicking on "Settings" button
         """
         # save current instance and nickname to check afterwards if they have changed
-        old_instance = self.settings.qchat_instance_uri
-        old_nickname = self.settings.author_nickname
+        old_instance = self.settings.instance_uri
+        old_nickname = self.settings.nickname
         self.iface.showOptionsDialog(currentPage=f"mOptionsPage{__title__}")
 
         # get new instance and nickname settings
-        new_instance = self.settings.qchat_instance_uri
-        new_nickname = self.settings.author_nickname
+        new_instance = self.settings.instance_uri
+        new_nickname = self.settings.nickname
 
         # disconnect if instance or nickname have changed
         if old_instance != new_instance or old_nickname != new_nickname:
-            self.disconnect_from_room(log=self.connected, close_ws=self.connected)
+            self.disconnect_from_channel(log=self.connected, close_ws=self.connected)
             self.on_widget_closed()
             self.on_widget_opened()
 
         # reload settings
         self.load_settings()
 
-    def on_room_changed(self) -> None:
+    def on_channel_changed(self) -> None:
         """
-        Action called when room index is changed in the room combobox
+        Action called when channel index is changed in the channel combobox
         """
         if (
             not self.min_author_length
-            <= len(self.settings.author_nickname)
+            <= len(self.settings.nickname)
             <= self.max_author_length
         ):
             self.log(
@@ -390,23 +388,27 @@ Rooms:
                 button_connect=self.on_settings_button_clicked,
             )
             return
-        old_room = self.current_room
-        new_room = self.cbb_room.currentText()
-        old_is_marker = old_room != MARKER_VALUE
-        if new_room == MARKER_VALUE:
-            if self.connected:
-                self.disconnect_from_room(log=old_is_marker, close_ws=old_is_marker)
-            self.current_room = MARKER_VALUE
-            return
-        if self.connected:
-            self.disconnect_from_room(log=old_is_marker, close_ws=old_is_marker)
-        self.connect_to_room(new_room)
-        self.current_room = new_room
 
-        # write new room value to auto-reconnect room in settings if needed
+        old_channel = self.current_channel
+        new_channel = self.cbb_channel.currentText()
+        old_is_marker = old_channel != MARKER_VALUE
+
+        if new_channel == MARKER_VALUE:
+            if self.connected:
+                self.disconnect_from_channel(log=old_is_marker, close_ws=old_is_marker)
+            self.current_channel = MARKER_VALUE
+            return
+
+        if self.connected:
+            self.disconnect_from_channel(log=old_is_marker, close_ws=old_is_marker)
+
+        self.connect_to_channel(new_channel)
+        self.current_channel = new_channel
+
+        # write new channel value to auto-reconnect channel in settings if needed
         settings = self.settings
-        if settings.qchat_auto_reconnect:
-            settings.qchat_auto_reconnect_room = new_room
+        if settings.auto_reconnect:
+            settings.auto_reconnect_channel = new_channel
             self.plg_settings.save_from_object(settings)
 
     def on_connect_button_clicked(self) -> None:
@@ -414,11 +416,11 @@ Rooms:
         Action called when clicking on "Connect" / "Disconnect" button
         """
         if self.connected:
-            self.disconnect_from_room()
+            self.disconnect_from_channel()
         else:
             if (
                 not self.min_author_length
-                <= len(self.settings.author_nickname)
+                <= len(self.settings.nickname)
                 <= self.max_author_length
             ):
                 self.log(
@@ -433,58 +435,61 @@ Rooms:
                     button_connect=self.on_settings_button_clicked,
                 )
                 return
-            room = self.cbb_room.currentText()
-            if room == MARKER_VALUE:
+
+            channel = self.cbb_channel.currentText()
+
+            if channel == MARKER_VALUE:
                 return
-            self.connect_to_room(room)
 
-    def connect_to_room(self, room: str) -> None:
-        """
-        Connect widget to a specific room
-        """
-        self.qchat_ws.open(self.settings.qchat_instance_uri, room)
-        self.qchat_ws.connected.connect(partial(self.on_ws_connected, room))
+            self.connect_to_channel(channel)
 
-    def on_ws_connected(self, room: str) -> None:
+    def connect_to_channel(self, channel: str) -> None:
         """
-        Action called when websocket is connected to a room
+        Connect widget to a specific channel
+        """
+        self.qchat_ws.open(self.settings.instance_uri, channel)
+        self.qchat_ws.connected.connect(partial(self.on_ws_connected, channel))
+
+    def on_ws_connected(self, channel: str) -> None:
+        """
+        Action called when websocket is connected from a channel
         """
         self.btn_connect.setText(self.tr("Disconnect"))
         self.btn_list_users.setEnabled(True)
         self.grb_user.setEnabled(True)
-        self.current_room = room
+        self.current_channel = channel
 
-        # write new room value to auto-reconnect room in settings if needed
+        # write new channel value to auto-reconnect channel in settings if needed
         settings = self.settings
-        if settings.qchat_auto_reconnect:
-            settings.qchat_auto_reconnect_room = room
+        if settings.auto_reconnect:
+            settings.auto_reconnect_channel = channel
             self.plg_settings.save_from_object(settings)
 
         self.connected = True
         self.twg_chat.clear()
-        if self.settings.qchat_display_admin_messages:
+        if self.settings.display_admin_messages:
             self.add_admin_message(
-                self.tr("Connected to room '{room}'").format(room=room)
+                self.tr("Connected to channel '{channel}'").format(channel=channel)
             )
 
         # send newcomer message to websocket
-        if not self.settings.qchat_incognito_mode:
+        if not self.settings.incognito_mode:
             message = QChatNewcomerMessage(
                 type=QCHAT_MESSAGE_TYPE_NEWCOMER,
                 id=str(uuid4()),
                 timestamp=int(datetime.now().timestamp()),
-                newcomer=self.settings.author_nickname,
+                newcomer=self.settings.nickname,
             )
             self.qchat_ws.send_message(message)
 
-    def disconnect_from_room(self, log: bool = True, close_ws: bool = True) -> None:
+    def disconnect_from_channel(self, log: bool = True, close_ws: bool = True) -> None:
         """
-        Disconnect widget from the current room
+        Disconnect widget from the current channel
         """
-        if log and self.settings.qchat_display_admin_messages:
+        if log and self.settings.display_admin_messages:
             self.add_admin_message(
-                self.tr("Disconnected from room '{room}'").format(
-                    room=self.current_room
+                self.tr("Disconnected from channel '{channel}'").format(
+                    channel=self.current_channel
                 ),
             )
         self.btn_connect.setText(self.tr("Connect"))
@@ -500,14 +505,14 @@ Rooms:
         """
         Action called when websocket is disconnected
         """
-        self.cbb_room.setCurrentText(MARKER_VALUE)
+        self.cbb_channel.setCurrentText(MARKER_VALUE)
         self.log(message="Websocket disconnected")
 
     def on_ws_error(self, error_code: int) -> None:
         """
         Action called when an error appears on the websocket
         """
-        if self.settings.qchat_display_admin_messages:
+        if self.settings.display_admin_messages:
             self.add_admin_message(self.qchat_ws.error_string())
         self.log(
             message=f"{error_code}: {self.qchat_ws.error_string()}",
@@ -532,7 +537,7 @@ Rooms:
         Launched when a text message is received from the websocket
         """
         # check if a cheatcode is activated
-        if self.settings.qchat_activate_cheatcode:
+        if self.settings.activate_cheatcode:
             activated = self.check_cheatcode(message.text)
             if activated:
                 return
@@ -545,8 +550,8 @@ Rooms:
 
         # check if message mentions current user
         words = message.text.split(" ")
-        if f"@{self.settings.author_nickname}" in words or "@all" in words:
-            if message.author != self.settings.author_nickname:
+        if f"@{self.settings.nickname}" in words or "@all" in words:
+            if message.author != self.settings.nickname:
                 self.log(
                     message=self.tr(
                         "You were mentionned by {sender}: {message}"
@@ -558,9 +563,9 @@ Rooms:
                 )
 
                 # check if a notification sound should be played
-                if self.settings.qchat_play_sounds:
+                if self.settings.play_sounds:
                     play_resource_sound(
-                        self.settings.qchat_ring_tone, self.settings.qchat_sound_volume
+                        self.settings.ring_tone, self.settings.sound_volume
                     )
 
         self.add_tree_widget_item(item)
@@ -577,8 +582,8 @@ Rooms:
         Launched when a nb_users message is received from the websocket
         """
         self.grb_qchat.setTitle(
-            self.tr("QChat - room: {room} - {nb_users} {user_txt}").format(
-                room=self.current_room,
+            self.tr("QChat - channel: {channel} - {nb_users} {user_txt}").format(
+                channel=self.current_channel,
                 nb_users=message.nb_users,
                 user_txt=self.tr("user") if message.nb_users <= 1 else self.tr("users"),
             )
@@ -589,11 +594,11 @@ Rooms:
         Launched when a newcomer message is received from the websocket
         """
         if (
-            self.settings.qchat_display_admin_messages
-            and message.newcomer != self.settings.author_nickname
+            self.settings.display_admin_messages
+            and message.newcomer != self.settings.nickname
         ):
             self.add_admin_message(
-                text=self.tr("{newcomer} has joined the room").format(
+                text=self.tr("{newcomer} has joined the channel").format(
                     newcomer=message.newcomer
                 ),
                 timestamp=message.timestamp,
@@ -604,11 +609,11 @@ Rooms:
         Launched when an exiter message is received from the websocket
         """
         if (
-            self.settings.qchat_display_admin_messages
-            and message.exiter != self.settings.author_nickname
+            self.settings.display_admin_messages
+            and message.exiter != self.settings.nickname
         ):
             self.add_admin_message(
-                text=self.tr("{exiter} has left the room").format(
+                text=self.tr("{exiter} has left the channel").format(
                     exiter=message.exiter
                 ),
                 timestamp=message.timestamp,
@@ -618,7 +623,7 @@ Rooms:
         """
         Launched when a like message is received from the websocket
         """
-        if message.liked_author == self.settings.author_nickname:
+        if message.liked_author == self.settings.nickname:
             self.log(
                 message=self.tr("{liker_author} liked your message: {message}").format(
                     liker_author=message.liker_author, message=message.message
@@ -629,10 +634,8 @@ Rooms:
                 duration=self.settings.notify_push_duration,
             )
             # play a notification sound if enabled
-            if self.settings.qchat_play_sounds:
-                play_resource_sound(
-                    self.settings.qchat_ring_tone, self.settings.qchat_sound_volume
-                )
+            if self.settings.play_sounds:
+                play_resource_sound(self.settings.ring_tone, self.settings.sound_volume)
 
     def on_geojson_message_received(self, message: QChatGeojsonMessage) -> None:
         """
@@ -678,7 +681,7 @@ Rooms:
         """
         author = item.author
         # do nothing if double click on admin message
-        if author == ADMIN_MESSAGES_NICKNAME or author == self.settings.author_nickname:
+        if author == ADMIN_MESSAGES_NICKNAME or author == self.settings.nickname:
             return
         text = self.lne_message.text()
         self.lne_message.setText(f"{text}@{author} ")
@@ -693,7 +696,7 @@ Rooms:
             type=QCHAT_MESSAGE_TYPE_LIKE,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
-            liker_author=self.settings.author_nickname,
+            liker_author=self.settings.nickname,
             liked_author=liked_author,
             message=msg,
         )
@@ -788,7 +791,7 @@ Rooms:
         """
         Action called when the list users button is clicked
         """
-        if self.settings.qchat_incognito_mode:
+        if self.settings.incognito_mode:
             QMessageBox.warning(
                 self,
                 self.tr("Registered users"),
@@ -798,15 +801,15 @@ Rooms:
             )
             return
         try:
-            users = self.qchat_client.get_registered_users(self.current_room)
+            users = self.qchat_client.get_registered_users(self.current_channel)
             QMessageBox.information(
                 self,
                 self.tr("Registered users"),
                 self.tr(
-                    """Registered users in room ({room}):
+                    """Registered users in channel ({channel}):
 
 {users}"""
-                ).format(room=self.current_room, users=",".join(users)),
+                ).format(channel=self.current_channel, users=",".join(users)),
             )
         except Exception as exc:
             self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
@@ -824,8 +827,8 @@ Rooms:
         """
 
         # retrieve nickname and message
-        nickname = self.settings.author_nickname
-        avatar = self.settings.author_avatar
+        nickname = self.settings.nickname
+        avatar = self.settings.avatar
         message_text = self.lne_message.text()
 
         if not nickname:
@@ -888,8 +891,8 @@ Rooms:
                     type=QCHAT_MESSAGE_TYPE_IMAGE,
                     id=str(uuid4()),
                     timestamp=int(datetime.now().timestamp()),
-                    author=self.settings.author_nickname,
-                    avatar=self.settings.author_avatar,
+                    author=self.settings.nickname,
+                    avatar=self.settings.avatar,
                     image_data=base64.b64encode(data).decode("utf-8"),
                 )
                 self.qchat_ws.send_message(message)
@@ -907,8 +910,8 @@ Rooms:
                 type=QCHAT_MESSAGE_TYPE_IMAGE,
                 id=str(uuid4()),
                 timestamp=int(datetime.now().timestamp()),
-                author=self.settings.author_nickname,
-                avatar=self.settings.author_avatar,
+                author=self.settings.nickname,
+                avatar=self.settings.avatar,
                 image_data=base64.b64encode(data).decode("utf-8"),
             )
             self.qchat_ws.send_message(message)
@@ -923,8 +926,8 @@ Rooms:
             type=QCHAT_MESSAGE_TYPE_BBOX,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
-            author=self.settings.author_nickname,
-            avatar=self.settings.author_avatar,
+            author=self.settings.nickname,
+            avatar=self.settings.avatar,
             crs_wkt=crs.toWkt(),
             crs_authid=crs.authid(),
             xmin=rect.xMinimum(),
@@ -943,8 +946,8 @@ Rooms:
             type=QCHAT_MESSAGE_TYPE_CRS,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
-            author=self.settings.author_nickname,
-            avatar=self.settings.author_avatar,
+            author=self.settings.nickname,
+            avatar=self.settings.avatar,
             crs_wkt=crs.toWkt(),
             crs_authid=crs.authid(),
         )
@@ -967,8 +970,8 @@ Rooms:
         Action called when the widget is closed
         """
         if self.connected:
-            self.disconnect_from_room()
-        self.cbb_room.currentIndexChanged.disconnect()
+            self.disconnect_from_channel()
+        self.cbb_channel.currentIndexChanged.disconnect()
         self.initialized = False
 
         # remove context menu on vector layer for sending as geojson in QChat
@@ -1002,9 +1005,9 @@ Rooms:
             )
             return True
         # play sounds
-        if self.settings.qchat_play_sounds:
+        if self.settings.play_sounds:
             if text in [CHEATCODE_IAMAROBOT, CHEATCODE_10OCLOCK]:
-                play_resource_sound(text, self.settings.qchat_sound_volume)
+                play_resource_sound(text, self.settings.sound_volume)
                 return True
         return False
 
@@ -1061,7 +1064,7 @@ Visit the website ?
         if not self.connected:
             self.log(
                 message=self.tr(
-                    "Not connected to QChat. Please connect to a room first"
+                    "Not connected to QChat. Please connect to a channel first"
                 ),
                 application="QChat",
                 log_level=Qgis.MessageLevel.Critical,
@@ -1080,8 +1083,8 @@ Visit the website ?
             type=QCHAT_MESSAGE_TYPE_POSITION,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
-            author=self.settings.author_nickname,
-            avatar=self.settings.author_avatar,
+            author=self.settings.nickname,
+            avatar=self.settings.avatar,
             crs_wkt="TODO",
             crs_authid="TODO",
             x=map_point.x(),
@@ -1093,7 +1096,7 @@ Visit the website ?
         if not self.connected:
             self.log(
                 message=self.tr(
-                    "Not connected to QChat. Please connect to a room first"
+                    "Not connected to QChat. Please connect to a channel first"
                 ),
                 application="QChat",
                 log_level=Qgis.MessageLevel.Critical,
@@ -1140,8 +1143,8 @@ Visit the website ?
             type=QCHAT_MESSAGE_TYPE_GEOJSON,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
-            author=self.settings.author_nickname,
-            avatar=self.settings.author_avatar,
+            author=self.settings.nickname,
+            avatar=self.settings.avatar,
             layer_name=layer.name(),
             crs_wkt=layer.crs().toWkt(),
             crs_authid=layer.crs().authid(),

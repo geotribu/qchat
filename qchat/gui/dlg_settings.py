@@ -114,29 +114,27 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         dialog is accepted."""
         settings = self.plg_settings.get_plg_settings()
 
-        settings.author_nickname = self.lne_qchat_nickname.text()
-        settings.author_avatar = QCHAT_USER_AVATARS.get(
+        settings.nickname = self.lne_qchat_nickname.text()
+        settings.avatar = QCHAT_USER_AVATARS.get(
             self.cbb_qchat_avatar.currentText(), "mIconInfo.svg"
         )
 
         instance = self.cbb_qchat_instance_uri.currentText()
         if instance.endswith("/"):
-            settings.qchat_instance_uri = instance[0:-1]
+            settings.instance_uri = instance[0:-1]
         else:
-            settings.qchat_instance_uri = instance
-        settings.qchat_auto_reconnect = self.ckb_auto_reconnect.isChecked()
-        settings.qchat_activate_cheatcode = self.ckb_cheatcodes.isChecked()
-        settings.qchat_display_admin_messages = (
-            self.ckb_display_admin_messages.isChecked()
-        )
-        settings.qchat_show_avatars = self.ckb_show_avatars.isChecked()
-        settings.qchat_incognito_mode = self.ckb_incognito_mode.isChecked()
-        settings.qchat_play_sounds = self.ckb_play_sounds.isChecked()
-        settings.qchat_sound_volume = self.hsl_sound_volume.value()
-        settings.qchat_ring_tone = self.cbb_ring_tone.currentText()
-        settings.qchat_color_mention = self.cbt_color_mention.color().name()
-        settings.qchat_color_self = self.cbt_color_self.color().name()
-        settings.qchat_color_admin = self.cbt_color_admin.color().name()
+            settings.instance_uri = instance
+        settings.auto_reconnect = self.ckb_auto_reconnect.isChecked()
+        settings.activate_cheatcode = self.ckb_cheatcodes.isChecked()
+        settings.display_admin_messages = self.ckb_display_admin_messages.isChecked()
+        settings.show_avatars = self.ckb_show_avatars.isChecked()
+        settings.incognito_mode = self.ckb_incognito_mode.isChecked()
+        settings.play_sounds = self.ckb_play_sounds.isChecked()
+        settings.sound_volume = self.hsl_sound_volume.value()
+        settings.ring_tone = self.cbb_ring_tone.currentText()
+        settings.color_mention = self.cbt_color_mention.color().name()
+        settings.color_self = self.cbt_color_self.color().name()
+        settings.color_admin = self.cbt_color_admin.color().name()
 
         # misc
         settings.debug_mode = self.opt_debug.isChecked()
@@ -155,17 +153,17 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         """Load options from QgsSettings into UI form."""
         settings = self.plg_settings.get_plg_settings()
 
-        self.lne_qchat_nickname.setText(settings.author_nickname)
+        self.lne_qchat_nickname.setText(settings.nickname)
 
         # retrieve avatar among values
-        if settings.author_avatar in QCHAT_USER_AVATARS.values():
+        if settings.avatar in QCHAT_USER_AVATARS.values():
             self.cbb_qchat_avatar.setCurrentIndex(
-                list(QCHAT_USER_AVATARS.values()).index(settings.author_avatar)
+                list(QCHAT_USER_AVATARS.values()).index(settings.avatar)
             )
         else:
             self.log(
                 message="Avatar {} has not been found among available one: {}".format(
-                    settings.author_avatar, ", ".join(QCHAT_USER_AVATARS.values())
+                    settings.avatar, ", ".join(QCHAT_USER_AVATARS.values())
                 ),
                 log_level=Qgis.MessageLevel.Warning,
                 push=True,
@@ -173,29 +171,27 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
             self.cbb_qchat_avatar.setCurrentIndex(4)
 
         instance_index = self.cbb_qchat_instance_uri.findText(
-            settings.qchat_instance_uri, Qt.MatchFlag.MatchFixedString
+            settings.instance_uri, Qt.MatchFlag.MatchFixedString
         )
         if instance_index >= 0:
             self.cbb_qchat_instance_uri.setCurrentIndex(instance_index)
         else:
-            self.cbb_qchat_instance_uri.setCurrentText(settings.qchat_instance_uri)
-        self.ckb_auto_reconnect.setChecked(settings.qchat_auto_reconnect)
-        self.ckb_cheatcodes.setChecked(settings.qchat_activate_cheatcode)
-        self.ckb_display_admin_messages.setChecked(
-            settings.qchat_display_admin_messages
-        )
-        self.ckb_show_avatars.setChecked(settings.qchat_show_avatars)
-        self.ckb_incognito_mode.setChecked(settings.qchat_incognito_mode)
-        self.ckb_play_sounds.setChecked(settings.qchat_play_sounds)
-        self.hsl_sound_volume.setValue(settings.qchat_sound_volume)
+            self.cbb_qchat_instance_uri.setCurrentText(settings.instance_uri)
+        self.ckb_auto_reconnect.setChecked(settings.auto_reconnect)
+        self.ckb_cheatcodes.setChecked(settings.activate_cheatcode)
+        self.ckb_display_admin_messages.setChecked(settings.display_admin_messages)
+        self.ckb_show_avatars.setChecked(settings.show_avatars)
+        self.ckb_incognito_mode.setChecked(settings.incognito_mode)
+        self.ckb_play_sounds.setChecked(settings.play_sounds)
+        self.hsl_sound_volume.setValue(settings.sound_volume)
         beep_index = self.cbb_ring_tone.findText(
-            settings.qchat_ring_tone, Qt.MatchFlag.MatchFixedString
+            settings.ring_tone, Qt.MatchFlag.MatchFixedString
         )
         if beep_index >= 0:
             self.cbb_ring_tone.setCurrentIndex(beep_index)
-        self.cbt_color_mention.setColor(QColor(settings.qchat_color_mention))
-        self.cbt_color_self.setColor(QColor(settings.qchat_color_self))
-        self.cbt_color_admin.setColor(QColor(settings.qchat_color_admin))
+        self.cbt_color_mention.setColor(QColor(settings.color_mention))
+        self.cbt_color_self.setColor(QColor(settings.color_self))
+        self.cbt_color_admin.setColor(QColor(settings.color_admin))
 
         # global
         self.opt_debug.setChecked(settings.debug_mode)

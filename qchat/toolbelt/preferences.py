@@ -63,22 +63,22 @@ class PlgSettingsStructure:
         f"utm_source=QGIS&utm_medium={__title__}&utm_campaign=plugin_{__version__}"
     )
 
-    author_nickname: str = f"jd_{random.randint(1000, 9999)}"
-    author_avatar: str = "mGeoPackage.svg"
+    nickname: str = f"jd_{random.randint(1000, 9999)}"
+    avatar: str = "mGeoPackage.svg"
 
-    qchat_instance_uri: str = "https://gischat.geotribu.net"
-    qchat_auto_reconnect: bool = True
-    qchat_auto_reconnect_room: str | None = None
-    qchat_activate_cheatcode: bool = True
-    qchat_display_admin_messages: bool = False
-    qchat_show_avatars: bool = True
-    qchat_incognito_mode: bool = False
-    qchat_play_sounds: bool = True
-    qchat_sound_volume: int = 33
-    qchat_ring_tone: str = "beep_1"
-    qchat_color_mention: str = "#4169e1"
-    qchat_color_self: str = "#00cc00"
-    qchat_color_admin: str = "#ffa500"
+    instance_uri: str = "https://gischat.geotribu.net"
+    auto_reconnect: bool = True
+    auto_reconnect_channel: str | None = None
+    activate_cheatcode: bool = True
+    display_admin_messages: bool = False
+    show_avatars: bool = True
+    incognito_mode: bool = False
+    play_sounds: bool = True
+    sound_volume: int = 33
+    ring_tone: str = "beep_1"
+    color_mention: str = "#4169e1"
+    color_self: str = "#00cc00"
+    color_admin: str = "#ffa500"
 
 
 class PlgOptionsManager:
