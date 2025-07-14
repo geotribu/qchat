@@ -69,11 +69,11 @@ class QChatApiClient:
         data = json.loads(str(response, "UTF8"))
         return data
 
-    def get_rooms(self) -> list[str]:
+    def get_channels(self) -> list[str]:
         """
-        Get available rooms with an API HTTP call
+        Get available channels with an API HTTP call
         """
-        url = f"{self.instance_uri}/rooms"
+        url = f"{self.instance_uri}/channels"
         response: QByteArray = self.qntwk.get_from_source(
             headers=HEADERS,
             url=url,
@@ -83,11 +83,11 @@ class QChatApiClient:
         data = json.loads(str(response, "UTF8"))
         return data
 
-    def get_registered_users(self, room: str) -> list[str]:
+    def get_registered_users(self, channel: str) -> list[str]:
         """
-        Get registered users in a room with an API HTTP CALL
+        Get registered users in a channel with an API HTTP CALL
         """
-        url = f"{self.instance_uri}/room/{room}/users"
+        url = f"{self.instance_uri}/channel/{channel}/users"
         response: QByteArray = self.qntwk.get_from_source(
             headers=HEADERS,
             url=url,

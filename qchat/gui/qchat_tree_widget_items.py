@@ -67,7 +67,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
     def init_time_and_author(self) -> None:
         self.setText(TIME_COLUMN, self.time.toString())
         self.setText(AUTHOR_COLUM, self.author)
-        if self.settings.qchat_show_avatars and self.avatar:
+        if self.settings.show_avatars and self.avatar:
             self.setIcon(AUTHOR_COLUM, QIcon(QgsApplication.iconPath(self.avatar)))
 
     def set_foreground_color(self, color: str) -> None:
@@ -89,7 +89,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         Returns if the item can be liked
         """
-        return self.author != self.settings.author_nickname
+        return self.author != self.settings.nickname
 
     @property
     def liked_message(self) -> str:
@@ -103,7 +103,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         Returns if the item can be mentioned
         """
-        return self.author != self.settings.author_nickname
+        return self.author != self.settings.nickname
 
     @property
     def can_be_copied_to_clipboard(self) -> bool:
@@ -131,7 +131,7 @@ class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, text)
         self.setToolTip(MESSAGE_COLUMN, text)
-        self.set_foreground_color(self.settings.qchat_color_admin)
+        self.set_foreground_color(self.settings.color_admin)
 
     @property
     def can_be_liked(self) -> bool:
@@ -156,12 +156,12 @@ class QChatTextTreeWidgetItem(QChatTreeWidgetItem):
 
         # set foreground color if  user is mentioned
         words = message.text.split(" ")
-        if f"@{self.settings.author_nickname}" in words or "@all" in words:
-            self.set_foreground_color(self.settings.qchat_color_mention)
+        if f"@{self.settings.nickname}" in words or "@all" in words:
+            self.set_foreground_color(self.settings.color_mention)
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
     @property
     def liked_message(self) -> str:
@@ -187,8 +187,8 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
         self.init_time_and_author()
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
         self.pixmap = QPixmap()
         data = base64.b64decode(message.image_data)
@@ -236,8 +236,8 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
@@ -294,8 +294,8 @@ class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
@@ -332,8 +332,8 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
@@ -382,8 +382,8 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
-        if message.author == self.settings.author_nickname:
-            self.set_foreground_color(self.settings.qchat_color_self)
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:

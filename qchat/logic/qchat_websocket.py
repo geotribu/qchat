@@ -99,16 +99,16 @@ class QChatWebsocket(QObject):
         self.ws_client.error.connect(lambda code: self.error.emit(code))
         self.ws_client.textMessageReceived.connect(self.on_message_received)
 
-    def open(self, qchat_instance_uri: str, room: str) -> None:
+    def open(self, qchat_instance_uri: str, channel: str) -> None:
         """Opens a websocket to a QChat instance.
 
         :param qchat_instance_uri: URI of the QChat instance to connect to
-        :param room: room to connect to
+        :param channel: channel to connect to
         """
         protocol, domain = qchat_instance_uri.split("://")
         ws_protocol = "wss" if protocol == "https" else "ws"
         ws_instance_url = f"{ws_protocol}://{domain}"
-        ws_url = f"{ws_instance_url}/room/{room}/ws"
+        ws_url = f"{ws_instance_url}/channel/{channel}/ws"
         self.ws_client.open(QUrl(ws_url))
         self.ws_client.connected.connect(self.connected.emit)
 
