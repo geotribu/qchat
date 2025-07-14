@@ -125,7 +125,7 @@ class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
         if timestamp is None:
             time = QTime.currentTime()
         else:
-            time = QTime.fromSecsSinceEpoch(timestamp).toLocalTime().time()
+            time = QDateTime.fromSecsSinceEpoch(timestamp).toLocalTime().time()
         super().__init__(parent, time, ADMIN_MESSAGES_NICKNAME, ADMIN_MESSAGES_AVATAR)
         self.text = text
         self.init_time_and_author()

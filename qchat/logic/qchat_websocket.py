@@ -95,6 +95,7 @@ class QChatWebsocket(QObject):
             )
             return
         self.ws_client = QWebSocket("", WS_PROTOCOL_VERSION, None)
+        self.ws_client.disconnected.connect(lambda: self.disconnected.emit())
         self.ws_client.error.connect(lambda code: self.error.emit(code))
         self.ws_client.textMessageReceived.connect(self.on_message_received)
 
