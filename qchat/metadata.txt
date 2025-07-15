@@ -5,12 +5,12 @@ category=Web
 hasProcessingProvider=False
 description=This plugin allows one to chat with other QGIS users connected at the same time.
 icon=resources/images/logo_geotribu_orange.svg
-tags=geotribu,chat,community,social
+tags=chat,community,geotribu,social
 
 # credits and contact
 author=Guilhem Allaman (Geotribu), Julien Moura (Geotribu)
 email=geotribu@gmail.com
-homepage=https://github.com/geotribu/qchat
+homepage=https://geotribu.github.io/qchat/
 repository=https://github.com/geotribu/qchat
 tracker=https://github.com/geotribu/qchat/issues/
 
@@ -22,5 +22,5 @@ qgisMaximumVersion=4.99
 supportsQt6=True
 
 # versioning
-version=1.0.0-beta2
+version=1.0.0-beta1
 changelog=
