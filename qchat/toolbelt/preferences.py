@@ -66,7 +66,7 @@ class PlgSettingsStructure:
     nickname: str = f"jd_{random.randint(1000, 9999)}"
     avatar: str = "mGeoPackage.svg"
 
-    instance_uri: str = "https://staging.gischat.geotribu.net"
+    instance_uri: str = "https://qchat.geotribu.net"
     auto_reconnect: bool = True
     auto_reconnect_channel: str | None = None
     activate_cheatcode: bool = True

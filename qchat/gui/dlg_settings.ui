@@ -154,11 +154,11 @@
            <bool>true</bool>
           </property>
           <property name="currentText">
-           <string notr="true">https://staging.gischat.geotribu.net</string>
+           <string notr="true">https://qchat.geotribu.net</string>
           </property>
           <item>
            <property name="text">
-            <string notr="true">https://staging.gischat.geotribu.net</string>
+            <string notr="true">https://qchat.geotribu.net</string>
            </property>
           </item>
          </widget>
@@ -175,9 +175,6 @@
         </item>
         <item>
          <widget class="QPushButton" name="btn_discover">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="cursor">
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
