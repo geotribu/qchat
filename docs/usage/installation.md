@@ -1,14 +1,22 @@
 # Installation
 
+## Stable version (recommended)
+
+This plugin is published on the official QGIS plugins repository: <https://plugins.qgis.org/plugins/qchat/>.
+
 ## Dependencies
 
-Some features of the plugin rely on third-party software dependencies that are not included in the QGIS packaging on certain platforms:
+Some features of the plugin rely on third-party software dependencies, that are not included in the QGIS packaging on certain platforms:
 
-- QGISChat: (Py)QtMultimedia, (Py)QtWebSockets,
+- (Py)QtWebSockets: websocket communications with gischat backends.
+
+- (Py)QtMultimedia: sounds and notifications.
+
+### Windows
+
+The required third-party dependencies should be packaged with QGIS on Windows. So no additional installations to perform.
 
 ### Linux
-
-> For example on Ubuntu 22.04. Adapt to your distribution.
 
 Open a terminal and run the following command:
 
@@ -16,9 +24,9 @@ Open a terminal and run the following command:
 sudo apt install python3-pyqt5.qtmultimedia python3-pyqt5.qtwebsockets
 ```
 
-## Stable version (recommended)
+Then restart QGIS, you should be able to use QChat.
 
-This plugin is published on the official QGIS plugins repository: <https://plugins.qgis.org/plugins/qchat/>.
+> The above example is for Ubuntu 22.04. Adapt to your distribution.
 
 ## Beta versions released
 
