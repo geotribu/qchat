@@ -505,7 +505,9 @@ Channels:
         """
         Action called when websocket is disconnected
         """
-        self.cbb_channel.setCurrentText(MARKER_VALUE)
+        if self.connected:
+            self.disconnect_from_channel(log=True, close_ws=False)
+            self.cbb_channel.setCurrentText(MARKER_VALUE)
         self.log(message="Websocket disconnected")
 
     def on_ws_error(self, error_code: int) -> None:
