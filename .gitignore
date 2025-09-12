@@ -128,3 +128,4 @@ dmypy.json
 # -- CUSTOM ----
 *.zip
 *.qm
+*.db
