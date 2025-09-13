@@ -2,7 +2,6 @@
 
 """Plugin settings."""
 
-
 # standard
 from dataclasses import asdict, dataclass, fields
 from getpass import getuser
