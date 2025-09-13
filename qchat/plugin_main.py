@@ -71,7 +71,7 @@ class QChatPlugin:
         self.iface.registerOptionsWidgetFactory(self.options_factory)
 
         # -- Toolbar
-        self.toolbar = self.iface.addToolBar(name=self.tr("Geotribu toolbar"))
+        self.qchat_toolbar = self.iface.addToolBar(name=f"{__title__}")
 
         # -- QChat
         self.qchat_widget = None
@@ -124,7 +124,7 @@ class QChatPlugin:
         self.iface.addPluginToWebMenu(__title__, self.action_help)
 
         # -- Toolbar
-        self.toolbar.addAction(self.action_open_chat)
+        self.qchat_toolbar.addAction(self.action_open_chat)
 
         # documentation
         self.iface.pluginHelpMenu().addSeparator()
@@ -166,7 +166,7 @@ class QChatPlugin:
         self.iface.removePluginWebMenu(__title__, self.action_help)
 
         # -- Clean up toolbar
-        del self.toolbar
+        del self.qchat_toolbar
         del self.qchat_widget
 
         # -- Clean up preferences panel in QGIS settings
