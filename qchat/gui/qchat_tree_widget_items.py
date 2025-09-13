@@ -160,8 +160,9 @@ class QChatTextTreeWidgetItem(QChatTreeWidgetItem):
         self.message = message
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, message.text)
+        self.setToolTip(MESSAGE_COLUMN, message.text)
 
-        # set foreground color if  user is mentioned
+        # set foreground color if user is mentioned
         words = message.text.split(" ")
         if f"@{self.settings.nickname}" in words or "@all" in words:
             self.set_foreground_color(self.settings.color_mention)
