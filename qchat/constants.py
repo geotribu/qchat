@@ -49,3 +49,8 @@ QCHAT_MESSAGE_TYPE_GEOJSON = "geojson"
 QCHAT_MESSAGE_TYPE_CRS = "crs"
 QCHAT_MESSAGE_TYPE_BBOX = "bbox"
 QCHAT_MESSAGE_TYPE_POSITION = "position"
+
+# QField integration
+QFIELD_PLUGIN_INSTALLATION_URL = (
+    "https://geotribu.github.io/qchat/usage/installation.html"
+)
