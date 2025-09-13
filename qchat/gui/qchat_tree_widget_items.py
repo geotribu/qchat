@@ -15,7 +15,7 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtCore import QDateTime, QTime
+from qgis.PyQt.QtCore import QDateTime
 from qgis.PyQt.QtGui import QBrush, QColor, QIcon, QPixmap
 from qgis.PyQt.QtWidgets import (
     QDialog,
@@ -52,11 +52,15 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
     """
 
     def __init__(
-        self, parent: QTreeWidget, time: QTime, author: str, avatar: Optional[str]
+        self,
+        parent: QTreeWidget,
+        datetime: QDateTime,
+        author: str,
+        avatar: Optional[str],
     ):
         super().__init__(parent)
         self.plg_settings = PlgOptionsManager()
-        self.time = time
+        self.datetime = datetime
         self.author = author
         self.avatar = avatar
 
@@ -65,7 +69,8 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         return self.plg_settings.get_plg_settings()
 
     def init_time_and_author(self) -> None:
-        self.setText(TIME_COLUMN, self.time.toString())
+        self.setText(TIME_COLUMN, self.datetime.toLocalTime().time().toString())
+        self.setToolTip(TIME_COLUMN, self.datetime.date().toString())
         self.setText(AUTHOR_COLUM, self.author)
         if self.settings.show_avatars and self.avatar:
             self.setIcon(AUTHOR_COLUM, QIcon(QgsApplication.iconPath(self.avatar)))
@@ -123,10 +128,12 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
 class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, text: str, timestamp: Optional[int] = None):
         if timestamp is None:
-            time = QTime.currentTime()
+            datetime = QDateTime.currentDateTime()
         else:
-            time = QDateTime.fromSecsSinceEpoch(timestamp).toLocalTime().time()
-        super().__init__(parent, time, ADMIN_MESSAGES_NICKNAME, ADMIN_MESSAGES_AVATAR)
+            datetime = QDateTime.fromSecsSinceEpoch(timestamp)
+        super().__init__(
+            parent, datetime, ADMIN_MESSAGES_NICKNAME, ADMIN_MESSAGES_AVATAR
+        )
         self.text = text
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, text)
@@ -146,15 +153,16 @@ class QChatTextTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatTextMessage):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp),
             message.author,
             message.avatar,
         )
         self.message = message
         self.init_time_and_author()
         self.setText(MESSAGE_COLUMN, message.text)
+        self.setToolTip(MESSAGE_COLUMN, message.text)
 
-        # set foreground color if  user is mentioned
+        # set foreground color if user is mentioned
         words = message.text.split(" ")
         if f"@{self.settings.nickname}" in words or "@all" in words:
             self.set_foreground_color(self.settings.color_mention)
@@ -179,7 +187,7 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatImageMessage):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp),
             message.author,
             message.avatar,
         )
@@ -226,7 +234,7 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatGeojsonMessage):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp),
             message.author,
             message.avatar,
         )
@@ -284,7 +292,7 @@ class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, message: QChatCrsMessage):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp),
             message.author,
             message.avatar,
         )
@@ -321,7 +329,7 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
     ):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
             message.author,
             message.avatar,
         )
@@ -371,7 +379,7 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
     ):
         super().__init__(
             parent,
-            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime().time(),
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
             message.author,
             message.avatar,
         )
