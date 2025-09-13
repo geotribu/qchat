@@ -15,6 +15,7 @@ from qgis.PyQt.QtWidgets import QAction, QToolBar
 
 # project
 from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__, __title__, __uri_homepage__
+from qchat.constants import QFIELD_PLUGIN_INSTALLATION_URL
 from qchat.gui.dlg_settings import PlgOptionsFactory
 from qchat.toolbelt import PlgLogger
 from qchat.toolbelt.commons import open_url_in_browser
@@ -27,8 +28,6 @@ try:
     EXTERNAL_DEPENDENCIES_AVAILABLE: bool = True
 except ImportError:
     EXTERNAL_DEPENDENCIES_AVAILABLE: bool = False
-
-INSTALLATION_URL = "https://geotribu.github.io/qchat/usage/installation.html"
 
 # ############################################################################
 # ########## Classes ###############
@@ -242,7 +241,7 @@ class QChatPlugin:
                 button_text=self.tr("What to do ?"),
                 button_connect=partial(
                     QDesktopServices.openUrl,
-                    QUrl(INSTALLATION_URL),
+                    QUrl(QFIELD_PLUGIN_INSTALLATION_URL),
                 ),
             )
             # disable plugin widgets
