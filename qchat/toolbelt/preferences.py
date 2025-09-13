@@ -1,13 +1,11 @@
 #! python3  # noqa: E265
 
-"""
-Plugin settings.
-"""
+"""Plugin settings."""
 
-import random
 
 # standard
 from dataclasses import asdict, dataclass, fields
+from getpass import getuser
 
 # PyQGIS
 from qgis.core import QgsSettings
@@ -63,7 +61,7 @@ class PlgSettingsStructure:
         f"utm_source=QGIS&utm_medium={__title__}&utm_campaign=plugin_{__version__}"
     )
 
-    nickname: str = f"jd_{random.randint(1000, 9999)}"
+    nickname: str = getuser()
     avatar: str = "mGeoPackage.svg"
 
     instance_uri: str = "https://qchat.geotribu.net"
