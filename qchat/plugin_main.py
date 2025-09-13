@@ -11,7 +11,7 @@ from qgis.core import Qgis, QgsApplication, QgsSettings
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtCore import QCoreApplication, QLocale, Qt, QTranslator, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QToolBar
 
 # project
 from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__, __title__, __uri_homepage__
@@ -71,7 +71,8 @@ class QChatPlugin:
         self.iface.registerOptionsWidgetFactory(self.options_factory)
 
         # -- Toolbar
-        self.toolbar = self.iface.addToolBar(name=self.tr("Geotribu toolbar"))
+        self.qchat_toolbar: QToolBar = self.iface.addToolBar(name=f"{__title__}")
+        self.qchat_toolbar.setObjectName(f"{__title__}Toolbar")
 
         # -- QChat
         self.qchat_widget = None
@@ -124,7 +125,7 @@ class QChatPlugin:
         self.iface.addPluginToWebMenu(__title__, self.action_help)
 
         # -- Toolbar
-        self.toolbar.addAction(self.action_open_chat)
+        self.qchat_toolbar.addAction(self.action_open_chat)
 
         # documentation
         self.iface.pluginHelpMenu().addSeparator()
@@ -166,7 +167,7 @@ class QChatPlugin:
         self.iface.removePluginWebMenu(__title__, self.action_help)
 
         # -- Clean up toolbar
-        del self.toolbar
+        del self.qchat_toolbar
         del self.qchat_widget
 
         # -- Clean up preferences panel in QGIS settings

@@ -29,11 +29,6 @@ Max nickname length: {max_nickname_length}</source>
 <context>
     <name>QChatPlugin</name>
     <message>
-        <location filename="../../plugin_main.py" line="74"/>
-        <source>Geotribu toolbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../plugin_main.py" line="85"/>
         <source>QChat</source>
         <translation type="unfinished"></translation>
@@ -205,7 +200,7 @@ Max nickname length: {max_nickname_length}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="815"/>
+        <location filename="../../gui/dck_qchat.py" line="817"/>
         <source>QChat error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,7 +222,7 @@ Max nickname length: {max_nickname_length}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="584"/>
+        <location filename="../../gui/dck_qchat.py" line="586"/>
         <source>user</source>
         <translation type="unfinished"></translation>
     </message>
@@ -251,7 +246,7 @@ Channels:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="847"/>
+        <location filename="../../gui/dck_qchat.py" line="849"/>
         <source>Open Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -271,129 +266,129 @@ Channels:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1118"/>
+        <location filename="../../gui/dck_qchat.py" line="1120"/>
         <source>QChat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="525"/>
+        <location filename="../../gui/dck_qchat.py" line="527"/>
         <source>Uncompliant message: {reason}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="555"/>
+        <location filename="../../gui/dck_qchat.py" line="557"/>
         <source>You were mentionned by {sender}: {message}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="584"/>
+        <location filename="../../gui/dck_qchat.py" line="586"/>
         <source>QChat - channel: {channel} - {nb_users} {user_txt}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="584"/>
+        <location filename="../../gui/dck_qchat.py" line="586"/>
         <source>users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="600"/>
+        <location filename="../../gui/dck_qchat.py" line="602"/>
         <source>{newcomer} has joined the channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="615"/>
+        <location filename="../../gui/dck_qchat.py" line="617"/>
         <source>{exiter} has left the channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="627"/>
+        <location filename="../../gui/dck_qchat.py" line="629"/>
         <source>{liker_author} liked your message: {message}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="711"/>
+        <location filename="../../gui/dck_qchat.py" line="713"/>
         <source>QChat Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="715"/>
+        <location filename="../../gui/dck_qchat.py" line="717"/>
         <source>Load layer in QGIS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="726"/>
+        <location filename="../../gui/dck_qchat.py" line="728"/>
         <source>Set current project CRS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="735"/>
+        <location filename="../../gui/dck_qchat.py" line="737"/>
         <source>Set current extent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="744"/>
+        <location filename="../../gui/dck_qchat.py" line="746"/>
         <source>Like message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="755"/>
+        <location filename="../../gui/dck_qchat.py" line="757"/>
         <source>Mention user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="766"/>
+        <location filename="../../gui/dck_qchat.py" line="768"/>
         <source>Copy message to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="774"/>
+        <location filename="../../gui/dck_qchat.py" line="776"/>
         <source>Hide message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="805"/>
+        <location filename="../../gui/dck_qchat.py" line="807"/>
         <source>Registered users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="795"/>
+        <location filename="../../gui/dck_qchat.py" line="797"/>
         <source>You&apos;re using incognito mode. Please disable it to see registered users.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="805"/>
+        <location filename="../../gui/dck_qchat.py" line="807"/>
         <source>Registered users in channel ({channel}):
 
 {users}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="835"/>
+        <location filename="../../gui/dck_qchat.py" line="837"/>
         <source>Nickname not set : please open settings and set it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="847"/>
+        <location filename="../../gui/dck_qchat.py" line="849"/>
         <source>Nickname too short: must be at least 3 characters. Please open settings and set it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="881"/>
+        <location filename="../../gui/dck_qchat.py" line="883"/>
         <source>Select images to send to the chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="996"/>
+        <location filename="../../gui/dck_qchat.py" line="998"/>
         <source>Your QGIS Pro license is about to expire</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="996"/>
+        <location filename="../../gui/dck_qchat.py" line="998"/>
         <source>Click here to renew it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1018"/>
+        <location filename="../../gui/dck_qchat.py" line="1020"/>
         <source>No... it was a joke!
 
 QGIS is Free and Open Source software, forever.
@@ -404,27 +399,27 @@ Visit the website ?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1036"/>
+        <location filename="../../gui/dck_qchat.py" line="1038"/>
         <source>Send on QChat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1051"/>
+        <location filename="../../gui/dck_qchat.py" line="1053"/>
         <source>Send position on QChat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1097"/>
+        <location filename="../../gui/dck_qchat.py" line="1099"/>
         <source>Not connected to QChat. Please connect to a channel first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1109"/>
+        <location filename="../../gui/dck_qchat.py" line="1111"/>
         <source>No active layer in current QGIS project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dck_qchat.py" line="1118"/>
+        <location filename="../../gui/dck_qchat.py" line="1120"/>
         <source>Only vector layers can be sent on QChat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -477,97 +472,97 @@ Visit the website ?
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="185"/>
+        <location filename="../../gui/dlg_settings.ui" line="182"/>
         <source>Discover instances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="195"/>
+        <location filename="../../gui/dlg_settings.ui" line="192"/>
         <source>Automatically reconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="209"/>
+        <location filename="../../gui/dlg_settings.ui" line="206"/>
         <source>Show avatars</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="219"/>
+        <location filename="../../gui/dlg_settings.ui" line="216"/>
         <source>Incognito mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="232"/>
+        <location filename="../../gui/dlg_settings.ui" line="229"/>
         <source>Display admin messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="242"/>
+        <location filename="../../gui/dlg_settings.ui" line="239"/>
         <source>Activate cheatcodes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="253"/>
+        <location filename="../../gui/dlg_settings.ui" line="250"/>
         <source>Play sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="260"/>
+        <location filename="../../gui/dlg_settings.ui" line="257"/>
         <source>Volume:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="283"/>
+        <location filename="../../gui/dlg_settings.ui" line="280"/>
         <source>Notification tone:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="364"/>
+        <location filename="../../gui/dlg_settings.ui" line="361"/>
         <source>Mention message color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="387"/>
+        <location filename="../../gui/dlg_settings.ui" line="384"/>
         <source>Self message color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="410"/>
+        <location filename="../../gui/dlg_settings.ui" line="407"/>
         <source>Admin message color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="441"/>
+        <location filename="../../gui/dlg_settings.ui" line="438"/>
         <source>Miscellaneous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="493"/>
+        <location filename="../../gui/dlg_settings.ui" line="490"/>
         <source>Report an issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="515"/>
+        <location filename="../../gui/dlg_settings.ui" line="512"/>
         <source>Version used to save settings:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="540"/>
+        <location filename="../../gui/dlg_settings.ui" line="537"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="565"/>
+        <location filename="../../gui/dlg_settings.ui" line="562"/>
         <source>Reset settings to factory defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="584"/>
+        <location filename="../../gui/dlg_settings.ui" line="581"/>
         <source>Enable debug mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../gui/dlg_settings.ui" line="593"/>
+        <location filename="../../gui/dlg_settings.ui" line="590"/>
         <source>Debug mode (degraded performances)</source>
         <translation type="unfinished"></translation>
     </message>

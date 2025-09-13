@@ -21,4 +21,6 @@ SOURCES =	../../constants.py \
 	../../toolbelt/network_manager.py \
 	../../toolbelt/preferences.py
 
-TRANSLATIONS = qchat_fr.ts qchat_de.ts qchat_es.ts
+TRANSLATIONS =	qchat_de.ts \
+	qchat_es.ts \
+	qchat_fr.ts
