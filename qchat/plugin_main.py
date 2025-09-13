@@ -11,7 +11,7 @@ from qgis.core import Qgis, QgsApplication, QgsSettings
 from qgis.gui import QgisInterface
 from qgis.PyQt.QtCore import QCoreApplication, QLocale, Qt, QTranslator, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QToolBar
 
 # project
 from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__, __title__, __uri_homepage__
@@ -71,7 +71,8 @@ class QChatPlugin:
         self.iface.registerOptionsWidgetFactory(self.options_factory)
 
         # -- Toolbar
-        self.qchat_toolbar = self.iface.addToolBar(name=f"{__title__}")
+        self.qchat_toolbar: QToolBar = self.iface.addToolBar(name=f"{__title__}")
+        self.qchat_toolbar.setObjectName(f"{__title__}Toolbar")
 
         # -- QChat
         self.qchat_widget = None
