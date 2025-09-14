@@ -41,6 +41,7 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_NEWCOMER,
     QCHAT_MESSAGE_TYPE_POSITION,
     QCHAT_MESSAGE_TYPE_TEXT,
+    QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
 )
 from qchat.gui.qchat_tree_widget_items import (
@@ -252,8 +253,8 @@ class QChatWidget(QgsDockWidget):
             self.max_author_length = rules["max_author_length"]
         except Exception as exc:
             self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
-            self.min_author_length = 3
-            self.max_author_length = 32
+            self.min_author_length = QCHAT_NICKNAME_MINLENGTH
+            self.max_author_length = QCHAT_NICKNAME_MAXLENGTH_DEFAULT
 
         # clear channel combobox items
         self.cbb_channel.clear()  # delete all items from comboBox
