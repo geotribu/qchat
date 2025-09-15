@@ -2,6 +2,8 @@
 
 """Plugin settings."""
 
+import re
+
 # standard
 from dataclasses import asdict, dataclass, fields
 from getpass import getuser
@@ -9,9 +11,12 @@ from getpass import getuser
 # PyQGIS
 from qgis.core import QgsSettings
 
-# package
 import qchat.toolbelt.log_handler as log_hdlr
 from qchat.__about__ import __title__, __version__
+
+# package
+from qchat.constants import QCHAT_NICKNAME_MAXLENGTH_DEFAULT
+from qchat.gui.gui_commons import _alphanum_excl
 from qchat.toolbelt.env_var_parser import EnvVarParser
 
 # ############################################################################
@@ -60,7 +65,9 @@ class PlgSettingsStructure:
         f"utm_source=QGIS&utm_medium={__title__}&utm_campaign=plugin_{__version__}"
     )
 
-    nickname: str = getuser()
+    nickname: str = re.sub(_alphanum_excl, "_", getuser())[
+        :QCHAT_NICKNAME_MAXLENGTH_DEFAULT
+    ]
     avatar: str = "mGeoPackage.svg"
 
     instance_uri: str = "https://qchat.geotribu.net"
