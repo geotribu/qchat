@@ -125,4 +125,4 @@ class EmojiButtonHandler(QObject):
 
         picker = FullEmojiPicker(self.parent_button)
         picker.emoji_selected.connect(self.emoji_selected.emit)
-        picker.exec_()
+        picker.exec()
