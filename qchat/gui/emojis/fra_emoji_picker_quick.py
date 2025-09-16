@@ -27,7 +27,11 @@ class EmojiHoverPreview(QFrame):
         self.setWindowIcon(QIcon(str(__icon_path__)))
 
         # Set window flags for popup behavior
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.Popup | Qt.FramelessWindowHint)
+        self.setWindowFlags(
+            Qt.WindowType.WindowStaysOnTopHint
+            | Qt.WindowType.Popup
+            | Qt.WindowType.FramelessWindowHint
+        )
 
         # Connect emoji buttons
         self.connect_emoji_buttons()
