@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
+    <width>467</width>
     <height>887</height>
    </rect>
   </property>
@@ -219,6 +219,11 @@
           <property name="text">
            <string notr="true">3</string>
           </property>
+          <property name="font">
+           <font>
+            <kerning>false</kerning>
+           </font>
+          </property>
          </column>
         </widget>
        </item>
@@ -284,8 +289,37 @@
          </item>
          <item>
           <widget class="QgsFilterLineEdit" name="lne_message">
+           <property name="font">
+            <font>
+             <family>Noto Color Emoji</family>
+            </font>
+           </property>
+           <property name="placeholderText">
+            <string>Type your message here...</string>
+           </property>
            <property name="qgisRelation" stdset="0">
             <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_emojis_picker">
+           <property name="maximumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Noto Color Emoji</family>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string>Pick an emoji to insert</string>
+           </property>
+           <property name="text">
+            <string>😀</string>
            </property>
           </widget>
          </item>

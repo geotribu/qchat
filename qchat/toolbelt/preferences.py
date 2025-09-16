@@ -83,6 +83,10 @@ class PlgSettingsStructure:
     color_mention: str = "#4169e1"
     color_self: str = "#00cc00"
     color_admin: str = "#ffa500"
+    font_emoji_family: str = "Noto Color Emoji"
+    font_emoji_download_url: str = (
+        "https://github.com/google/fonts/raw/main/ofl/notocoloremoji/NotoColorEmoji-Regular.ttf"
+    )
 
 
 class PlgOptionsManager:

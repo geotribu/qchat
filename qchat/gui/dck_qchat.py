@@ -13,8 +13,8 @@ from uuid import uuid4
 from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
 from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QPoint, Qt
-from qgis.PyQt.QtGui import QCursor, QIcon
+from qgis.PyQt.QtCore import QPoint, Qt, QUrl
+from qgis.PyQt.QtGui import QCursor, QFont, QFontDatabase, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
     QFileDialog,
@@ -44,6 +44,7 @@ from qchat.constants import (
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
 )
+from qchat.gui.emojis.fra_emoji_picker_quick import EmojiButtonHandler
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -105,6 +106,7 @@ class QChatWidget(QgsDockWidget):
         self.task_manager = QgsApplication.taskManager()
         self.log = PlgLogger().log
         self.plg_settings = PlgOptionsManager()
+
         uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
 
         # set channel to autoreconnect to when widget will open
@@ -190,6 +192,10 @@ class QChatWidget(QgsDockWidget):
         self.btn_send.setIcon(
             QIcon(QgsApplication.iconPath("mActionDoubleArrowRight.svg"))
         )
+
+        # emoji picker
+        self.emoji_handler = EmojiButtonHandler(parent_button=self.btn_emojis_picker)
+        self.emoji_handler.emoji_selected.connect(self.insert_emoji)
 
         # send image message signal listener
         self.btn_send_image.pressed.connect(self.on_send_image_button_clicked)
@@ -957,14 +963,26 @@ Channels:
         self.qchat_ws.send_message(message)
 
     def add_admin_message(self, text: str, timestamp: Optional[int] = None) -> None:
+        """Adds an admin message to QTreeWidget chat.
+
+        :param text: admin message to insert
+        :type text: str
+        :param timestamp: datetime, defaults to None
+        :type timestamp: Optional[int], optional
         """
-        Adds an admin message to QTreeWidget chat
-        """
+
         item = QChatAdminTreeWidgetItem(self.twg_chat, text, timestamp)
         self.add_tree_widget_item(item)
 
     def add_tree_widget_item(self, item: QTreeWidgetItem) -> None:
+        """Adds a QTreeWidgetItem to the chat QTreeWidget.
+
+        :param item: item to insert
+        :type item: QTreeWidgetItem
+        """
         self.twg_chat.addTopLevelItem(item)
+        if isinstance(item, QChatTextTreeWidgetItem):
+            item.setFont(MESSAGE_COLUMN, QFont("Noto Color Emoji"))
         if self.ckb_autoscroll.isChecked():
             self.twg_chat.scrollToItem(item)
 
@@ -1155,3 +1173,73 @@ Visit the website ?
             style=qml_style,
         )
         self.qchat_ws.send_message(message)
+
+    # -- FONTS --
+    def is_font_available(self, font_family: str) -> bool:
+        available_fonts = QFontDatabase().families()
+        return font_family in available_fonts
+
+    # -- EMOJIS --
+
+    def check_emoji_font(self) -> bool:
+        """Check if the font used for displaying emojis is installed. If not, try to
+            download it.
+
+        :return: _description_
+        :rtype: _type_
+        """
+        if self.is_font_available(font_family=self.plg_settings.font_emoji_family):
+            self.log(
+                message=self.tr(
+                    "Required font to display emojis is already installed: {}".format(
+                        self.plg_settings.font_emoji_family
+                    )
+                ),
+                push=False,
+                log_level=Qgis.MessageLevel.NoLevel,
+            )
+            return True
+        else:
+            self.log(
+                message="Required font for emojis needs to be installed: {}".format(
+                    self.plg_settings.font_emoji_family
+                ),
+                push=False,
+            )
+            font_manager = QgsApplication.fontManager()
+            font_manager.fontDownloadErrorOccurred.connect(self.on_font_download_failed)
+            auto_downloaded = font_manager.tryToDownloadFontFamily(
+                self.plg_settings.font_emoji_family
+            )
+            if not auto_downloaded:
+                self.log(message="not downloaded", log_level=Qgis.MessageLevel.Warning)
+
+            font_manager.downloadAndInstallFont(
+                url=QUrl(self.plg_settings.font_emoji_download_url),
+                identifier="qchat-emoji-font",
+            )
+
+    def on_font_download_failed(self, error_message: Optional[str] = None):
+        """Handle pyqtsignal emitted by QgsFontManager when font downloading failed.
+
+        :param error_message: error message, defaults to None
+        :type error_message: Optional[str], optional
+        """
+        self.log(
+            message=self.tr(
+                "Downloading the font {} from {} failed. Since it's required to "
+                "correctly display emojis, consider to add it manually to your system. "
+                "Trace: {}".format(
+                    self.EMOJI_FONT_FAMILY, self.EMOJI_FONT_DOWNLOAD_URL, error_message
+                )
+            )
+        )
+
+    def insert_emoji(self, emoji):
+        """Insert selected emoji at cursor position"""
+        cursor_pos = self.lne_message.cursorPosition()
+        current_text = self.lne_message.text()
+        new_text = current_text[:cursor_pos] + emoji + current_text[cursor_pos:]
+        self.lne_message.setText(new_text)
+        self.lne_message.setCursorPosition(cursor_pos + len(emoji))
+        self.lne_message.setFocus()
