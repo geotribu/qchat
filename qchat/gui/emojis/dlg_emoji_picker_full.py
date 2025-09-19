@@ -7,12 +7,13 @@ from typing import Optional
 from qgis.core import Qgis
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtGui import QFont, QIcon
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QDialog, QGridLayout, QPushButton, QScrollArea, QWidget
 
 # plugin
 from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__
-from qchat.toolbelt import PlgLogger, PlgOptionsManager
+from qchat.toolbelt import PlgLogger
+from qchat.toolbelt.font_helper import PlgFontHelper
 
 
 class FullEmojiPicker(QDialog):
@@ -23,7 +24,7 @@ class FullEmojiPicker(QDialog):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.log = PlgLogger().log
-        self.plg_settings = PlgOptionsManager()
+        self.font_helper = PlgFontHelper()
 
         # Load UI
         uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
@@ -37,6 +38,8 @@ class FullEmojiPicker(QDialog):
 
         # Connect search
         self.lne_search_box.textChanged.connect(self.filter_emojis)
+
+        self.adjustSize()
 
     def load_emojis_from_json(self):
         """Load emoji categories from JSON file"""
@@ -64,9 +67,9 @@ class FullEmojiPicker(QDialog):
 
         except (FileNotFoundError, json.JSONDecodeError) as err:
             self.log(
-                message=self.tr("Error loading emojis: {}\nUsing defaults.").format(
-                    err
-                ),
+                message=self.tr(
+                    "Error loading emojis: {}\Fallback to defaults embedded shortlist."
+                ).format(err),
                 log_level=Qgis.MessageLevel.Warning,
                 duration=3,
                 push=True,
@@ -88,7 +91,6 @@ class FullEmojiPicker(QDialog):
 
     def create_emoji_tab(self, emojis):
         """Create a tab with emoji buttons"""
-        plg_settings = self.plg_settings.get_plg_settings()
         scroll_area = QScrollArea()
         scroll_widget = QWidget()
         grid_layout = QGridLayout(scroll_widget)
@@ -100,7 +102,7 @@ class FullEmojiPicker(QDialog):
 
             btn = QPushButton(emoji)
             btn.setFixedSize(40, 40)
-            btn.setFont(QFont(plg_settings.font_emoji_family, 14))
+            btn.setFont(self.font_helper.get_font_from_settings())
             btn.clicked.connect(lambda checked, e=emoji: self.emoji_clicked(e))
             btn.setToolTip(f"Insert {emoji}")
 

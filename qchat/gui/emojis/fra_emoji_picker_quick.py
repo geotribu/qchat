@@ -27,11 +27,7 @@ class EmojiHoverPreview(QFrame):
         self.setWindowIcon(QIcon(str(__icon_path__)))
 
         # Set window flags for popup behavior
-        self.setWindowFlags(
-            Qt.WindowType.WindowStaysOnTopHint
-            | Qt.WindowType.Popup
-            | Qt.WindowType.FramelessWindowHint
-        )
+        self.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
 
         # Connect emoji buttons
         self.connect_emoji_buttons()
@@ -66,8 +62,11 @@ class EmojiHoverPreview(QFrame):
         if self.size().isEmpty():
             self.resize(250, 50)
 
+        self.adjustSize()
         self.move(pos)
         self.show()
+        self.raise_()
+        self.activateWindow()
 
 
 class EmojiButtonHandler(QObject):
@@ -83,7 +82,7 @@ class EmojiButtonHandler(QObject):
         self.parent_button = parent_button
 
         # Create hover preview
-        self.hover_preview = EmojiHoverPreview(parent_button.window())
+        self.hover_preview = EmojiHoverPreview(None)
         self.hover_preview.emoji_selected.connect(self.emoji_selected.emit)
         self.hover_preview.open_full_picker.connect(self.show_full_picker)
 
@@ -123,6 +122,6 @@ class EmojiButtonHandler(QObject):
         """Show the full emoji picker dialog"""
         self.hover_preview.hide()
 
-        picker = FullEmojiPicker(self.parent_button)
+        picker = FullEmojiPicker(None)
         picker.emoji_selected.connect(self.emoji_selected.emit)
         picker.exec()

@@ -31,39 +31,33 @@ from qchat.gui.gui_commons import QVAL_ALPHANUM
 from qchat.logic.qchat_api_client import QChatApiClient
 from qchat.toolbelt import PlgLogger, PlgOptionsManager
 from qchat.toolbelt.commons import play_resource_sound
+from qchat.toolbelt.font_helper import PlgFontHelper
 from qchat.toolbelt.preferences import PlgSettingsStructure
-
-# ############################################################################
-# ########## Globals ###############
-# ##################################
-
-FORM_CLASS, _ = uic.loadUiType(
-    Path(__file__).parent / "{}.ui".format(Path(__file__).stem)
-)
-
 
 # ############################################################################
 # ########## Classes ###############
 # ##################################
 
 
-class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
+class ConfigOptionsPage(QgsOptionsPageWidget):
     """Settings form embedded into QGIS 'options' menu."""
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.font_helper = PlgFontHelper()
         self.log = PlgLogger().log
         self.plg_settings = PlgOptionsManager()
 
         # load UI and set objectName
-        self.setupUi(self)
+        uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
+        # self.setupUi(self)
         self.setObjectName("mOptionsPage{}".format(__title__))
 
         report_context_message = quote(
             "> Reported from plugin settings\n\n"
             f"- operating system: {platform.system()} "
             f"{platform.release()}_{platform.version()}\n"
-            f"- QGIS: {Qgis.QGIS_VERSION}"
+            f"- QGIS: {Qgis.QGIS_VERSION}\n"
             f"- plugin version: {__version__}\n"
         )
 
@@ -102,8 +96,13 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         self.btn_rules.setIcon(QIcon(QgsApplication.iconPath("processingResult.svg")))
         self.btn_discover.pressed.connect(self.discover_instances)
         self.btn_discover.setIcon(QIcon(QgsApplication.iconPath("mIconListView.svg")))
-
         self.cbb_ring_tone.currentIndexChanged.connect(self.on_ring_tone_changed)
+        self.cbb_font.currentFontChanged.connect(self.on_font_changed)
+        self.spb_font_size.valueChanged.connect(self.on_font_changed)
+        self.btn_download_emoji_font.setIcon(
+            QgsApplication.getThemeIcon("downloading_svg.svg")
+        )
+        self.btn_download_emoji_font.pressed.connect(self.font_helper.download_font)
 
         # load previously saved settings
         self.load_settings()
@@ -136,6 +135,10 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         settings.color_self = self.cbt_color_self.color().name()
         settings.color_admin = self.cbt_color_admin.color().name()
 
+        # emojis
+        settings.messages_font_family = self.cbb_font.currentFont().toString()
+        settings.messages_font_size_pts = self.spb_font_size.value()
+
         # misc
         settings.debug_mode = self.opt_debug.isChecked()
         settings.version = __version__
@@ -153,9 +156,8 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         """Load options from QgsSettings into UI form."""
         settings = self.plg_settings.get_plg_settings()
 
+        # Identity
         self.lne_qchat_nickname.setText(settings.nickname)
-
-        # retrieve avatar among values
         if settings.avatar in QCHAT_USER_AVATARS.values():
             self.cbb_qchat_avatar.setCurrentIndex(
                 list(QCHAT_USER_AVATARS.values()).index(settings.avatar)
@@ -170,6 +172,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
             )
             self.cbb_qchat_avatar.setCurrentIndex(4)
 
+        # Other
         instance_index = self.cbb_qchat_instance_uri.findText(
             settings.instance_uri, Qt.MatchFlag.MatchFixedString
         )
@@ -192,6 +195,13 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         self.cbt_color_mention.setColor(QColor(settings.color_mention))
         self.cbt_color_self.setColor(QColor(settings.color_self))
         self.cbt_color_admin.setColor(QColor(settings.color_admin))
+
+        # emojis
+        self.cbb_font.setCurrentFont(
+            self.font_helper.get_font_from_settings(plugin_settings=settings)
+        )
+        self.spb_font_size.setValue(settings.messages_font_size_pts)
+        self.on_font_changed()
 
         # global
         self.opt_debug.setChecked(settings.debug_mode)
@@ -286,6 +296,12 @@ Max nickname length: {max_nickname_length}"""
         play_resource_sound(
             self.cbb_ring_tone.currentText(), self.hsl_sound_volume.value()
         )
+
+    def on_font_changed(self) -> None:
+        """When a font is selected, it's applied to the font label."""
+        picked_font = self.cbb_font.currentFont()
+        picked_font.setPointSize(self.spb_font_size.value())
+        self.lbl_font.setFont(picked_font)
 
 
 class PlgOptionsFactory(QgsOptionsWidgetFactory):

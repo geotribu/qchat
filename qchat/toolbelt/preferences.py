@@ -11,10 +11,9 @@ from getpass import getuser
 # PyQGIS
 from qgis.core import QgsSettings
 
+# plugin
 import qchat.toolbelt.log_handler as log_hdlr
 from qchat.__about__ import __title__, __version__
-
-# package
 from qchat.constants import QCHAT_NICKNAME_MAXLENGTH_DEFAULT
 from qchat.gui.gui_commons import _alphanum_excl
 from qchat.toolbelt.env_var_parser import EnvVarParser
@@ -83,8 +82,10 @@ class PlgSettingsStructure:
     color_mention: str = "#4169e1"
     color_self: str = "#00cc00"
     color_admin: str = "#ffa500"
-    font_emoji_family: str = "Noto Color Emoji"
-    font_emoji_download_url: str = "https://github.com/google/fonts/raw/main/ofl/notocoloremoji/NotoColorEmoji-Regular.ttf"
+    messages_font_family: str = "Noto Color Emoji,10,-1,5,50,0,0,0,0,0"
+    messages_font_size_pts: int = 10
+    default_font_emoji_family: str = "Noto Color Emoji"
+    default_font_emoji_download_url: str = "https://github.com/google/fonts/raw/main/ofl/notocoloremoji/NotoColorEmoji-Regular.ttf"
 
 
 class PlgOptionsManager:
