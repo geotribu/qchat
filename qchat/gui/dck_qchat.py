@@ -3,7 +3,7 @@ import base64
 import json
 import tempfile
 from datetime import datetime
-from functools import partial
+from functools import lru_cache, partial
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
@@ -20,6 +20,7 @@ from qgis.PyQt.QtWidgets import (
     QFileDialog,
     QMenu,
     QMessageBox,
+    QToolButton,
     QTreeWidgetItem,
     QWidget,
 )
@@ -43,8 +44,9 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_TEXT,
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
+    QUICK_EMOJIS,
 )
-from qchat.gui.emojis.fra_emoji_picker_quick import EmojiButtonHandler
+from qchat.gui.emojis.dlg_emoji_picker_full import FullEmojiPicker
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -196,8 +198,9 @@ class QChatWidget(QgsDockWidget):
         )
 
         # emoji picker
-        self.emoji_handler = EmojiButtonHandler(self.btn_emojis_picker)
-        self.emoji_handler.emoji_selected.connect(self.insert_emoji)
+        self.emojis_full_picker: Optional[FullEmojiPicker] = None
+        self.btn_emojis_picker: QToolButton
+        self._setup_emoji_button()
 
         # send image message signal listener
         self.btn_send_image.pressed.connect(self.on_send_image_button_clicked)
@@ -227,6 +230,7 @@ class QChatWidget(QgsDockWidget):
         self.lne_message.setFont(self.messages_font)
 
     @property
+    @lru_cache()
     def messages_font(self) -> QFont:
         """Get messages text font."""
         return self.font_helper.get_font_from_settings(self.settings)
@@ -1191,3 +1195,29 @@ Visit the website ?
         self.lne_message.setText(new_text)
         self.lne_message.setCursorPosition(cursor_pos + len(emoji) + 1)
         self.lne_message.setFocus()
+
+    def _setup_emoji_button(self) -> None:
+        """Setup emoji button with dropdown menu"""
+
+        self.btn_emojis_picker.setFont(self.messages_font)
+        default_action = QAction(
+            text="...", parent=self.btn_emojis_picker, triggered=self.show_full_picker
+        )
+
+        # populate dropdown list
+        for emoji in QUICK_EMOJIS:
+            action = QAction(emoji, self)
+            action.setFont(self.messages_font)
+            action.triggered.connect(partial(self.insert_emoji, emoji))
+            self.btn_emojis_picker.addAction(action)
+
+        # define default action (button part)
+        self.btn_emojis_picker.setDefaultAction(default_action)
+
+    def show_full_picker(self):
+        """Show the full emoji picker dialog"""
+        if self.emojis_full_picker is None:
+            self.emojis_full_picker = FullEmojiPicker(self)
+            self.emojis_full_picker.emoji_selected.connect(self.insert_emoji)
+
+        self.emojis_full_picker.exec()

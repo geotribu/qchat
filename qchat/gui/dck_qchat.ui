@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>467</width>
-    <height>887</height>
+    <height>894</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -292,6 +292,7 @@
            <property name="font">
             <font>
              <family>Noto Color Emoji</family>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="placeholderText">
@@ -303,23 +304,39 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_emojis_picker">
-           <property name="maximumSize">
-            <size>
-             <width>35</width>
-             <height>35</height>
-            </size>
+          <widget class="QToolButton" name="btn_emojis_picker">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="font">
             <font>
              <family>Noto Color Emoji</family>
+             <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::DefaultContextMenu</enum>
            </property>
            <property name="toolTip">
             <string>Pick an emoji to insert</string>
            </property>
            <property name="text">
-            <string>😀</string>
+            <string notr="true">😀</string>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::MenuButtonPopup</enum>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonFollowStyle</enum>
            </property>
           </widget>
          </item>
