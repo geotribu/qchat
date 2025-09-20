@@ -192,6 +192,15 @@
             "amazed",
             "impressed"
           ]
+        },
+        {
+          "emoji": "🤔",
+          "alt": "thinking face",
+          "keywords": [
+            "hmmm",
+            "think",
+            "consider"
+          ]
         }
       ]
     },

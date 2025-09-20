@@ -37,8 +37,17 @@
      </item>
      <item>
       <widget class="QLineEdit" name="lne_search_box">
+       <property name="maxLength">
+        <number>20</number>
+       </property>
+       <property name="frame">
+        <bool>false</bool>
+       </property>
        <property name="placeholderText">
         <string>Type to search emojis...</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
