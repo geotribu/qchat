@@ -4,7 +4,7 @@ about="Let's chat with your fellow GIS mates in QGIS !"
 category=Web
 hasProcessingProvider=False
 description=This plugin allows one to chat with other QGIS users connected at the same time.
-icon=resources/images/logo_geotribu_orange.svg
+icon=resources/images/logo_qchat.svg
 tags=chat,community,geotribu,social
 
 # credits and contact
