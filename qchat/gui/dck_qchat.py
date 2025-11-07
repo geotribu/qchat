@@ -1138,9 +1138,9 @@ Visit the website ?
 
 Are you sure ?"""
                 ).format(layer_name=layer.name()),
-                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-            == QMessageBox.Yes
+            == QMessageBox.StandardButton.Yes
         ):
             return
 
