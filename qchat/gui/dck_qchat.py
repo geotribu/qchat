@@ -1107,6 +1107,7 @@ Visit the website ?
                 duration=self.settings.notify_push_duration,
             )
             return
+
         layer = self.iface.activeLayer()
         if not layer:
             self.log(
@@ -1117,6 +1118,7 @@ Visit the website ?
                 duration=self.settings.notify_push_duration,
             )
             return
+
         if layer.type() != QgsMapLayer.LayerType.VectorLayer:
             self.log(
                 message=self.tr("Only vector layers can be sent on QChat"),
@@ -1125,6 +1127,21 @@ Visit the website ?
                 push=self.settings.notify_push_info,
                 duration=self.settings.notify_push_duration,
             )
+            return
+
+        if (
+            not QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr(
+                    """The "{layer_name}" layer will be sent to QChat.
+
+Are you sure ?"""
+                ).format(layer_name=layer.name()),
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            == QMessageBox.Yes
+        ):
             return
 
         exporter = QgsJsonExporter(layer)
