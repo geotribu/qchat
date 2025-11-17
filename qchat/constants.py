@@ -5,6 +5,7 @@ ADMIN_MESSAGES_AVATAR: str = "mIconWarning.svg"
 ERROR_MESSAGES_COLOR: str = "#ff0000"
 QCHAT_USER_AVATARS: dict[str, str] = {
     "Arrow Up": "mActionArrowUp.svg",
+    "CAD": "cadtools/cad.svg",
     "Calculate": "mActionCalculateField.svg",
     "Camera": "mIconCamera.svg",
     "Certificate": "mIconCertificate.svg",
