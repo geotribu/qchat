@@ -117,7 +117,9 @@ class QChatWidget(QgsDockWidget):
             self.slash_command_handler.get_command_list()
         )
         self.command_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.command_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        self.command_completer.setCompletionMode(
+            QCompleter.CompletionMode.PopupCompletion
+        )
         self.lne_message.setCompleter(self.command_completer)
 
         # set channel to autoreconnect to when widget will open
