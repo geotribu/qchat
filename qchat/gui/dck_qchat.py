@@ -17,6 +17,7 @@ from qgis.PyQt.QtCore import QPoint, Qt
 from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
+    QCompleter,
     QFileDialog,
     QMenu,
     QMessageBox,
@@ -69,6 +70,7 @@ from qchat.logic.qchat_messages import (
     QChatUncompliantMessage,
 )
 from qchat.logic.qchat_websocket import QChatWebsocket
+from qchat.logic.slash_commands import SlashCommandHandler
 from qchat.tasks.dizzy import DizzyTask
 from qchat.toolbelt import PlgLogger, PlgOptionsManager
 from qchat.toolbelt.commons import open_url_in_browser, play_resource_sound
@@ -106,6 +108,17 @@ class QChatWidget(QgsDockWidget):
         self.log = PlgLogger().log
         self.plg_settings = PlgOptionsManager()
         uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
+
+        # Initialize slash commands handler
+        self.slash_command_handler = SlashCommandHandler()
+
+        # Setup autocomplete for slash commands
+        self.command_completer = QCompleter(
+            self.slash_command_handler.get_command_list()
+        )
+        self.command_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.command_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        self.lne_message.setCompleter(self.command_completer)
 
         # set channel to autoreconnect to when widget will open
         self.auto_reconnect_channel = auto_reconnect_channel
@@ -862,6 +875,38 @@ Channels:
 
         if not message_text:
             return
+
+        # Check if message is a slash command
+        if self.slash_command_handler.is_command(message_text):
+            result = self.slash_command_handler.execute(message_text)
+
+            if not result.success:
+                # Show error
+                self.log(
+                    message=result.error or self.tr("Error executing command"),
+                    log_level=Qgis.MessageLevel.Warning,
+                    push=True,
+                    duration=3,
+                )
+                self.lne_message.setText("")
+                return
+
+            # Clear input
+            self.lne_message.setText("")
+
+            # If there's a local action, execute it
+            if result.local_action:
+                action_result = result.local_action()
+                if action_result and action_result[0] == "show_message":
+                    # Show message locally via QMessageBox
+                    QMessageBox.information(self, self.tr("QChat"), action_result[1])
+                return
+
+            # If there's a message text, send it to chat
+            if result.message_text:
+                message_text = result.message_text
+            else:
+                return
 
         # send message to websocket
         message = QChatTextMessage(
