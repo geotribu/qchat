@@ -192,7 +192,7 @@ class SlashCommandHandler:
         # Validate
         if num_dice < 1 or num_dice > 100:
             return SlashCommandResult(
-                success=False, error="Invalid number of dice (1-100)"
+                success=False, error="Invalid number of dice [1-100]"
             )
         if num_sides < 2 or num_sides > 1000:
             return SlashCommandResult(
