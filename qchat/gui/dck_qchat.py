@@ -14,12 +14,13 @@ from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsPro
 from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QPoint, Qt
-from qgis.PyQt.QtGui import QCursor, QIcon
+from qgis.PyQt.QtGui import QCursor, QFont, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
     QFileDialog,
     QMenu,
     QMessageBox,
+    QToolButton,
     QTreeWidgetItem,
     QWidget,
 )
@@ -43,7 +44,9 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_TEXT,
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
+    QUICK_EMOJIS,
 )
+from qchat.gui.emojis.dlg_emoji_picker_full import FullEmojiPicker
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -72,6 +75,7 @@ from qchat.logic.qchat_websocket import QChatWebsocket
 from qchat.tasks.dizzy import DizzyTask
 from qchat.toolbelt import PlgLogger, PlgOptionsManager
 from qchat.toolbelt.commons import open_url_in_browser, play_resource_sound
+from qchat.toolbelt.font_helper import PlgFontHelper
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 # -- GLOBALS --
@@ -105,6 +109,8 @@ class QChatWidget(QgsDockWidget):
         self.task_manager = QgsApplication.taskManager()
         self.log = PlgLogger().log
         self.plg_settings = PlgOptionsManager()
+        self.font_helper = PlgFontHelper()
+
         uic.loadUi(Path(__file__).parent / f"{Path(__file__).stem}.ui", self)
 
         # set channel to autoreconnect to when widget will open
@@ -191,6 +197,11 @@ class QChatWidget(QgsDockWidget):
             QIcon(QgsApplication.iconPath("mActionDoubleArrowRight.svg"))
         )
 
+        # emoji picker
+        self.emojis_full_picker: Optional[FullEmojiPicker] = None
+        self.btn_emojis_picker: QToolButton
+        self._setup_emoji_button()
+
         # send image message signal listener
         self.btn_send_image.pressed.connect(self.on_send_image_button_clicked)
         self.btn_send_image.setIcon(
@@ -215,6 +226,14 @@ class QChatWidget(QgsDockWidget):
             QIcon(QgsApplication.iconPath("mActionSetProjection.svg"))
         )
 
+        # set configured font
+        self.lne_message.setFont(self.messages_font)
+
+    @property
+    def messages_font(self) -> QFont:
+        """Get messages text font."""
+        return self.font_helper.get_font_from_settings(self.settings)
+
     @property
     def settings(self) -> PlgSettingsStructure:
         return self.plg_settings.get_plg_settings()
@@ -231,9 +250,7 @@ class QChatWidget(QgsDockWidget):
         self.btn_send.setIcon(QIcon(QgsApplication.iconPath(self.settings.avatar)))
 
     def on_widget_opened(self) -> None:
-        """
-        Action called when the widget is opened
-        """
+        """Action called when the widget is opened."""
 
         # hack to bypass multiple widget opened triggers when moving widget
         if self.initialized:
@@ -957,14 +974,26 @@ Channels:
         self.qchat_ws.send_message(message)
 
     def add_admin_message(self, text: str, timestamp: Optional[int] = None) -> None:
+        """Adds an admin message to QTreeWidget chat.
+
+        :param text: admin message to insert
+        :type text: str
+        :param timestamp: datetime, defaults to None
+        :type timestamp: Optional[int], optional
         """
-        Adds an admin message to QTreeWidget chat
-        """
+
         item = QChatAdminTreeWidgetItem(self.twg_chat, text, timestamp)
         self.add_tree_widget_item(item)
 
     def add_tree_widget_item(self, item: QTreeWidgetItem) -> None:
+        """Adds a QTreeWidgetItem to the chat QTreeWidget.
+
+        :param item: item to insert
+        :type item: QTreeWidgetItem
+        """
         self.twg_chat.addTopLevelItem(item)
+        if isinstance(item, QChatTextTreeWidgetItem):
+            item.setFont(MESSAGE_COLUMN, self.messages_font)
         if self.ckb_autoscroll.isChecked():
             self.twg_chat.scrollToItem(item)
 
@@ -1172,3 +1201,42 @@ Are you sure ?"""
             style=qml_style,
         )
         self.qchat_ws.send_message(message)
+
+    # -- EMOJIS --
+    def insert_emoji(self, emoji):
+        """Insert selected emoji at cursor position"""
+        cursor_pos = self.lne_message.cursorPosition()
+        current_text = self.lne_message.text()
+        new_text = current_text[:cursor_pos] + emoji + " " + current_text[cursor_pos:]
+        self.lne_message.setText(new_text)
+        self.lne_message.setCursorPosition(cursor_pos + len(emoji) + 1)
+        self.lne_message.setFocus()
+
+    def _setup_emoji_button(self) -> None:
+        """Setup emoji button with dropdown menu"""
+        self.btn_emojis_picker.setFont(self.messages_font)
+
+        default_action = QAction(
+            text=self.tr("..."),
+            parent=self.btn_emojis_picker,
+            triggered=self.show_full_picker,
+        )
+        default_action.setToolTip(self.tr("Open full emoji picker"))
+        self.btn_emojis_picker.setDefaultAction(default_action)
+        self.btn_emojis_picker.setText("😀")  # Add emoji to button text
+
+        # populate dropdown list
+        for emoji in QUICK_EMOJIS:
+            action = QAction(emoji, self)
+            action.setData(emoji)
+            action.setFont(self.messages_font)
+            action.triggered.connect(partial(self.insert_emoji, emoji))
+            self.btn_emojis_picker.addAction(action)
+
+    def show_full_picker(self):
+        """Show the full emoji picker dialog"""
+        if self.emojis_full_picker is None:
+            self.emojis_full_picker = FullEmojiPicker(self)
+            self.emojis_full_picker.emoji_selected.connect(self.insert_emoji)
+
+        self.emojis_full_picker.exec()

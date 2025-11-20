@@ -1,0 +1,790 @@
+{
+  "categories": {
+    "smileys_emotion": {
+      "name": "Smileys & Emotion",
+      "icon": "😀",
+      "emojis": [
+        {
+          "emoji": "😀",
+          "alt": "grinning face",
+          "keywords": [
+            "happy",
+            "smile",
+            "grin",
+            "joy"
+          ]
+        },
+        {
+          "emoji": "😃",
+          "alt": "grinning face with big eyes",
+          "keywords": [
+            "happy",
+            "smile",
+            "joy",
+            "excited"
+          ]
+        },
+        {
+          "emoji": "😄",
+          "alt": "grinning face with smiling eyes",
+          "keywords": [
+            "happy",
+            "smile",
+            "joy",
+            "laugh"
+          ]
+        },
+        {
+          "emoji": "😁",
+          "alt": "beaming face with smiling eyes",
+          "keywords": [
+            "happy",
+            "smile",
+            "grin"
+          ]
+        },
+        {
+          "emoji": "😆",
+          "alt": "grinning squinting face",
+          "keywords": [
+            "happy",
+            "laugh",
+            "satisfied"
+          ]
+        },
+        {
+          "emoji": "😅",
+          "alt": "grinning face with sweat",
+          "keywords": [
+            "happy",
+            "laugh",
+            "sweat",
+            "relief"
+          ]
+        },
+        {
+          "emoji": "😂",
+          "alt": "face with tears of joy",
+          "keywords": [
+            "laugh",
+            "cry",
+            "tears",
+            "joy",
+            "funny"
+          ]
+        },
+        {
+          "emoji": "🤣",
+          "alt": "rolling on the floor laughing",
+          "keywords": [
+            "laugh",
+            "rolling",
+            "funny",
+            "hilarious"
+          ]
+        },
+        {
+          "emoji": "😊",
+          "alt": "smiling face with smiling eyes",
+          "keywords": [
+            "happy",
+            "smile",
+            "blush"
+          ]
+        },
+        {
+          "emoji": "😇",
+          "alt": "smiling face with halo",
+          "keywords": [
+            "angel",
+            "innocent",
+            "halo"
+          ]
+        },
+        {
+          "emoji": "🙂",
+          "alt": "slightly smiling face",
+          "keywords": [
+            "smile",
+            "happy"
+          ]
+        },
+        {
+          "emoji": "🙃",
+          "alt": "upside-down face",
+          "keywords": [
+            "silly",
+            "upside down",
+            "sarcasm"
+          ]
+        },
+        {
+          "emoji": "😉",
+          "alt": "winking face",
+          "keywords": [
+            "wink",
+            "flirt",
+            "friendly"
+          ]
+        },
+        {
+          "emoji": "😌",
+          "alt": "relieved face",
+          "keywords": [
+            "relief",
+            "content",
+            "pleased"
+          ]
+        },
+        {
+          "emoji": "😍",
+          "alt": "smiling face with heart-eyes",
+          "keywords": [
+            "love",
+            "heart",
+            "adore",
+            "crush"
+          ]
+        },
+        {
+          "emoji": "🥰",
+          "alt": "smiling face with hearts",
+          "keywords": [
+            "love",
+            "hearts",
+            "adore",
+            "crush"
+          ]
+        },
+        {
+          "emoji": "😘",
+          "alt": "face blowing a kiss",
+          "keywords": [
+            "kiss",
+            "love",
+            "affection"
+          ]
+        },
+        {
+          "emoji": "😋",
+          "alt": "face savoring food",
+          "keywords": [
+            "delicious",
+            "yummy",
+            "tongue",
+            "taste"
+          ]
+        },
+        {
+          "emoji": "😎",
+          "alt": "smiling face with sunglasses",
+          "keywords": [
+            "cool",
+            "sunglasses",
+            "confident"
+          ]
+        },
+        {
+          "emoji": "🤩",
+          "alt": "star-struck",
+          "keywords": [
+            "stars",
+            "amazed",
+            "impressed"
+          ]
+        },
+        {
+          "emoji": "🤔",
+          "alt": "thinking face",
+          "keywords": [
+            "hmmm",
+            "think",
+            "consider"
+          ]
+        }
+      ]
+    },
+    "people_body": {
+      "name": "People & Body",
+      "icon": "👋",
+      "emojis": [
+        {
+          "emoji": "👋",
+          "alt": "waving hand",
+          "keywords": [
+            "hello",
+            "hi",
+            "goodbye",
+            "wave"
+          ]
+        },
+        {
+          "emoji": "👍",
+          "alt": "thumbs up",
+          "keywords": [
+            "good",
+            "yes",
+            "approve",
+            "like"
+          ]
+        },
+        {
+          "emoji": "👎",
+          "alt": "thumbs down",
+          "keywords": [
+            "bad",
+            "no",
+            "disapprove",
+            "dislike"
+          ]
+        },
+        {
+          "emoji": "👌",
+          "alt": "OK hand",
+          "keywords": [
+            "okay",
+            "perfect",
+            "good"
+          ]
+        },
+        {
+          "emoji": "✌️",
+          "alt": "victory hand",
+          "keywords": [
+            "peace",
+            "victory",
+            "two"
+          ]
+        },
+        {
+          "emoji": "🤞",
+          "alt": "crossed fingers",
+          "keywords": [
+            "luck",
+            "hope",
+            "wish"
+          ]
+        },
+        {
+          "emoji": "👏",
+          "alt": "clapping hands",
+          "keywords": [
+            "clap",
+            "applause",
+            "congratulations"
+          ]
+        },
+        {
+          "emoji": "🙌",
+          "alt": "raising hands",
+          "keywords": [
+            "celebration",
+            "praise",
+            "hooray"
+          ]
+        },
+        {
+          "emoji": "🤝",
+          "alt": "handshake",
+          "keywords": [
+            "agreement",
+            "deal",
+            "meeting"
+          ]
+        },
+        {
+          "emoji": "🙏",
+          "alt": "folded hands",
+          "keywords": [
+            "pray",
+            "thank you",
+            "please"
+          ]
+        },
+        {
+          "emoji": "💪",
+          "alt": "flexed biceps",
+          "keywords": [
+            "strong",
+            "muscle",
+            "strength"
+          ]
+        }
+      ]
+    },
+    "animals_nature": {
+      "name": "Animals & Nature",
+      "icon": "🌱",
+      "emojis": [
+        {
+          "emoji": "🐶",
+          "alt": "dog face",
+          "keywords": [
+            "dog",
+            "pet",
+            "puppy",
+            "animal"
+          ]
+        },
+        {
+          "emoji": "🐱",
+          "alt": "cat face",
+          "keywords": [
+            "cat",
+            "pet",
+            "kitten",
+            "animal"
+          ]
+        },
+        {
+          "emoji": "🐭",
+          "alt": "mouse face",
+          "keywords": [
+            "mouse",
+            "animal",
+            "small"
+          ]
+        },
+        {
+          "emoji": "🌱",
+          "alt": "seedling",
+          "keywords": [
+            "plant",
+            "nature",
+            "growth",
+            "green"
+          ]
+        },
+        {
+          "emoji": "🌳",
+          "alt": "deciduous tree",
+          "keywords": [
+            "tree",
+            "nature",
+            "plant",
+            "environment"
+          ]
+        },
+        {
+          "emoji": "🌸",
+          "alt": "cherry blossom",
+          "keywords": [
+            "flower",
+            "spring",
+            "nature",
+            "pink"
+          ]
+        },
+        {
+          "emoji": "🌞",
+          "alt": "sun with face",
+          "keywords": [
+            "sun",
+            "sunny",
+            "weather",
+            "bright"
+          ]
+        },
+        {
+          "emoji": "🌙",
+          "alt": "crescent moon",
+          "keywords": [
+            "moon",
+            "night",
+            "sleep"
+          ]
+        },
+        {
+          "emoji": "⭐",
+          "alt": "star",
+          "keywords": [
+            "star",
+            "night",
+            "space"
+          ]
+        },
+        {
+          "emoji": "🌈",
+          "alt": "rainbow",
+          "keywords": [
+            "rainbow",
+            "colorful",
+            "weather",
+            "pride"
+          ]
+        }
+      ]
+    },
+    "food_drink": {
+      "name": "Food & Drink",
+      "icon": "🍕",
+      "emojis": [
+        {
+          "emoji": "🍕",
+          "alt": "pizza",
+          "keywords": [
+            "pizza",
+            "food",
+            "slice",
+            "italian"
+          ]
+        },
+        {
+          "emoji": "🍔",
+          "alt": "hamburger",
+          "keywords": [
+            "burger",
+            "food",
+            "meat",
+            "fast food"
+          ]
+        },
+        {
+          "emoji": "🍟",
+          "alt": "french fries",
+          "keywords": [
+            "fries",
+            "food",
+            "potato",
+            "fast food"
+          ]
+        },
+        {
+          "emoji": "🌮",
+          "alt": "taco",
+          "keywords": [
+            "taco",
+            "food",
+            "mexican",
+            "meat"
+          ]
+        },
+        {
+          "emoji": "🍝",
+          "alt": "spaghetti",
+          "keywords": [
+            "pasta",
+            "spaghetti",
+            "italian",
+            "food"
+          ]
+        },
+        {
+          "emoji": "🍎",
+          "alt": "red apple",
+          "keywords": [
+            "apple",
+            "fruit",
+            "red",
+            "healthy"
+          ]
+        },
+        {
+          "emoji": "🍌",
+          "alt": "banana",
+          "keywords": [
+            "banana",
+            "fruit",
+            "yellow",
+            "healthy"
+          ]
+        },
+        {
+          "emoji": "☕",
+          "alt": "hot beverage",
+          "keywords": [
+            "coffee",
+            "tea",
+            "hot",
+            "drink",
+            "morning"
+          ]
+        },
+        {
+          "emoji": "🥤",
+          "alt": "cup with straw",
+          "keywords": [
+            "drink",
+            "soda",
+            "beverage",
+            "straw"
+          ]
+        },
+        {
+          "emoji": "🍰",
+          "alt": "shortcake",
+          "keywords": [
+            "cake",
+            "dessert",
+            "sweet",
+            "birthday"
+          ]
+        }
+      ]
+    },
+    "activities": {
+      "name": "Activities",
+      "icon": "⚽",
+      "emojis": [
+        {
+          "emoji": "⚽",
+          "alt": "soccer ball",
+          "keywords": [
+            "soccer",
+            "football",
+            "sport",
+            "ball"
+          ]
+        },
+        {
+          "emoji": "🏀",
+          "alt": "basketball",
+          "keywords": [
+            "basketball",
+            "sport",
+            "ball",
+            "game"
+          ]
+        },
+        {
+          "emoji": "🎵",
+          "alt": "musical note",
+          "keywords": [
+            "music",
+            "note",
+            "sound",
+            "melody"
+          ]
+        },
+        {
+          "emoji": "🎨",
+          "alt": "artist palette",
+          "keywords": [
+            "art",
+            "paint",
+            "creative",
+            "palette"
+          ]
+        },
+        {
+          "emoji": "🎮",
+          "alt": "video game",
+          "keywords": [
+            "game",
+            "controller",
+            "video",
+            "play"
+          ]
+        },
+        {
+          "emoji": "📚",
+          "alt": "books",
+          "keywords": [
+            "books",
+            "reading",
+            "study",
+            "education"
+          ]
+        },
+        {
+          "emoji": "✈️",
+          "alt": "airplane",
+          "keywords": [
+            "plane",
+            "travel",
+            "flight",
+            "vacation"
+          ]
+        },
+        {
+          "emoji": "🚗",
+          "alt": "automobile",
+          "keywords": [
+            "car",
+            "vehicle",
+            "drive",
+            "transportation"
+          ]
+        }
+      ]
+    },
+    "objects": {
+      "name": "Objects",
+      "icon": "💻",
+      "emojis": [
+        {
+          "emoji": "💻",
+          "alt": "laptop computer",
+          "keywords": [
+            "laptop",
+            "computer",
+            "technology",
+            "work"
+          ]
+        },
+        {
+          "emoji": "📱",
+          "alt": "mobile phone",
+          "keywords": [
+            "phone",
+            "mobile",
+            "cell",
+            "smartphone"
+          ]
+        },
+        {
+          "emoji": "⌚",
+          "alt": "watch",
+          "keywords": [
+            "watch",
+            "time",
+            "clock",
+            "wrist"
+          ]
+        },
+        {
+          "emoji": "📷",
+          "alt": "camera",
+          "keywords": [
+            "camera",
+            "photo",
+            "picture",
+            "photography"
+          ]
+        },
+        {
+          "emoji": "🎧",
+          "alt": "headphone",
+          "keywords": [
+            "headphones",
+            "music",
+            "audio",
+            "sound"
+          ]
+        },
+        {
+          "emoji": "💡",
+          "alt": "light bulb",
+          "keywords": [
+            "idea",
+            "light",
+            "bulb",
+            "innovation"
+          ]
+        },
+        {
+          "emoji": "🔑",
+          "alt": "key",
+          "keywords": [
+            "key",
+            "unlock",
+            "access",
+            "security"
+          ]
+        },
+        {
+          "emoji": "💰",
+          "alt": "money bag",
+          "keywords": [
+            "money",
+            "bag",
+            "cash",
+            "wealth"
+          ]
+        }
+      ]
+    },
+    "symbols": {
+      "name": "Symbols",
+      "icon": "❤️",
+      "emojis": [
+        {
+          "emoji": "❤️",
+          "alt": "red heart",
+          "keywords": [
+            "love",
+            "heart",
+            "red",
+            "romance"
+          ]
+        },
+        {
+          "emoji": "💔",
+          "alt": "broken heart",
+          "keywords": [
+            "broken",
+            "heart",
+            "sad",
+            "breakup"
+          ]
+        },
+        {
+          "emoji": "✨",
+          "alt": "sparkles",
+          "keywords": [
+            "sparkle",
+            "magic",
+            "special",
+            "shine"
+          ]
+        },
+        {
+          "emoji": "🔥",
+          "alt": "fire",
+          "keywords": [
+            "fire",
+            "hot",
+            "flame",
+            "burn"
+          ]
+        },
+        {
+          "emoji": "💯",
+          "alt": "hundred points symbol",
+          "keywords": [
+            "100",
+            "perfect",
+            "score",
+            "full"
+          ]
+        },
+        {
+          "emoji": "✅",
+          "alt": "check mark button",
+          "keywords": [
+            "check",
+            "correct",
+            "done",
+            "yes"
+          ]
+        },
+        {
+          "emoji": "❌",
+          "alt": "cross mark",
+          "keywords": [
+            "wrong",
+            "no",
+            "error",
+            "cancel"
+          ]
+        },
+        {
+          "emoji": "⚠️",
+          "alt": "warning sign",
+          "keywords": [
+            "warning",
+            "caution",
+            "alert",
+            "danger"
+          ]
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Emoji data for QGIS plugin message feature",
+    "total_emojis": 77,
+    "last_updated": "2025-01-15"
+  }
+}

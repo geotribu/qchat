@@ -56,3 +56,6 @@ QCHAT_MESSAGE_TYPE_POSITION = "position"
 QFIELD_PLUGIN_INSTALLATION_URL = (
     "https://geotribu.github.io/qchat/usage/installation.html"
 )
+
+# Emojis
+QUICK_EMOJIS = ("😀", "😂", "❤️", "👍", "🎉", "🔥")
