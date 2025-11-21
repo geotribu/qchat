@@ -278,12 +278,13 @@ class QChatWidget(QgsDockWidget):
             self.generate_qaction_send_geojson_layer
         )
 
+        # Note: disabled for now since it messes with vectorizing lines.
         # context menu on right-click on the canvas for sending position in QChat
-        map_canvas = self.iface.mapCanvas()
-        map_canvas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        map_canvas.customContextMenuRequested.connect(
-            self.custom_qchat_position_context_menu
-        )
+        # map_canvas = self.iface.mapCanvas()
+        # map_canvas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        # map_canvas.customContextMenuRequested.connect(
+        #     self.custom_qchat_position_context_menu
+        # )
 
         # auto reconnect to channel if needed
         if self.auto_reconnect_channel:
