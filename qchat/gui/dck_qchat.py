@@ -13,7 +13,7 @@ from uuid import uuid4
 from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
 from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QPoint, Qt
+from qgis.PyQt.QtCore import QPoint, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -121,6 +121,8 @@ class QChatWidget(QgsDockWidget):
             QCompleter.CompletionMode.PopupCompletion
         )
         self.lne_message.setCompleter(self.command_completer)
+        # Connect to activated signal to handle completion selection
+        self.command_completer.activated.connect(self.on_command_activated)
 
         # set channel to autoreconnect to when widget will open
         self.auto_reconnect_channel = auto_reconnect_channel
@@ -844,6 +846,11 @@ Channels:
         Action called when the send button is clicked
         """
 
+        # If the completer popup is visible, ignore this call
+        # The activated signal will handle it instead
+        if self.command_completer.popup().isVisible():
+            return
+
         # retrieve nickname and message
         nickname = self.settings.nickname
         avatar = self.settings.avatar
@@ -921,6 +928,15 @@ Channels:
         )
         self.qchat_ws.send_message(message)
         self.lne_message.setText("")
+
+    def on_command_activated(self, completion: str) -> None:
+        """
+        Handle when user selects a completion from QCompleter.
+        This is called when the user presses Enter while the completion popup is active.
+        We defer the send action slightly to ensure QCompleter finishes its text update.
+        """
+        # Use QTimer.singleShot to defer the action, allowing QCompleter to finish
+        QTimer.singleShot(0, self.on_send_button_clicked)
 
     def on_send_image_button_clicked(self) -> None:
         """
