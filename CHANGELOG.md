@@ -2,6 +2,39 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.1.0 - 2025-11-28
+
+### Features and enhancements 🎉
+
+* update(ui): new icon by @Guts in https://github.com/geotribu/qchat/pull/30
+* feat(ui): ask for confirmation before sending a vector layer to QChat by @gounux in https://github.com/geotribu/qchat/pull/33
+* fix(ui): disable sending position on canvas right-clic by @gounux in https://github.com/geotribu/qchat/pull/37
+* feat: Add Discord-style slash commands to QChat by @lbartoletti in https://github.com/geotribu/qchat/pull/35
+* Cleanier versions for the logo by @sylvainbeo in https://github.com/geotribu/qchat/pull/39
+
+### Tooling 🔧
+
+* build(deps): bump actions/setup-python from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/28
+* build(deps): bump actions/labeler from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/27
+* build(deps): bump actions/download-artifact from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/31
+* build(deps): bump actions/upload-artifact from 4 to 5 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/32
+
+### Documentation 📖
+
+* Documentation: add slash commands by @lbartoletti in https://github.com/geotribu/qchat/pull/40
+
+### Other Changes
+
+* update(tooling): remove black in favor of ruff format by @Guts in https://github.com/geotribu/qchat/pull/26
+* [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci[bot] in https://github.com/geotribu/qchat/pull/29
+* style(icon): Add CAD icon from cadtools by @lbartoletti in https://github.com/geotribu/qchat/pull/34
+
+## New Contributors
+
+* @pre-commit-ci[bot] made their first contribution in https://github.com/geotribu/qchat/pull/29
+* @lbartoletti made their first contribution in https://github.com/geotribu/qchat/pull/34
+* @sylvainbeo made their first contribution in https://github.com/geotribu/qchat/pull/39
+
 ## 1.0.2 - 2025-09-15
 
 * fix(nickname): make `getuser` compliant with qchat by @gounux in <https://github.com/geotribu/qchat/pull/24>
