@@ -17,6 +17,7 @@ maxdepth: 1
 ---
 Installation <usage/installation>
 Settings <usage/configuration>
+Slash Commands <usage/slash_commands>
 ```
 
 ```{toctree}
