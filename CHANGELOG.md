@@ -2,6 +2,12 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.1.1 - 2025-11-28
+
+### Documentation 📖
+
+* compat: set min qgis version to 3.40 by @gounux in https://github.com/geotribu/qchat/pull/41
+
 ## 1.1.0 - 2025-11-28
 
 ### Features and enhancements 🎉
