@@ -31,6 +31,7 @@ from qchat.constants import (
     ADMIN_MESSAGES_NICKNAME,
     CHEATCODE_10OCLOCK,
     CHEATCODE_DIZZY,
+    CHEATCODE_FLICK,
     CHEATCODE_IAMAROBOT,
     CHEATCODE_QGIS_PRO_LICENSE,
     CHEATCODES,
@@ -45,6 +46,7 @@ from qchat.constants import (
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
 )
+from qchat.gui.effects import dizzy, flick_of_the_wrist
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -71,7 +73,6 @@ from qchat.logic.qchat_messages import (
 )
 from qchat.logic.qchat_websocket import QChatWebsocket
 from qchat.logic.slash_commands import SlashCommandHandler
-from qchat.tasks.dizzy import DizzyTask
 from qchat.toolbelt import PlgLogger, PlgOptionsManager
 from qchat.toolbelt.commons import open_url_in_browser, play_resource_sound
 from qchat.toolbelt.preferences import PlgSettingsStructure
@@ -910,6 +911,9 @@ Channels:
                 if action_result and action_result[0] == "show_message":
                     # Show message locally via QMessageBox
                     QMessageBox.information(self, self.tr("QChat"), action_result[1])
+                if action_result and action_result[0] == "show_message_bar":
+                    # Show message locally in QGIS message bar
+                    self.iface.messageBar().pushInfo(self.tr("QChat"), action_result[1])
                 return
 
             # If there's a message text, send it to chat
@@ -1054,8 +1058,12 @@ Channels:
         """
         # make QGIS shuffle for a few seconds
         if text == CHEATCODE_DIZZY:
-            task = DizzyTask(f"Cheatcode activation: {CHEATCODE_DIZZY}", self.iface)
-            self.task_manager.addTask(task)
+            dizzy()
+            return True
+
+        # make QGIS flick the wrist for a few seconds
+        if text == CHEATCODE_FLICK:
+            flick_of_the_wrist()
             return True
 
         # QGIS pro license expiration message
