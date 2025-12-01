@@ -28,6 +28,7 @@ QCHAT_USER_AVATARS: dict[str, str] = {
 
 # QChat cheatcodes
 CHEATCODE_DIZZY: str = "givemesomecheese"
+CHEATCODE_FLICK: str = "lookattheflickofqgis"
 CHEATCODE_IAMAROBOT: str = "iamarobot"
 CHEATCODE_10OCLOCK: str = "its10oclock"
 CHEATCODE_QGIS_PRO_LICENSE: str = "qgisprolicense"

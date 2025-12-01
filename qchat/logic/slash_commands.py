@@ -7,6 +7,8 @@ import random
 from dataclasses import dataclass
 from typing import Callable, Optional
 
+from qchat.gui.effects import dizzy, flick_of_the_wrist
+
 
 @dataclass
 class SlashCommandResult:
@@ -55,6 +57,8 @@ class SlashCommandHandler:
         "flip": "Flip a coin (heads or tails)",
         "roll": "Roll dice (e.g. /roll 2d20)",
         "8ball": "Ask the magic 8-ball",
+        "dizz": "Let QGIS shake",
+        "flick": "Look at QGIS flicking the wrist",
     }
 
     def __init__(self):
@@ -68,6 +72,8 @@ class SlashCommandHandler:
             "flip": self.cmd_flip,
             "roll": self.cmd_roll,
             "8ball": self.cmd_8ball,
+            "dizz": self.cmd_dizz,
+            "flick": self.cmd_flick,
         }
 
     def get_command_list(self) -> list[str]:
@@ -221,6 +227,32 @@ class SlashCommandHandler:
         emoji = "🎱"
         message = f"{emoji} {answer}"
         return SlashCommandResult(success=True, message_text=message)
+
+    def cmd_dizz(self, args: str) -> SlashCommandResult:
+        """Dizz command, makes QGIS shake.
+
+        :param args: optional message displayed in message bar
+        :return: SlashCommandResult
+        """
+
+        dizzy()
+
+        return SlashCommandResult(
+            success=True, local_action=lambda: ("show_message_bar", args)
+        )
+
+    def cmd_flick(self, args: str) -> SlashCommandResult:
+        """Flick command, QGIS is flicking the wrist.
+
+        :param args: optional message displayed in message bar
+        :return: SlashCommandResult
+        """
+
+        flick_of_the_wrist()
+
+        return SlashCommandResult(
+            success=True, local_action=lambda: ("show_message_bar", args)
+        )
 
     def cmd_list(self, args: str) -> SlashCommandResult:
         """List all available commands.
