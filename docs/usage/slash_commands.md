@@ -14,6 +14,8 @@ QChat supports Discord-style slash commands. Type a command starting with `/` in
 | `/flip` | Flip a coin (heads or tails) | `/flip` |
 | `/roll` | Roll dice with customizable faces and count | `/roll 2d20` |
 | `/8ball` | Ask the magic 8-ball a question | `/8ball Will it rain?` |
+| `/dizz` | QGIS is dancing | `/dizz Open the door to the dancefloor` |
+| `/flick` | QGIS is flicking the wrist | `/flick Look at the flick of QGIS !` |
 
 ## Command Details
 
@@ -78,6 +80,14 @@ Possible responses include:
 - Positive: "It is certain", "Without a doubt", "Yes definitely", "Outlook good"
 - Neutral: "Reply hazy, try again", "Ask again later", "Cannot predict now"
 - Negative: "Don't count on it", "My reply is no", "Outlook not so good", "Very doubtful"
+
+### /dizz
+
+Make your QGIS shake for 3 seconds.
+
+### /flick
+
+Woohoo ! QGIS is flicking the wrist for 3 seconds !
 
 ## Autocomplete
 
