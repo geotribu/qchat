@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.2.0 - 2026-01-10
+
+### Features and enhancements 🎉
+
+* feat: add `/dizz` and `/flick` slash commands by @gounux in https://github.com/geotribu/qchat/pull/44
+
+### Tooling 🔧
+
+* build(deps): bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/43
+* build(deps): bump actions/download-artifact from 6 to 7 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/46
+* build(deps): bump actions/cache from 4 to 5 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/47
+* build(deps): bump dawidd6/action-download-artifact from 11 to 12 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/48
+* build(deps): bump actions/upload-artifact from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/49
+
+### Other Changes
+
+* [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci[bot] in https://github.com/geotribu/qchat/pull/50
+
 ## 1.1.1 - 2025-11-28
 
 ### Documentation 📖
