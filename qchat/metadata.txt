@@ -8,7 +8,7 @@ icon=resources/images/logo_qchat.svg
 tags=chat,community,geotribu,social
 
 # credits and contact
-author=Guilhem Allaman (Geotribu), Julien Moura (Geotribu)
+author=Geotribu
 email=geotribu@gmail.com
 homepage=https://geotribu.github.io/qchat/
 repository=https://github.com/geotribu/qchat
@@ -22,5 +22,5 @@ qgisMaximumVersion=4.99
 supportsQt6=True
 
 # versioning
-version=1.2.0-DEV
+version=1.3.0-DEV
 changelog=
