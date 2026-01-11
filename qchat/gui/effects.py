@@ -120,3 +120,55 @@ def flick_of_the_wrist(
         timer.start()
 
     return timer
+
+
+def wizz(
+    duration: int = 3,
+    d: int = 12,
+    interval: int = 50,
+    should_start: bool = True,
+) -> QTimer:
+    """Wizz command, make the entire QGIS application shake like MSN effect.
+
+    :param duration: duration in seconds
+    :param d: max offset in pixels
+    :param interval: refresh interval in milliseconds
+    :param should_start: whether to start the timer immediately
+    :return: QTimer instance
+    """
+
+    main_window = iface.mainWindow()
+    stop_time = datetime.now() + timedelta(seconds=duration)
+
+    # Check if window is maximized and store the state
+    was_maximized = main_window.isMaximized()
+    if was_maximized:
+        main_window.showNormal()  # Restore window to normal state temporarily
+
+    original_pos = main_window.pos()
+
+    timer = QTimer()
+    timer.setInterval(interval)
+
+    def wizz_effect():
+        if datetime.now() >= stop_time:
+            timer.stop()
+            main_window.move(original_pos)
+            # Restore maximized state if it was maximized before
+            if was_maximized:
+                main_window.showMaximized()
+            return
+
+        # Calculate random offset
+        offset_x = random.randint(-d, d)
+        offset_y = random.randint(-d, d)
+
+        # Apply shake effect to main window
+        main_window.move(original_pos.x() + offset_x, original_pos.y() + offset_y)
+
+    timer.timeout.connect(wizz_effect)
+
+    if should_start:
+        timer.start()
+
+    return timer

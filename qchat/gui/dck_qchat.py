@@ -34,6 +34,7 @@ from qchat.constants import (
     CHEATCODE_FLICK,
     CHEATCODE_IAMAROBOT,
     CHEATCODE_QGIS_PRO_LICENSE,
+    CHEATCODE_WIZZ,
     CHEATCODES,
     QCHAT_MESSAGE_TYPE_BBOX,
     QCHAT_MESSAGE_TYPE_CRS,
@@ -46,7 +47,7 @@ from qchat.constants import (
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
 )
-from qchat.gui.effects import dizzy, flick_of_the_wrist
+from qchat.gui.effects import dizzy, flick_of_the_wrist, wizz
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -1064,6 +1065,11 @@ Channels:
         # make QGIS flick the wrist for a few seconds
         if text == CHEATCODE_FLICK:
             flick_of_the_wrist()
+            return True
+
+        # make the entire QGIS application shake like MSN wizz effect
+        if text == CHEATCODE_WIZZ:
+            wizz()
             return True
 
         # QGIS pro license expiration message
