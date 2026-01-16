@@ -7,7 +7,7 @@ import random
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from qchat.gui.effects import dizzy, flick_of_the_wrist
+from qchat.gui.effects import dizzy, flick_of_the_wrist, wizz
 
 
 @dataclass
@@ -59,6 +59,7 @@ class SlashCommandHandler:
         "8ball": "Ask the magic 8-ball",
         "dizz": "Let QGIS shake",
         "flick": "Look at QGIS flicking the wrist",
+        "wizz": "Make the entire QGIS application shake like MSN effect",
     }
 
     def __init__(self):
@@ -74,6 +75,7 @@ class SlashCommandHandler:
             "8ball": self.cmd_8ball,
             "dizz": self.cmd_dizz,
             "flick": self.cmd_flick,
+            "wizz": self.cmd_wizz,
         }
 
     def get_command_list(self) -> list[str]:
@@ -249,6 +251,19 @@ class SlashCommandHandler:
         """
 
         flick_of_the_wrist()
+
+        return SlashCommandResult(
+            success=True, local_action=lambda: ("show_message_bar", args)
+        )
+
+    def cmd_wizz(self, args: str) -> SlashCommandResult:
+        """Wizz command, makes the entire QGIS application shake like MSN effect.
+
+        :param args: optional message displayed in message bar
+        :return: SlashCommandResult
+        """
+
+        wizz()
 
         return SlashCommandResult(
             success=True, local_action=lambda: ("show_message_bar", args)
