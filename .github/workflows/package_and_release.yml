@@ -164,3 +164,14 @@ jobs:
           --allow-uncommitted-changes
           --osgeo-username ${{ secrets.OSGEO_USER }}
           --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+
+      - name: Send notification on matrix
+        id: matrix-notification
+        uses: fadenb/matrix-chat-message@v0.0.6
+        with:
+          homeserver: ${{ secrets.PUBLISH_MATRIX_HOMESERVER }}
+          token: ${{ secrets.PUBLISH_MATRIX_TOKEN }}
+          channel: ${{ secrets.PUBLISH_MATRIX_CHANNEL }}
+          message: |
+            💬 QChat ${{ github.ref_name }} !\
+            -> https://plugins.qgis.org/plugins/qchat/
