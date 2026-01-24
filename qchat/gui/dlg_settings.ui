@@ -221,6 +221,16 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="ckb_confirm_before_send">
+          <property name="toolTip">
+           <string extracomment="When sending a specific message, if QChat should display a confirmation dialog"/>
+          </property>
+          <property name="text">
+           <string>Confirm before send</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QCheckBox" name="ckb_display_admin_messages">
           <property name="toolTip">
            <string extracomment="Display connections and disconnections messages"/>

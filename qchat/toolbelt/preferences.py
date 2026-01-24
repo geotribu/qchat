@@ -77,6 +77,7 @@ class PlgSettingsStructure:
     display_admin_messages: bool = False
     show_avatars: bool = True
     incognito_mode: bool = False
+    confirm_before_send: bool = True
     play_sounds: bool = True
     sound_volume: int = 33
     ring_tone: str = "beep_1"
