@@ -2,6 +2,21 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.3.0 - 2026-01-25
+
+### Features and enhancements 🎉
+
+* back to 00's msn by @lbartoletti in https://github.com/geotribu/qchat/pull/52
+* feature: display a confirmation message based on a new setting by @gounux in https://github.com/geotribu/qchat/pull/54
+
+### Tooling 🔧
+
+* ci: publish matrix message on new release by @gounux in https://github.com/geotribu/qchat/pull/55
+
+### Other Changes
+
+* fix(qchat): consider flick message in constants by @gounux in https://github.com/geotribu/qchat/pull/53
+
 ## 1.2.0 - 2026-01-10
 
 ### Features and enhancements 🎉
