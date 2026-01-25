@@ -974,6 +974,22 @@ Channels:
         Action called when the Send QGIS screenshot button is clicked
         """
 
+        if (
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr(
+                    """Screenshot of current QGIS map will be sent to QChat.
+
+Are you sure ?"""
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
         sc_fp = Path(tempfile.gettempdir()) / "qgis_screenshot.png"
         self.iface.mapCanvas().saveAsImage(str(sc_fp))
         with open(sc_fp, "rb") as file:
@@ -992,6 +1008,22 @@ Channels:
         """
         Action called when the Send extent button is clicked
         """
+        if (
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr(
+                    """The current map extent will be sent to QChat.
+
+Are you sure ?"""
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
         crs = QgsProject.instance().crs()
         rect = self.iface.mapCanvas().extent()
         message = QChatBboxMessage(
@@ -1013,6 +1045,22 @@ Channels:
         """
         Action called when the Send CRS button is clicked
         """
+        if (
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr(
+                    """The current CRS will be sent to QChat.
+
+Are you sure ?"""
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
         crs = QgsProject.instance().crs()
         message = QChatCrsMessage(
             type=QCHAT_MESSAGE_TYPE_CRS,
@@ -1208,7 +1256,8 @@ Visit the website ?
             return
 
         if (
-            not QMessageBox.warning(
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
                 self,
                 self.tr("Sure ?"),
                 self.tr(
@@ -1218,7 +1267,7 @@ Are you sure ?"""
                 ).format(layer_name=layer.name()),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
-            == QMessageBox.StandardButton.Yes
+            != QMessageBox.StandardButton.Yes
         ):
             return
 

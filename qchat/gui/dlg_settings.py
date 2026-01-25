@@ -129,6 +129,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         settings.display_admin_messages = self.ckb_display_admin_messages.isChecked()
         settings.show_avatars = self.ckb_show_avatars.isChecked()
         settings.incognito_mode = self.ckb_incognito_mode.isChecked()
+        settings.confirm_before_send = self.ckb_confirm_before_send.isChecked()
         settings.play_sounds = self.ckb_play_sounds.isChecked()
         settings.sound_volume = self.hsl_sound_volume.value()
         settings.ring_tone = self.cbb_ring_tone.currentText()
@@ -182,6 +183,7 @@ class ConfigOptionsPage(FORM_CLASS, QgsOptionsPageWidget):
         self.ckb_display_admin_messages.setChecked(settings.display_admin_messages)
         self.ckb_show_avatars.setChecked(settings.show_avatars)
         self.ckb_incognito_mode.setChecked(settings.incognito_mode)
+        self.ckb_confirm_before_send.setChecked(settings.confirm_before_send)
         self.ckb_play_sounds.setChecked(settings.play_sounds)
         self.hsl_sound_volume.setValue(settings.sound_volume)
         beep_index = self.cbb_ring_tone.findText(
