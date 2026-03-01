@@ -95,7 +95,7 @@ jobs:
         workflow: package_and_release.yml
 
     - name: Save build doc as artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         if-no-files-found: error
         name: documentation
