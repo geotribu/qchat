@@ -60,9 +60,7 @@ jobs:
 
       - name: Run PyQGIS 4 migration check
         run: |
-          # write the report into a log file
           pyqt5_to_pyqt6.py --dry_run --logfile pyqt6_checker.log ${{ env.PROJECT_FOLDER }}/
-          # trigger an exit code if some incompatibility has been spotted
           pyqt5_to_pyqt6.py ${{ env.PROJECT_FOLDER }}/
 
       - name: Upload script report if script fails
