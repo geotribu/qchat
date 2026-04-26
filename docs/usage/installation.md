@@ -12,8 +12,6 @@ Some features of the plugin rely on third-party software dependencies, that are 
 
 - (Py)QtWebSockets: websocket communications with gischat backends.
 
-- (Py)QtMultimedia: sounds and notifications.
-
 ### Windows
 
 The required third-party dependencies should be packaged with QGIS on Windows. So no additional installations to perform.
@@ -23,7 +21,7 @@ The required third-party dependencies should be packaged with QGIS on Windows. S
 Open a terminal and run the following command:
 
 ```sh
-sudo apt install python3-pyqt5.qtmultimedia python3-pyqt5.qtwebsockets
+sudo apt install python3-pyqt5.qtwebsockets
 ```
 
 Then restart QGIS, you should be able to use QChat.
