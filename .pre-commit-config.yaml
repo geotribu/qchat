@@ -71,7 +71,7 @@ repos:
     hooks:
       - id: bandit
         files: ^qchat/.*\.py$
-        args: ["-c", ".bandit.yaml"]
+        args: ["-c", ".bandit.yaml", "-ll"]
 
 ci:
     autoupdate_schedule: quarterly
