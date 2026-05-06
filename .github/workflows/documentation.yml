@@ -82,7 +82,7 @@ jobs:
 
     - name: Download artifact from build workflow
       if: ${{ env.CONDITION_IS_PUSH || env.CONDITION_IS_WORKFLOW_RUN }}
-      uses: dawidd6/action-download-artifact@v19
+      uses: dawidd6/action-download-artifact@v21
       with:
         allow_forks: false
         branch: main
@@ -107,7 +107,7 @@ jobs:
       if: ${{ env.CONDITION_IS_PUSH || env.CONDITION_IS_WORKFLOW_RUN }}
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
+      uses: actions/upload-pages-artifact@v5
       if: ${{ env.CONDITION_IS_PUSH || env.CONDITION_IS_WORKFLOW_RUN }}
       with:
         # Upload entire repository

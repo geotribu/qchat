@@ -66,6 +66,13 @@ repos:
             "--select=E9,F63,F7,F82,QGS101,QGS102,QGS103,QGS104,QGS106",
           ]
 
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.4
+    hooks:
+      - id: bandit
+        files: ^qchat/.*\.py$
+        args: ["-c", ".bandit.yaml", "-ll"]
+
 ci:
     autoupdate_schedule: quarterly
     skip: []
