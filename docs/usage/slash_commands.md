@@ -16,6 +16,8 @@ QChat supports Discord-style slash commands. Type a command starting with `/` in
 | `/8ball` | Ask the magic 8-ball a question | `/8ball Will it rain?` |
 | `/dizz` | QGIS is dancing | `/dizz Open the door to the dancefloor` |
 | `/flick` | QGIS is flicking the wrist | `/flick Look at the flick of QGIS !` |
+| `/wizz` | QGIS app shakes like MSN effect | `/wizz kikou` |
+| `/vortex` | QGIS is in a vortex | `/vortex Welcome to the vortex !` |
 
 ## Command Details
 
@@ -88,6 +90,14 @@ Make your QGIS shake for 3 seconds.
 ### /flick
 
 Woohoo ! QGIS is flicking the wrist for 3 seconds !
+
+### /wizz
+
+Back to 2003 and MSN messenger effects !
+
+### /vortex
+
+QGIS zooms in and out like it's in a vortex.
 
 ## Autocomplete
 

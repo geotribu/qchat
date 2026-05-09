@@ -7,7 +7,7 @@ import random
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from qchat.gui.effects import dizzy, flick_of_the_wrist, wizz
+from qchat.gui.effects import dizzy, flick_of_the_wrist, vortex, wizz
 
 
 @dataclass
@@ -76,6 +76,7 @@ class SlashCommandHandler:
             "dizz": self.cmd_dizz,
             "flick": self.cmd_flick,
             "wizz": self.cmd_wizz,
+            "vortex": self.cmd_vortex,
         }
 
     def get_command_list(self) -> list[str]:
@@ -264,6 +265,19 @@ class SlashCommandHandler:
         """
 
         wizz()
+
+        return SlashCommandResult(
+            success=True, local_action=lambda: ("show_message_bar", args)
+        )
+
+    def cmd_vortex(self, args: str) -> SlashCommandResult:
+        """Vortex command, makes QGIS spin like a vortex.
+
+        :param args: optional message displayed in message bar
+        :return: SlashCommandResult
+        """
+
+        vortex()
 
         return SlashCommandResult(
             success=True, local_action=lambda: ("show_message_bar", args)

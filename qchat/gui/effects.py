@@ -1,3 +1,4 @@
+import math
 import random
 from datetime import datetime, timedelta
 from typing import Tuple
@@ -167,6 +168,53 @@ def wizz(
         main_window.move(original_pos.x() + offset_x, original_pos.y() + offset_y)
 
     timer.timeout.connect(wizz_effect)
+
+    if should_start:
+        timer.start()
+
+    return timer
+
+
+def vortex(
+    duration: int = 2,
+    zfactor: int = 30,
+    interval: int = 50,
+    should_start: bool = True,
+) -> QTimer:
+    """Vortex command, makes QGIS canvas zoom in and out like it's in a vortex.
+
+    :param duration: duration in seconds
+    :param zfactor: maximum zoom factor (e.g. 15 means zooming in up to 15x and out to 1/15x)
+    :param interval: refresh interval in milliseconds
+    :param should_start: whether to start the timer immediately
+    :return: QTimer instance
+    """
+    canvas = iface.mapCanvas()
+    initial_scale = canvas.scale()
+    stop_time = datetime.now() + timedelta(seconds=duration)
+
+    timer = QTimer()
+    timer.setInterval(interval)
+
+    total_steps = (duration * 1000) // interval
+    step = 0
+
+    def zoom_effect():
+        nonlocal step
+
+        if datetime.now() >= stop_time:
+            canvas.zoomScale(initial_scale)
+            timer.stop()
+            return
+
+        t = step / total_steps
+        factor = math.sin(t * math.pi)
+        zoom_factor = 1 + (factor * zfactor)
+        canvas.zoomScale(initial_scale / zoom_factor)
+
+        step += 1
+
+    timer.timeout.connect(zoom_effect)
 
     if should_start:
         timer.start()

@@ -33,6 +33,7 @@ CHEATCODE_IAMAROBOT: str = "iamarobot"
 CHEATCODE_10OCLOCK: str = "its10oclock"
 CHEATCODE_QGIS_PRO_LICENSE: str = "qgisprolicense"
 CHEATCODE_WIZZ: str = "wizz"
+CHEATCODE_VORTEX: str = "spaceandtime"
 
 CHEATCODES = [
     CHEATCODE_DIZZY,
@@ -41,6 +42,7 @@ CHEATCODES = [
     CHEATCODE_10OCLOCK,
     CHEATCODE_QGIS_PRO_LICENSE,
     CHEATCODE_WIZZ,
+    CHEATCODE_VORTEX,
 ]
 
 # QChat message types
