@@ -2,6 +2,31 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.4.0 - 2026-05-09
+
+### Features and enhancements 🎉
+
+* feat(qchat): add `/vortex` slash command by @gounux in https://github.com/geotribu/qchat/pull/65
+
+### Tooling 🔧
+
+* build(deps): bump dawidd6/action-download-artifact from 12 to 13 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/57
+* build(deps): bump actions/upload-artifact from 6 to 7 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/59
+* build(deps): bump dawidd6/action-download-artifact from 13 to 16 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/58
+* build(deps): bump actions/download-artifact from 7 to 8 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/60
+* build(deps): bump actions/configure-pages from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/63
+* build(deps): bump dawidd6/action-download-artifact from 16 to 19 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/62
+* build(deps): bump actions/deploy-pages from 4 to 5 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/61
+* build(deps): bump actions/upload-pages-artifact from 4 to 5 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/68
+* build(deps): bump dawidd6/action-download-artifact from 19 to 21 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/67
+* build(deps): bump softprops/action-gh-release from 2 to 3 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/69
+* ci(qchat): move linter to official `pyqgis4-checker` image by @gounux in https://github.com/geotribu/qchat/pull/66
+
+### Other Changes
+
+* [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci[bot] in https://github.com/geotribu/qchat/pull/64
+* tooling(pre-commit): add `bandit` pre-commit hook by @gounux in https://github.com/geotribu/qchat/pull/70
+
 ## 1.3.0 - 2026-01-25
 
 ### Features and enhancements 🎉
