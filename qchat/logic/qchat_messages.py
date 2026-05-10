@@ -19,6 +19,7 @@ class QChatTextMessage(QChatMessage):
     author: str
     avatar: Optional[str]
     text: str
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -26,6 +27,7 @@ class QChatImageMessage(QChatMessage):
     author: str
     avatar: Optional[str]
     image_data: str
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -59,6 +61,7 @@ class QChatGeojsonMessage(QChatMessage):
     crs_authid: str
     geojson: dict
     style: Optional[str]
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -67,6 +70,7 @@ class QChatCrsMessage(QChatMessage):
     avatar: Optional[str]
     crs_wkt: str
     crs_authid: str
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -79,6 +83,7 @@ class QChatBboxMessage(QChatMessage):
     xmax: float
     ymin: float
     ymax: float
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -89,6 +94,7 @@ class QChatPositionMessage(QChatMessage):
     crs_authid: str
     x: float
     y: float
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
