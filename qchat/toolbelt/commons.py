@@ -4,14 +4,19 @@
 from qgis.core import Qgis
 from qgis.PyQt.QtCore import QT_VERSION_STR, QUrl
 from qgis.PyQt.QtGui import QDesktopServices
-from qgis.PyQt.QtMultimedia import QMediaContent, QMediaPlayer
 
 from qchat.__about__ import DIR_PLUGIN_ROOT
 from qchat.toolbelt.log_handler import PlgLogger
 
-if int(QT_VERSION_STR.split(".")[0]) == 6:
+# conditional import depending on Qt version
+if int(QT_VERSION_STR.split(".")[0]) == 5:
+    from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer  # noqa QGS103
+elif int(QT_VERSION_STR.split(".")[0]) == 6:
     # see: https://doc.qt.io/qt-6/qtmultimedia-changes-qt6.html
     QMediaContent = QUrl
+    from PyQt6.QtMultimedia import QMediaPlayer  # noqa QGS103
+else:
+    QMediaPlayer = None
 
 
 def open_url_in_browser(url: str) -> bool:
