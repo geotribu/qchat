@@ -56,6 +56,7 @@ from qchat.gui.qchat_tree_widget_items import (
     QChatCrsTreeWidgetItem,
     QChatGeojsonTreeWidgetItem,
     QChatImageTreeWidgetItem,
+    QChatMessageWrapDelegate,
     QChatPositionTreeWidgetItem,
     QChatTextTreeWidgetItem,
 )
@@ -158,6 +159,13 @@ class QChatWidget(QgsDockWidget):
                 self.tr("Nickname"),
                 self.tr("Message"),
             ]
+        )
+        self.twg_chat.setUniformRowHeights(False)
+        self.twg_chat.setItemDelegateForColumn(
+            MESSAGE_COLUMN, QChatMessageWrapDelegate(self.twg_chat)
+        )
+        self.twg_chat.header().sectionResized.connect(
+            lambda *_: self.twg_chat.scheduleDelayedItemsLayout()
         )
         self.twg_chat.itemClicked.connect(self.on_message_clicked)
         self.twg_chat.itemDoubleClicked.connect(self.on_message_double_clicked)
@@ -319,16 +327,14 @@ class QChatWidget(QgsDockWidget):
             QMessageBox.information(
                 self,
                 self.tr("Instance rules"),
-                self.tr(
-                    """Instance rules ({instance_url}):
+                self.tr("""Instance rules ({instance_url}):
 
 {rules}
 
 Main language: {main_lang}
 Max message length: {max_message_length}
 Min nickname length: {min_nickname_length}
-Max nickname length: {max_nickname_length}"""
-                ).format(
+Max nickname length: {max_nickname_length}""").format(
                     instance_url=self.qchat_client.instance_uri,
                     rules=rules["rules"],
                     main_lang=rules["main_lang"],
@@ -348,13 +354,11 @@ Max nickname length: {max_nickname_length}"""
         try:
             status = self.qchat_client.get_status()
             user_txt = self.tr("user")
-            text = self.tr(
-                """Status: {status}
+            text = self.tr("""Status: {status}
 
 Channels:
 
-{channels_status}"""
-            ).format(
+{channels_status}""").format(
                 status=status["status"],
                 channels_status="\n".join(
                     [
@@ -829,11 +833,9 @@ Channels:
             QMessageBox.information(
                 self,
                 self.tr("Registered users"),
-                self.tr(
-                    """Registered users in channel ({channel}):
+                self.tr("""Registered users in channel ({channel}):
 
-{users}"""
-                ).format(channel=self.current_channel, users=",".join(users)),
+{users}""").format(channel=self.current_channel, users=",".join(users)),
             )
         except Exception as exc:
             self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
@@ -980,11 +982,9 @@ Channels:
             and QMessageBox.warning(
                 self,
                 self.tr("Sure ?"),
-                self.tr(
-                    """Screenshot of current QGIS map will be sent to QChat.
+                self.tr("""Screenshot of current QGIS map will be sent to QChat.
 
-Are you sure ?"""
-                ),
+Are you sure ?"""),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
             != QMessageBox.StandardButton.Yes
@@ -1014,11 +1014,9 @@ Are you sure ?"""
             and QMessageBox.warning(
                 self,
                 self.tr("Sure ?"),
-                self.tr(
-                    """The current map extent will be sent to QChat.
+                self.tr("""The current map extent will be sent to QChat.
 
-Are you sure ?"""
-                ),
+Are you sure ?"""),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
             != QMessageBox.StandardButton.Yes
@@ -1051,11 +1049,9 @@ Are you sure ?"""
             and QMessageBox.warning(
                 self,
                 self.tr("Sure ?"),
-                self.tr(
-                    """The current CRS will be sent to QChat.
+                self.tr("""The current CRS will be sent to QChat.
 
-Are you sure ?"""
-                ),
+Are you sure ?"""),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
             != QMessageBox.StandardButton.Yes
@@ -1151,15 +1147,13 @@ Are you sure ?"""
         msg_box.setWindowTitle("QGIS")
         msg_box.setIcon(QMessageBox.Icon.Information)
         msg_box.setText(
-            self.tr(
-                """No... it was a joke!
+            self.tr("""No... it was a joke!
 
 QGIS is Free and Open Source software, forever.
 Free to use, not to make.
 
 Visit the website ?
-"""
-            )
+""")
         )
         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes)
         return_value = msg_box.exec()
@@ -1266,11 +1260,9 @@ Visit the website ?
             and QMessageBox.warning(
                 self,
                 self.tr("Sure ?"),
-                self.tr(
-                    """The "{layer_name}" layer will be sent to QChat.
+                self.tr("""The "{layer_name}" layer will be sent to QChat.
 
-Are you sure ?"""
-                ).format(layer_name=layer.name()),
+Are you sure ?""").format(layer_name=layer.name()),
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             )
             != QMessageBox.StandardButton.Yes
