@@ -340,19 +340,6 @@ class SlashCommandHandler:
                 error="Invalid format. Use /grid [size]",
             )
 
-    def cmd_vortex(self, args: str) -> SlashCommandResult:
-        """Vortex command, makes QGIS spin like a vortex.
-
-        :param args: optional message displayed in message bar
-        :return: SlashCommandResult
-        """
-
-        vortex()
-
-        return SlashCommandResult(
-            success=True, local_action=lambda: ("show_message_bar", args)
-        )
-
     def cmd_list(self, args: str) -> SlashCommandResult:
         """List all available commands.
 
