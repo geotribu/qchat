@@ -15,11 +15,15 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtCore import QDateTime
-from qgis.PyQt.QtGui import QBrush, QColor, QIcon, QPixmap
+from qgis.PyQt.QtCore import QDateTime, QModelIndex, QSize, Qt
+from qgis.PyQt.QtGui import QBrush, QColor, QFontMetrics, QIcon, QPainter, QPixmap
 from qgis.PyQt.QtWidgets import (
+    QApplication,
     QDialog,
     QLabel,
+    QStyle,
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
     QTreeWidget,
     QTreeWidgetItem,
     QVBoxLayout,
@@ -38,10 +42,64 @@ from qchat.toolbelt import PlgOptionsManager
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 TIME_COLUMN = 0
-AUTHOR_COLUM = 1
+AUTHOR_COLUMN = 1
 MESSAGE_COLUMN = 2
 
 MAX_IMAGE_ITEM_HEIGHT = 24
+
+
+class QChatMessageWrapDelegate(QStyledItemDelegate):
+    """
+    Delegate to wrap text column in QTreeWidgetItem.
+    """
+
+    def paint(
+        self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> None:
+        self.initStyleOption(option, index)
+        painter.save()
+
+        style = option.widget.style() if option.widget else QApplication.style()
+        if style:
+            style.drawPrimitive(
+                QStyle.PrimitiveElement.PE_PanelItemViewItem,
+                option,
+                painter,
+                option.widget,
+            )
+
+        text = index.data(Qt.ItemDataRole.DisplayRole)
+        if text:
+            color_data = index.data(Qt.ItemDataRole.ForegroundRole)
+            if color_data:
+                painter.setPen(color_data.color())
+            elif option.state & QStyle.StateFlag.State_Selected:
+                painter.setPen(option.palette.highlightedText().color())
+            else:
+                painter.setPen(option.palette.text().color())
+
+            rect = option.rect.adjusted(4, 2, -4, -2)
+            painter.drawText(rect, Qt.TextFlag.TextWordWrap, text)
+
+        painter.restore()
+
+    def sizeHint(self, option: QStyleOptionViewItem, index: QModelIndex) -> QSize:
+        text = index.data(Qt.ItemDataRole.DisplayRole)
+        if not text:
+            return super().sizeHint(option, index)
+
+        tree = option.widget
+        column_width = (
+            tree.columnWidth(index.column()) - 8 if tree else option.rect.width() - 8
+        )
+        if column_width <= 0:
+            return super().sizeHint(option, index)
+
+        fm = QFontMetrics(option.font)
+        bounding = fm.boundingRect(
+            0, 0, column_width, 0, Qt.TextFlag.TextWordWrap, text
+        )
+        return QSize(column_width, max(bounding.height() + 4, 20))
 
 
 class QChatTreeWidgetItem(QTreeWidgetItem):
@@ -71,14 +129,14 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
     def init_time_and_author(self) -> None:
         self.setText(TIME_COLUMN, self.datetime.toLocalTime().time().toString())
         self.setToolTip(TIME_COLUMN, self.datetime.date().toString())
-        self.setText(AUTHOR_COLUM, self.author)
+        self.setText(AUTHOR_COLUMN, self.author)
         if self.settings.show_avatars and self.avatar:
-            self.setIcon(AUTHOR_COLUM, QIcon(QgsApplication.iconPath(self.avatar)))
+            self.setIcon(AUTHOR_COLUMN, QIcon(QgsApplication.iconPath(self.avatar)))
 
     def set_foreground_color(self, color: str) -> None:
         fg_color = QBrush(QColor(color))
         self.setForeground(TIME_COLUMN, fg_color)
-        self.setForeground(AUTHOR_COLUM, fg_color)
+        self.setForeground(AUTHOR_COLUMN, fg_color)
         self.setForeground(MESSAGE_COLUMN, fg_color)
 
     def on_click(self, column: int) -> None:
