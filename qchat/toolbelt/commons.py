@@ -40,14 +40,13 @@ def play_resource_sound(resource: str, volume: int) -> None:
     file_path = DIR_PLUGIN_ROOT / f"resources/sounds/{resource}.mp3"
     if not file_path.exists():
         raise FileNotFoundError(
-            f"File '{resource}.wav' not found in resources/sounds folder"
+            f"File '{resource}.mp3' not found in resources/sounds folder"
         )
     play_sound(f"{file_path.resolve()}", volume)
 
 
 def play_sound(file: str, volume: int) -> None:
     """Play a sound using QtMultimedia QMediaPlayer."""
-    url = QUrl.fromLocalFile(file)
     if QMediaPlayer is None:
         PlgLogger.log(
             message="QMediaPlayer is not available. Sound cannot be played.",
@@ -65,10 +64,9 @@ def play_sound(file: str, volume: int) -> None:
         player.audioAvailableChanged.connect(lambda: player.play())
         player.play()
     elif int(QT_VERSION_STR.split(".")[0]) == 6:
-        # Qt6 : setSource() remplace setMedia()
         audio_output = QAudioOutput()
-        # volume goes through audio output in Qt6
-        audio_output.setVolume(volume / 100.0)  # expects a float between 0 and 1
+        # expects a float between 0 and 1
+        audio_output.setVolume(volume / 100.0)
         player.setAudioOutput(audio_output)
         player.setSource(url)
         player.play()
