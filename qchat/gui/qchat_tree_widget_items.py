@@ -358,18 +358,28 @@ class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
         )
         self.message = message
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        crs_button = QPushButton(
+            translate("CRS ({crs}) - click to set").format(crs=self.message.crs_authid)
+        )
+        crs_button.setIcon(QIcon(QgsApplication.iconPath("mActionSetProjection.svg")))
+        crs_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        crs_button.setToolTip(self.liked_message)
+        crs_button.clicked.connect(self.set_project_crs)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, crs_button)
+
+    def set_project_crs(self) -> None:
+        crs = QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt)
+        QgsProject.instance().setCrs(crs)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # set current QGIS project CRS to the message one
-            crs = QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt)
-            QgsProject.instance().setCrs(crs)
+            self.set_project_crs()
 
     @property
     def liked_message(self) -> str:
@@ -402,16 +412,16 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
-        crs_button = QPushButton(
+        bbox_button = QPushButton(
             translate("BBOX ({crs}) - click to fit").format(crs=self.message.crs_authid)
         )
-        crs_button.setIcon(
+        bbox_button.setIcon(
             QIcon(QgsApplication.iconPath("mActionViewExtentInCanvas.svg"))
         )
-        crs_button.setCursor(Qt.PointingHandCursor)
-        crs_button.setToolTip(self.liked_message)
-        crs_button.clicked.connect(self.zoom_to_bbox)
-        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, crs_button)
+        bbox_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        bbox_button.setToolTip(self.liked_message)
+        bbox_button.clicked.connect(self.zoom_to_bbox)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, bbox_button)
 
     def zoom_to_bbox(self) -> None:
         project = QgsProject.instance()
