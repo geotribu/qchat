@@ -310,38 +310,49 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
         )
         self.message = message
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        vector_layer_button = QPushButton(
+            translate("Layer '{layer}' (#{nb}) - click to load").format(
+                layer=self.message.layer_name,
+                nb=len(self.message.geojson["features"]),
+                crs=self.message.crs_authid,
+            )
+        )
+        vector_layer_button.setIcon(
+            QIcon(QgsApplication.iconPath("mActionAddLayer.svg"))
+        )
+        vector_layer_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        vector_layer_button.setToolTip(self.liked_message)
+        vector_layer_button.clicked.connect(self.load_layer_from_geojson)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, vector_layer_button)
+
+    def load_layer_from_geojson(self) -> None:
+        temp_directory = Path(tempfile.gettempdir())
+        save_path = temp_directory / f"{self.message.layer_name}.geojson"
+        with open(save_path, "w") as file:
+            json.dump(self.message.geojson, file)
+
+        save_style_path = temp_directory / f"{self.message.layer_name}_style.qml"
+        with open(save_style_path, "w", encoding="utf-8") as style_file:
+            style_file.write(self.message.style)
+
+        layer = QgsVectorLayer(str(save_path), self.message.layer_name, "ogr")
+        layer.setCrs(QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt))
+        layer.loadNamedStyle(
+            str(save_style_path),
+            loadFromLocalDb=False,
+            categories=QgsMapLayer.StyleCategory.AllStyleCategories,
+        )
+        QgsProject.instance().addMapLayer(layer)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # save geojson to temp file
-            save_path = (
-                Path(tempfile.gettempdir()) / f"{self.message.layer_name}.geojson"
-            )
-            with open(save_path, "w") as file:
-                json.dump(self.message.geojson, file)
-
-            # save QML style to temp file
-            save_style_path = (
-                Path(tempfile.gettempdir()) / f"{self.message.layer_name}_style.qml"
-            )
-            with open(save_style_path, "w", encoding="utf-8") as style_file:
-                style_file.write(self.message.style)
-
-            # load geojson file into QGIS
-            layer = QgsVectorLayer(str(save_path), self.message.layer_name, "ogr")
-            layer.setCrs(QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt))
-            layer.loadNamedStyle(
-                str(save_style_path),
-                loadFromLocalDb=False,
-                categories=QgsMapLayer.StyleCategory.AllStyleCategories,
-            )
-            QgsProject.instance().addMapLayer(layer)
+            self.load_layer_from_geojson()
 
     @property
     def liked_message(self) -> str:

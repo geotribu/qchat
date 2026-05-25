@@ -738,17 +738,6 @@ Channels:
 
         menu = QMenu(self.tr("QChat Menu"), self)
 
-        # if this is a geojson message
-        if type(item) is QChatGeojsonTreeWidgetItem:
-            load_geojson_action = QAction(
-                QgsApplication.getThemeIcon("mActionAddLayer.svg"),
-                self.tr("Load layer in QGIS"),
-            )
-            load_geojson_action.triggered.connect(
-                partial(item.on_click, MESSAGE_COLUMN)
-            )
-            menu.addAction(load_geojson_action)
-
         # like message action if possible
         if item.can_be_liked:
             like_action = QAction(
