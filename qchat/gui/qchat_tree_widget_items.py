@@ -21,6 +21,7 @@ from qgis.PyQt.QtWidgets import (
     QApplication,
     QDialog,
     QLabel,
+    QPushButton,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
@@ -39,6 +40,7 @@ from qchat.logic.qchat_messages import (
     QChatTextMessage,
 )
 from qchat.toolbelt import PlgOptionsManager
+from qchat.toolbelt.commons import translate
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 TIME_COLUMN = 0
@@ -394,28 +396,40 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        crs_button = QPushButton(
+            translate("BBOX ({crs}) - click to fit").format(crs=self.message.crs_authid)
+        )
+        crs_button.setIcon(
+            QIcon(QgsApplication.iconPath("mActionViewExtentInCanvas.svg"))
+        )
+        crs_button.setCursor(Qt.PointingHandCursor)
+        crs_button.setToolTip(self.liked_message)
+        crs_button.clicked.connect(self.zoom_to_bbox)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, crs_button)
+
+    def zoom_to_bbox(self) -> None:
+        project = QgsProject.instance()
+        tr = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(self.message.crs_wkt),
+            project.crs(),
+            project,
+        )
+        rect = QgsRectangle(
+            tr.transform(QgsPointXY(self.message.xmin, self.message.ymin)),
+            tr.transform(QgsPointXY(self.message.xmax, self.message.ymax)),
+        )
+        self.canvas.setExtent(rect)
+        self.canvas.refresh()
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # set current canvas extent to the received one
-            project = QgsProject.instance()
-            tr = QgsCoordinateTransform(
-                QgsCoordinateReferenceSystem(self.message.crs_wkt),
-                project.crs(),
-                project,
-            )
-            rect = QgsRectangle(
-                tr.transform(QgsPointXY(self.message.xmin, self.message.ymin)),
-                tr.transform(QgsPointXY(self.message.xmax, self.message.ymax)),
-            )
-            self.canvas.setExtent(rect)
-            self.canvas.refresh()
+            self.zoom_to_bbox()
 
     @property
     def liked_message(self) -> str:

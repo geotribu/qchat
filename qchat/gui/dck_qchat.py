@@ -758,15 +758,6 @@ Channels:
             set_crs_action.triggered.connect(partial(item.on_click, MESSAGE_COLUMN))
             menu.addAction(set_crs_action)
 
-        # if this is a bbox message
-        if type(item) is QChatBboxTreeWidgetItem:
-            set_bbox_action = QAction(
-                QgsApplication.getThemeIcon("mActionViewExtentInCanvas.svg"),
-                self.tr("Set current extent"),
-            )
-            set_bbox_action.triggered.connect(partial(item.on_click, MESSAGE_COLUMN))
-            menu.addAction(set_bbox_action)
-
         # like message action if possible
         if item.can_be_liked:
             like_action = QAction(
