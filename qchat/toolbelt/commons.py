@@ -15,6 +15,8 @@ elif int(QT_VERSION_STR.split(".")[0]) == 6:
     # see: https://doc.qt.io/qt-6/qtmultimedia-changes-qt6.html
     QMediaContent = QUrl
     from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer  # noqa QGS103
+    qt6_player = QMediaPlayer()
+    qt6_audio_output = QAudioOutput()
 else:
     QMediaPlayer = None
 
@@ -55,18 +57,16 @@ def play_sound(file: str, volume: int) -> None:
         return
 
     url = QUrl.fromLocalFile(file)
-    player = QMediaPlayer()
-
     # play sound
     if int(QT_VERSION_STR.split(".")[0]) == 5:
-        player.setMedia(QMediaContent(url))
-        player.setVolume(volume)
-        player.audioAvailableChanged.connect(lambda: player.play())
-        player.play()
+        qt5_player = QMediaPlayer()
+        qt5_player.setMedia(QMediaContent(url))
+        qt5_player.setVolume(volume)
+        qt5_player.audioAvailableChanged.connect(lambda: qt5_player.play())
+        qt5_player.play()
     elif int(QT_VERSION_STR.split(".")[0]) == 6:
-        audio_output = QAudioOutput()
         # expects a float between 0 and 1
-        audio_output.setVolume(volume / 100.0)
-        player.setAudioOutput(audio_output)
-        player.setSource(url)
-        player.play()
+        qt6_audio_output.setVolume(volume / 100.0)
+        qt6_player.setAudioOutput(qt6_audio_output)
+        qt6_player.setSource(url)
+        qt6_player.play()
