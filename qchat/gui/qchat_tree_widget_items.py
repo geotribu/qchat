@@ -261,22 +261,32 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
         self.pixmap = QPixmap()
         data = base64.b64decode(message.image_data)
         self.pixmap.loadFromData(data)
-        label = QLabel(self.parent())
+
+        image_button = QPushButton(translate("Image - click to view"))
+        scaled = self.pixmap.scaledToHeight(
+            MAX_IMAGE_ITEM_HEIGHT, Qt.TransformationMode.SmoothTransformation
+        )
+        image_button.setIcon(QIcon(scaled))
+        image_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        image_button.clicked.connect(self.show_image)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, image_button)
+
+    def show_image(self) -> None:
+        dialog = QDialog(self.treeWidget())
+        dialog.setWindowTitle(
+            translate("QChat image sent by {author}").format(author=self.author)
+        )
+        layout = QVBoxLayout()
+        label = QLabel()
         label.setPixmap(self.pixmap)
-        label.setMaximumSize(label.sizeHint().width(), MAX_IMAGE_ITEM_HEIGHT)
-        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, label)
+        layout.addWidget(label)
+        dialog.setLayout(layout)
+        dialog.setModal(True)
+        dialog.show()
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            dialog = QDialog(self.treeWidget())
-            dialog.setWindowTitle(f"QChat image {self.message.author}")
-            layout = QVBoxLayout()
-            label = QLabel()
-            label.setPixmap(self.pixmap)
-            layout.addWidget(label)
-            dialog.setLayout(layout)
-            dialog.setModal(True)
-            dialog.show()
+            self.show_image()
 
     @property
     def liked_message(self) -> str:
