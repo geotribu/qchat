@@ -489,17 +489,26 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        position_button = QPushButton(translate("Position - click to move to"))
+        position_button.setIcon(QIcon(QgsApplication.iconPath("mActionPanTo.svg")))
+        position_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        position_button.setToolTip(self.liked_message)
+        position_button.clicked.connect(self.move_to_position)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, position_button)
+
+    def move_to_position(self) -> None:
+        # TODO: move QGIS canvas to received position.
+        print(self.liked_message)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # TODO: move QGIS canvas to received position.
-            print(self.liked_message)
+            self.move_to_position()
 
     @property
     def liked_message(self) -> str:
