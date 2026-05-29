@@ -18,7 +18,7 @@ from qchat.__about__ import DIR_PLUGIN_ROOT, __icon_path__, __title__, __uri_hom
 from qchat.constants import QFIELD_PLUGIN_INSTALLATION_URL
 from qchat.gui.dlg_settings import PlgOptionsFactory
 from qchat.toolbelt import PlgLogger
-from qchat.toolbelt.commons import open_url_in_browser, translate
+from qchat.toolbelt.commons import open_url_in_browser
 from qchat.toolbelt.preferences import PlgOptionsManager
 
 # conditional imports
@@ -79,18 +79,18 @@ class QChatPlugin:
         # -- Actions
         self.action_open_chat = QAction(
             QgsApplication.getThemeIcon("mMessageLog.svg"),
-            translate("QChat"),
+            self.tr("QChat"),
             self.iface.mainWindow(),
         )
-        self.action_open_chat.setToolTip(translate("QChat"))
+        self.action_open_chat.setToolTip(self.tr("QChat"))
         self.action_open_chat.triggered.connect(self.open_chat)
 
         self.action_open_qfield_qchat = QAction(
             QIcon(str(DIR_PLUGIN_ROOT / "resources/images/qfield.svg")),
-            translate("QChat in QField"),
+            self.tr("QChat in QField"),
             self.iface.mainWindow(),
         )
-        self.action_open_qfield_qchat.setToolTip(translate("QChat in QField"))
+        self.action_open_qfield_qchat.setToolTip(self.tr("QChat in QField"))
         self.action_open_qfield_qchat.triggered.connect(
             partial(
                 open_url_in_browser,
@@ -99,7 +99,7 @@ class QChatPlugin:
         )
         self.action_help = QAction(
             QgsApplication.getThemeIcon("mActionHelpContents.svg"),
-            translate("Help"),
+            self.tr("Help"),
             self.iface.mainWindow(),
         )
         self.action_help.triggered.connect(
@@ -108,7 +108,7 @@ class QChatPlugin:
 
         self.action_settings = QAction(
             QgsApplication.getThemeIcon("console/iconSettingsConsole.svg"),
-            translate("Settings"),
+            self.tr("Settings"),
             self.iface.mainWindow(),
         )
         self.action_settings.triggered.connect(
@@ -145,6 +145,17 @@ class QChatPlugin:
 
         if not self.check_dependencies():
             return
+
+    def tr(self, message: str) -> str:
+        """Get the translation for a string using Qt translation API.
+
+        :param message: string to be translated.
+        :type message: str
+
+        :returns: Translated version of message.
+        :rtype: str
+        """
+        return QCoreApplication.translate(self.__class__.__name__, message)
 
     def unload(self):
         """Cleans up when plugin is disabled/uninstalled."""
@@ -199,13 +210,13 @@ class QChatPlugin:
         """
         try:
             self.log(
-                message=translate("Everything ran OK."),
+                message=self.tr("Everything ran OK."),
                 log_level=3,
                 push=False,
             )
         except Exception as err:
             self.log(
-                message=translate("Houston, we've got a problem: {}".format(err)),
+                message=self.tr("Houston, we've got a problem: {}".format(err)),
                 log_level=2,
                 push=True,
             )
@@ -219,7 +230,7 @@ class QChatPlugin:
         # if import failed
         if not EXTERNAL_DEPENDENCIES_AVAILABLE:
             self.log(
-                message=translate(
+                message=self.tr(
                     "Error importing some of dependencies. "
                     "QChat related functions have been disabled."
                 ),
@@ -227,7 +238,7 @@ class QChatPlugin:
                 push=True,
                 duration=0,
                 button=True,
-                button_text=translate("What to do ?"),
+                button_text=self.tr("What to do ?"),
                 button_connect=partial(
                     QDesktopServices.openUrl,
                     QUrl(QFIELD_PLUGIN_INSTALLATION_URL),
@@ -237,14 +248,14 @@ class QChatPlugin:
             self.action_open_chat.setEnabled(False)
 
             # add tooltip over menu
-            msg_disable = translate(
+            msg_disable = self.tr(
                 "Plugin disabled. Please install all dependencies and then restart QGIS."
                 " Refer to the documentation for more information."
             )
             self.action_open_chat.setToolTip(msg_disable)
             return False
         else:
-            self.log(message=translate("Dependencies satisfied"), log_level=3)
+            self.log(message=self.tr("Dependencies satisfied"), log_level=3)
             return True
 
     def open_chat(self) -> None:

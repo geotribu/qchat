@@ -2,7 +2,7 @@
 
 # 3rd party
 from qgis.core import Qgis
-from qgis.PyQt.QtCore import QT_VERSION_STR, QCoreApplication, QUrl
+from qgis.PyQt.QtCore import QT_VERSION_STR, QUrl
 from qgis.PyQt.QtGui import QDesktopServices
 
 from qchat.__about__ import DIR_PLUGIN_ROOT
@@ -71,15 +71,3 @@ def play_sound(file: str, volume: int) -> None:
         qt6_player.setAudioOutput(qt6_audio_output)
         qt6_player.setSource(url)
         qt6_player.play()
-
-
-def translate(message: str) -> str:
-    """Get the translation for a string using Qt translation API.
-
-    :param message: string to be translated.
-    :type message: str
-
-    :returns: Translated version of message.
-    :rtype: str
-    """
-    return QCoreApplication.translate("QChat", message)

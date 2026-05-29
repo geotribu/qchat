@@ -40,7 +40,6 @@ from qchat.logic.qchat_messages import (
     QChatTextMessage,
 )
 from qchat.toolbelt import PlgOptionsManager
-from qchat.toolbelt.commons import translate
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 TIME_COLUMN = 0
@@ -184,6 +183,9 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         pass
 
+    def tr(self, text: str) -> str:
+        return self.treeWidget().tr(text)
+
 
 class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, text: str, timestamp: Optional[int] = None):
@@ -262,7 +264,7 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
         data = base64.b64decode(message.image_data)
         self.pixmap.loadFromData(data)
 
-        image_button = QPushButton(translate("Image - click to view"))
+        image_button = QPushButton(self.tr("Image - click to view"))
         scaled = self.pixmap.scaledToHeight(
             MAX_IMAGE_ITEM_HEIGHT, Qt.TransformationMode.SmoothTransformation
         )
@@ -274,7 +276,7 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
     def show_image(self) -> None:
         dialog = QDialog(self.treeWidget())
         dialog.setWindowTitle(
-            translate("QChat image sent by {author}").format(author=self.author)
+            self.tr("QChat image sent by {author}").format(author=self.author)
         )
         layout = QVBoxLayout()
         label = QLabel()
@@ -317,7 +319,7 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
             self.set_foreground_color(self.settings.color_self)
 
         vector_layer_button = QPushButton(
-            translate("Layer '{layer}' (#{nb}) - click to load").format(
+            self.tr("Layer '{layer}' (#{nb}) - click to load").format(
                 layer=self.message.layer_name,
                 nb=len(self.message.geojson["features"]),
                 crs=self.message.crs_authid,
@@ -386,7 +388,7 @@ class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
             self.set_foreground_color(self.settings.color_self)
 
         crs_button = QPushButton(
-            translate("CRS ({crs}) - click to set").format(crs=self.message.crs_authid)
+            self.tr("CRS ({crs}) - click to set").format(crs=self.message.crs_authid)
         )
         crs_button.setIcon(QIcon(QgsApplication.iconPath("mActionSetProjection.svg")))
         crs_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -434,7 +436,7 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
             self.set_foreground_color(self.settings.color_self)
 
         bbox_button = QPushButton(
-            translate("BBOX ({crs}) - click to fit").format(crs=self.message.crs_authid)
+            self.tr("BBOX ({crs}) - click to fit").format(crs=self.message.crs_authid)
         )
         bbox_button.setIcon(
             QIcon(QgsApplication.iconPath("mActionViewExtentInCanvas.svg"))
@@ -495,7 +497,7 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
-        position_button = QPushButton(translate("Position - click to move to"))
+        position_button = QPushButton(self.tr("Position - click to move to"))
         position_button.setIcon(QIcon(QgsApplication.iconPath("mActionPanTo.svg")))
         position_button.setCursor(Qt.CursorShape.PointingHandCursor)
         position_button.setToolTip(self.liked_message)
