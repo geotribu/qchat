@@ -622,6 +622,8 @@ Channels:
         items_list = self.slash_command_handler.get_command_list()
 
         if self.connected and not self.settings.incognito_mode:
+            items_list.append("@all")
+
             try:
                 users = self.qchat_client.get_registered_users(self.current_channel)
                 for user in users:
