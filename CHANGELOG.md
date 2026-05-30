@@ -2,6 +2,17 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.5.0 - 2026-05-30
+
+### Features and enhancements 🎉
+
+* feat: auto-wrap text messages column in the treewidget by @gounux in https://github.com/geotribu/qchat/pull/74
+* ui: change message style of geo messages by @gounux in https://github.com/geotribu/qchat/pull/75
+
+### Other Changes
+
+* fix: fix `QtMultimedia` import on Qt6 by @gounux in https://github.com/geotribu/qchat/pull/73
+
 ## 1.4.0 - 2026-05-09
 
 ### Features and enhancements 🎉
