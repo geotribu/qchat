@@ -13,7 +13,7 @@ from uuid import uuid4
 from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
 from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QPoint, Qt, QTimer
+from qgis.PyQt.QtCore import QAbstractListModel, QPoint, QStringListModel, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -116,17 +116,13 @@ class QChatWidget(QgsDockWidget):
         # Initialize slash commands handler
         self.slash_command_handler = SlashCommandHandler()
 
-        # Setup autocomplete for slash commands
-        self.command_completer = QCompleter(
-            self.slash_command_handler.get_command_list()
-        )
-        self.command_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.command_completer.setCompletionMode(
-            QCompleter.CompletionMode.PopupCompletion
-        )
-        self.lne_message.setCompleter(self.command_completer)
+        # Setup autocomplete for slash commands and registered users
+        self.text_completer = QCompleter(self.get_text_completer_model())
+        self.text_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.text_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
+        self.lne_message.setCompleter(self.text_completer)
         # Connect to activated signal to handle completion selection
-        self.command_completer.activated.connect(self.on_command_activated)
+        self.text_completer.activated.connect(self.on_command_activated)
 
         # set channel to autoreconnect to when widget will open
         self.auto_reconnect_channel = auto_reconnect_channel
@@ -616,6 +612,27 @@ Channels:
                 user_txt=self.tr("user") if message.nb_users <= 1 else self.tr("users"),
             )
         )
+        self.text_completer.setModel(self.get_text_completer_model())
+
+    def get_text_completer_model(self) -> QAbstractListModel:
+        """
+        Get the model used for the text input autocompletion,
+        based on the list of slash commands and registered users in the current channel.
+        """
+        items_list = self.slash_command_handler.get_command_list()
+
+        if self.connected and not self.settings.incognito_mode:
+            try:
+                users = self.qchat_client.get_registered_users(self.current_channel)
+                for user in users:
+                    # do not include current user in completer
+                    if user != self.settings.nickname:
+                        items_list.append(f"@{user}")
+
+            except Exception as exc:
+                self.log(message=str(exc), log_level=Qgis.MessageLevel.Critical)
+
+        return QStringListModel(items_list)
 
     def on_newcomer_message_received(self, message: QChatNewcomerMessage) -> None:
         """
@@ -825,7 +842,7 @@ Channels:
 
         # If the completer popup is visible, ignore this call
         # The activated signal will handle it instead
-        if self.command_completer.popup().isVisible():
+        if self.text_completer.popup().isVisible():
             return
 
         # retrieve nickname and message
