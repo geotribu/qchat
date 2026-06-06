@@ -89,3 +89,12 @@ class QChatPositionMessage(QChatMessage):
     crs_authid: str
     x: float
     y: float
+
+
+@dataclass(init=True, frozen=True)
+class QChatModelMessage(QChatMessage):
+    author: str
+    avatar: Optional[str]
+    model_name: str
+    model_group: Optional[str]
+    raw_xml: str

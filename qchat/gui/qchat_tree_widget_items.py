@@ -1,15 +1,18 @@
 import base64
 import json
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
 
+from processing.modeler.ModelerUtils import ModelerUtils
 from qgis.core import (
     QgsApplication,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsMapLayer,
     QgsPointXY,
+    QgsProcessingModelAlgorithm,
     QgsProject,
     QgsRectangle,
     QgsVectorLayer,
@@ -36,6 +39,7 @@ from qchat.logic.qchat_messages import (
     QChatCrsMessage,
     QChatGeojsonMessage,
     QChatImageMessage,
+    QChatModelMessage,
     QChatPositionMessage,
     QChatTextMessage,
 )
@@ -528,3 +532,67 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
 
     def copy_to_clipboard(self) -> None:
         QgsApplication.instance().clipboard().setText(self.liked_message)
+
+
+class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
+    def __init__(self, parent: QTreeWidget, message: QChatModelMessage):
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
+            message.author,
+            message.avatar,
+        )
+        self.message = message
+        self.init_time_and_author()
+        self.setToolTip(MESSAGE_COLUMN, self.liked_message)
+
+        # set foreground color if sent by user
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
+
+        model_button = QPushButton(
+            self.tr("Graphic Model '{model}' - click to load").format(
+                model=self.message.model_name,
+            )
+        )
+        model_button.setIcon(QIcon(QgsApplication.iconPath("processingModel.svg")))
+        model_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        model_button.setToolTip(self.liked_message)
+        model_button.clicked.connect(self.load_graphical_model)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, model_button)
+
+    def load_graphical_model(self) -> None:
+        temp_file_path = (
+            Path(tempfile.gettempdir()) / f"{self.message.model_name}.model3"
+        )
+        with open(temp_file_path, "w", encoding="utf-8") as f:
+            f.write(self.message.raw_xml)
+
+        # load the xml into a processing model
+        model = QgsProcessingModelAlgorithm()
+        if not model.fromFile(str(temp_file_path)):
+            return
+
+        # check that there is at least one model directory to copy the file into,
+        # otherwise the model won't be loaded in the registry and thus not usable
+        if len(ModelerUtils.modelsFolders()) == 0:
+            return
+
+        model_dest_path = Path(ModelerUtils.modelsFolders()[0]) / temp_file_path.name
+        shutil.copyfile(str(temp_file_path), str(model_dest_path))
+        QgsApplication.processingRegistry().providerById("model").refreshAlgorithms()
+
+    def on_click(self, column: int) -> None:
+        if column == MESSAGE_COLUMN:
+            self.load_graphical_model()
+
+    @property
+    def liked_message(self) -> str:
+        return f"<MODEL {self.message.model_name} [{self.message.model_group or self.tr('no group')}]>"
+
+    @property
+    def can_be_copied_to_clipboard(self) -> bool:
+        return True
+
+    def copy_to_clipboard(self) -> None:
+        QgsApplication.instance().clipboard().setText(self.message.raw_xml)
