@@ -48,6 +48,7 @@ from qchat.constants import (
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
 )
+from qchat.gui.complete import QChatTextMessageCompleter
 from qchat.gui.effects import dizzy, flick_of_the_wrist, vortex, wizz
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
@@ -117,7 +118,7 @@ class QChatWidget(QgsDockWidget):
         self.slash_command_handler = SlashCommandHandler()
 
         # Setup autocomplete for slash commands and registered users
-        self.text_completer = QCompleter(self.get_text_completer_model())
+        self.text_completer = QChatTextMessageCompleter(self.get_text_completer_model())
         self.text_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.text_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
         self.lne_message.setCompleter(self.text_completer)
