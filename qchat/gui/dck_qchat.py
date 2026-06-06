@@ -10,8 +10,15 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 # PyQGIS
-from qgis.core import Qgis, QgsApplication, QgsJsonExporter, QgsMapLayer, QgsProject
-from qgis.gui import QgisInterface, QgsDockWidget
+from qgis.core import (
+    Qgis,
+    QgsApplication,
+    QgsJsonExporter,
+    QgsMapLayer,
+    QgsPointXY,
+    QgsProject,
+)
+from qgis.gui import QgisInterface, QgsDockWidget, QgsMapMouseEvent
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QAbstractListModel, QPoint, QStringListModel, Qt, QTimer
 from qgis.PyQt.QtGui import QCursor, QIcon
@@ -303,13 +310,10 @@ class QChatWidget(QgsDockWidget):
             self.generate_qaction_send_geojson_layer
         )
 
-        # Note: disabled for now since it messes with vectorizing lines.
         # context menu on right-click on the canvas for sending position in QChat
-        # map_canvas = self.iface.mapCanvas()
-        # map_canvas.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        # map_canvas.customContextMenuRequested.connect(
-        #     self.custom_qchat_position_context_menu
-        # )
+        self.iface.mapCanvas().contextMenuAboutToShow.connect(
+            self.custom_qchat_position_context_menu
+        )
 
         # auto reconnect to channel if needed
         if self.auto_reconnect_channel:
@@ -1161,26 +1165,22 @@ Visit the website ?
         send_geojson_action.triggered.connect(self.on_send_geojson_layer_to_qchat)
         menu.addAction(send_geojson_action)
 
-    def custom_qchat_position_context_menu(self, point: QPoint) -> None:
-        # TODO: find a way to get the existing context menu,
-        # that is being displayed on a right-click in the canvas.
-        # Rather than creating a new menu, which basically makes
-        # this menu being displayed after the previous one is closed.
-        menu = QMenu()
-
+    def custom_qchat_position_context_menu(
+        self, menu: QMenu, event: QgsMapMouseEvent
+    ) -> None:
         send_position_action = QAction(
             QgsApplication.getThemeIcon("mMessageLog.svg"),
             self.tr("Send position on QChat"),
             menu,
         )
+        map_point = event.mapPoint()
         send_position_action.triggered.connect(
-            lambda: self.on_send_position_to_qchat(point)
+            lambda: self.on_send_position_to_qchat(map_point)
         )
+        menu.addSeparator()
         menu.addAction(send_position_action)
 
-        menu.exec(self.iface.mapCanvas().mapToGlobal(point))
-
-    def on_send_position_to_qchat(self, point: QPoint) -> None:
+    def on_send_position_to_qchat(self, map_point: QgsPointXY) -> None:
         if not self.connected:
             self.log(
                 message=self.tr(
@@ -1193,20 +1193,29 @@ Visit the website ?
             )
             return
 
-        map_point = (
-            self.iface.mapCanvas()
-            .getCoordinateTransform()
-            .toMapCoordinates(point.x(), point.y())
-        )
+        if (
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr("""This position will be sent to QChat.
 
+Are you sure ?"""),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
+        position_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
         message = QChatPositionMessage(
             type=QCHAT_MESSAGE_TYPE_POSITION,
             id=str(uuid4()),
             timestamp=int(datetime.now().timestamp()),
             author=self.settings.nickname,
             avatar=self.settings.avatar,
-            crs_wkt="TODO",
-            crs_authid="TODO",
+            crs_wkt=position_crs.toWkt(),
+            crs_authid=position_crs.authid(),
             x=map_point.x(),
             y=map_point.y(),
         )
