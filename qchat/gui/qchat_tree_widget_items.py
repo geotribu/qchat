@@ -7,6 +7,7 @@ from typing import Optional
 
 from processing.modeler.ModelerUtils import ModelerUtils
 from qgis.core import (
+    Qgis,
     QgsApplication,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
@@ -44,6 +45,7 @@ from qchat.logic.qchat_messages import (
     QChatTextMessage,
 )
 from qchat.toolbelt import PlgOptionsManager
+from qchat.toolbelt.log_handler import PlgLogger
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 TIME_COLUMN = 0
@@ -571,11 +573,19 @@ class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
         # load the xml into a processing model
         model = QgsProcessingModelAlgorithm()
         if not model.fromFile(str(temp_file_path)):
+            PlgLogger().log(
+                message=f"Error while loading model '{self.message.model_name}': invalid model file.",
+                log_level=Qgis.MessageLevel.Critical,
+            )
             return
 
         # check that there is at least one model directory to copy the file into,
         # otherwise the model won't be loaded in the registry and thus not usable
         if len(ModelerUtils.modelsFolders()) == 0:
+            PlgLogger().log(
+                message=f"Error while loading model '{self.message.model_name}': no model directory found. Please set a model directory in Processing options.",
+                log_level=Qgis.MessageLevel.Critical,
+            )
             return
 
         model_dest_path = Path(ModelerUtils.modelsFolders()[0]) / temp_file_path.name
