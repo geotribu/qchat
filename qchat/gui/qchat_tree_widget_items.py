@@ -588,7 +588,11 @@ class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
             )
             return
 
-        model_dest_path = Path(ModelerUtils.modelsFolders()[0]) / temp_file_path.name
+        model_dest_path = (
+            Path(ModelerUtils.modelsFolders()[0]) / "qchat" / temp_file_path.name
+        )
+        model_dest_path.parent.mkdir(parents=True, exist_ok=True)
+
         shutil.copyfile(str(temp_file_path), str(model_dest_path))
         QgsApplication.processingRegistry().providerById("model").refreshAlgorithms()
 
