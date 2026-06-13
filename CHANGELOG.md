@@ -2,6 +2,24 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.6.0 - 2026-06-13
+
+### Features and enhancements 🎉
+
+* build(deps): update pytest-cov requirement from >=4 to >=7.1.0 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/78
+* build(deps): update myst-parser requirement from >=2 to >=5.1.0 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/80
+* build(deps): update sphinx-rtd-theme requirement from >=2 to >=3.1.0 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/79
+* build(deps-dev): update flake8-builtins requirement from >=2.2 to >=3.1.0 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/82
+* build(deps): update packaging requirement from >=23 to >=26.2 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/81
+* feat: add users to text autocomplete by @gounux in https://github.com/geotribu/qchat/pull/77
+* feature: add `/grid` slash command by @gounux in https://github.com/geotribu/qchat/pull/45
+* feat: (re)enable send and receive position messages by @gounux in https://github.com/geotribu/qchat/pull/85
+* feat: add send and receive support for models and scripts messages by @gounux in https://github.com/geotribu/qchat/pull/84
+
+### Tooling 🔧
+
+* chore: bump tooling python versions to `3.12` by @gounux in https://github.com/geotribu/qchat/pull/83
+
 ## 1.5.0 - 2026-05-30
 
 ### Features and enhancements 🎉
