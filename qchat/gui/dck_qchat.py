@@ -1192,13 +1192,15 @@ Are you sure ?"""),
         msg_box = QMessageBox()
         msg_box.setWindowTitle("QGIS")
         msg_box.setIcon(QMessageBox.Icon.Information)
-        msg_box.setText(self.tr("""No... it was a joke!
+        msg_box.setText(
+            self.tr("""No... it was a joke!
 
 QGIS is Free and Open Source software, forever.
 Free to use, not to make.
 
 Visit the website ?
-"""))
+""")
+        )
         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes)
         return_value = msg_box.exec()
         if return_value == QMessageBox.StandardButton.Yes:
