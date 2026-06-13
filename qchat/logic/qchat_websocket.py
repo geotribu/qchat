@@ -15,9 +15,11 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_GEOJSON,
     QCHAT_MESSAGE_TYPE_IMAGE,
     QCHAT_MESSAGE_TYPE_LIKE,
+    QCHAT_MESSAGE_TYPE_MODEL,
     QCHAT_MESSAGE_TYPE_NB_USERS,
     QCHAT_MESSAGE_TYPE_NEWCOMER,
     QCHAT_MESSAGE_TYPE_POSITION,
+    QCHAT_MESSAGE_TYPE_SCRIPT,
     QCHAT_MESSAGE_TYPE_TEXT,
     QCHAT_MESSAGE_TYPE_UNCOMPLIANT,
 )
@@ -29,9 +31,11 @@ from qchat.logic.qchat_messages import (
     QChatImageMessage,
     QChatLikeMessage,
     QChatMessage,
+    QChatModelMessage,
     QChatNbUsersMessage,
     QChatNewcomerMessage,
     QChatPositionMessage,
+    QChatScriptMessage,
     QChatTextMessage,
     QChatUncompliantMessage,
 )
@@ -78,9 +82,11 @@ class QChatWebsocket(QObject):
     geojson_message_received = pyqtSignal(QChatGeojsonMessage)
     image_message_received = pyqtSignal(QChatImageMessage)
     like_message_received = pyqtSignal(QChatLikeMessage)
+    model_message_received = pyqtSignal(QChatModelMessage)
     nb_users_message_received = pyqtSignal(QChatNbUsersMessage)
     newcomer_message_received = pyqtSignal(QChatNewcomerMessage)
     position_message_received = pyqtSignal(QChatPositionMessage)
+    script_message_received = pyqtSignal(QChatScriptMessage)
     text_message_received = pyqtSignal(QChatTextMessage)
     uncompliant_message_received = pyqtSignal(QChatUncompliantMessage)
 
@@ -163,6 +169,10 @@ class QChatWebsocket(QObject):
                 self.bbox_message_received.emit(QChatBboxMessage(**message))
             elif msg_type == QCHAT_MESSAGE_TYPE_POSITION:
                 self.position_message_received.emit(QChatPositionMessage(**message))
+            elif msg_type == QCHAT_MESSAGE_TYPE_MODEL:
+                self.model_message_received.emit(QChatModelMessage(**message))
+            elif msg_type == QCHAT_MESSAGE_TYPE_SCRIPT:
+                self.script_message_received.emit(QChatScriptMessage(**message))
         except KeyError:
             text = self.tr(
                 "Unintelligible message received. Please make sure you are using the latest plugin version. (type={type})"

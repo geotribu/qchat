@@ -1,15 +1,20 @@
 import base64
 import json
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
 
+from processing.modeler.ModelerUtils import ModelerUtils
+from processing.script import ScriptUtils
 from qgis.core import (
+    Qgis,
     QgsApplication,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsMapLayer,
     QgsPointXY,
+    QgsProcessingModelAlgorithm,
     QgsProject,
     QgsRectangle,
     QgsVectorLayer,
@@ -36,10 +41,12 @@ from qchat.logic.qchat_messages import (
     QChatCrsMessage,
     QChatGeojsonMessage,
     QChatImageMessage,
+    QChatModelMessage,
     QChatPositionMessage,
     QChatTextMessage,
 )
 from qchat.toolbelt import PlgOptionsManager
+from qchat.toolbelt.log_handler import PlgLogger
 from qchat.toolbelt.preferences import PlgSettingsStructure
 
 TIME_COLUMN = 0
@@ -528,3 +535,135 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
 
     def copy_to_clipboard(self) -> None:
         QgsApplication.instance().clipboard().setText(self.liked_message)
+
+
+class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
+    def __init__(self, parent: QTreeWidget, message: QChatModelMessage):
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
+            message.author,
+            message.avatar,
+        )
+        self.message = message
+        self.init_time_and_author()
+        self.setToolTip(MESSAGE_COLUMN, self.liked_message)
+
+        # set foreground color if sent by user
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
+
+        model_button = QPushButton(
+            self.tr("Graphic Model '{model}' - click to load").format(
+                model=self.message.model_name,
+            )
+        )
+        model_button.setIcon(QIcon(QgsApplication.iconPath("processingModel.svg")))
+        model_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        model_button.setToolTip(self.liked_message)
+        model_button.clicked.connect(self.load_graphical_model)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, model_button)
+
+    def load_graphical_model(self) -> None:
+        temp_file_path = (
+            Path(tempfile.gettempdir()) / f"{self.message.model_name}.model3"
+        )
+        with open(temp_file_path, "w", encoding="utf-8") as f:
+            f.write(self.message.raw_xml)
+
+        # load the xml into a processing model
+        model = QgsProcessingModelAlgorithm()
+        if not model.fromFile(str(temp_file_path)):
+            PlgLogger().log(
+                message=f"Error while loading model '{self.message.model_name}': invalid model file.",
+                log_level=Qgis.MessageLevel.Critical,
+            )
+            return
+
+        # check that there is at least one model directory to copy the file into,
+        # otherwise the model won't be loaded in the registry and thus not usable
+        if len(ModelerUtils.modelsFolders()) == 0:
+            PlgLogger().log(
+                message=f"Error while loading model '{self.message.model_name}': no model directory found. Please set a model directory in Processing options.",
+                log_level=Qgis.MessageLevel.Critical,
+            )
+            return
+
+        model_dest_path = (
+            Path(ModelerUtils.modelsFolders()[0]) / "qchat" / temp_file_path.name
+        )
+        model_dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+        shutil.copyfile(str(temp_file_path), str(model_dest_path))
+        QgsApplication.processingRegistry().providerById("model").refreshAlgorithms()
+
+    def on_click(self, column: int) -> None:
+        if column == MESSAGE_COLUMN:
+            self.load_graphical_model()
+
+    @property
+    def liked_message(self) -> str:
+        return f"<MODEL {self.message.model_name} [{self.message.model_group or self.tr('no group')}]>"
+
+    @property
+    def can_be_copied_to_clipboard(self) -> bool:
+        return True
+
+    def copy_to_clipboard(self) -> None:
+        QgsApplication.instance().clipboard().setText(self.message.raw_xml)
+
+
+class QChatScriptTreeWidgetItem(QChatTreeWidgetItem):
+    def __init__(self, parent: QTreeWidget, message):
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
+            message.author,
+            message.avatar,
+        )
+        self.message = message
+        self.init_time_and_author()
+        self.setToolTip(MESSAGE_COLUMN, self.liked_message)
+
+        # set foreground color if sent by user
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
+
+        script_button = QPushButton(
+            self.tr("Script '{script}' - click to load").format(
+                script=self.message.name,
+            )
+        )
+        script_button.setIcon(QIcon(QgsApplication.iconPath("processingScript.svg")))
+        script_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        script_button.setToolTip(self.liked_message)
+        script_button.clicked.connect(self.load_script)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, script_button)
+
+    def load_script(self) -> None:
+        temp_file_path = Path(tempfile.gettempdir()) / f"{self.message.name}.py"
+        with open(temp_file_path, "w", encoding="utf-8") as f:
+            f.write(self.message.raw_pycode)
+
+        script_dest_path = (
+            Path(ScriptUtils.scriptsFolders()[0]) / "qchat" / temp_file_path.name
+        )
+        script_dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+        shutil.copyfile(str(temp_file_path), str(script_dest_path))
+        QgsApplication.processingRegistry().providerById("script").refreshAlgorithms()
+
+    def on_click(self, column: int) -> None:
+        if column == MESSAGE_COLUMN:
+            self.load_script()
+
+    @property
+    def liked_message(self) -> str:
+        return f"<SCRIPT {self.message.name}>"
+
+    @property
+    def can_be_copied_to_clipboard(self) -> bool:
+        return True
+
+    def copy_to_clipboard(self) -> None:
+        QgsApplication.instance().clipboard().setText(self.message.raw_pycode)
