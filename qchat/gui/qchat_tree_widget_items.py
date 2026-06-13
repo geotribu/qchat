@@ -21,6 +21,7 @@ from qgis.PyQt.QtWidgets import (
     QApplication,
     QDialog,
     QLabel,
+    QPushButton,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
@@ -182,6 +183,9 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         pass
 
+    def tr(self, text: str) -> str:
+        return self.treeWidget().tr(text)
+
 
 class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
     def __init__(self, parent: QTreeWidget, text: str, timestamp: Optional[int] = None):
@@ -259,22 +263,32 @@ class QChatImageTreeWidgetItem(QChatTreeWidgetItem):
         self.pixmap = QPixmap()
         data = base64.b64decode(message.image_data)
         self.pixmap.loadFromData(data)
-        label = QLabel(self.parent())
+
+        image_button = QPushButton(self.tr("Image - click to view"))
+        scaled = self.pixmap.scaledToHeight(
+            MAX_IMAGE_ITEM_HEIGHT, Qt.TransformationMode.SmoothTransformation
+        )
+        image_button.setIcon(QIcon(scaled))
+        image_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        image_button.clicked.connect(self.show_image)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, image_button)
+
+    def show_image(self) -> None:
+        dialog = QDialog(self.treeWidget())
+        dialog.setWindowTitle(
+            self.tr("QChat image sent by {author}").format(author=self.author)
+        )
+        layout = QVBoxLayout()
+        label = QLabel()
         label.setPixmap(self.pixmap)
-        label.setMaximumSize(label.sizeHint().width(), MAX_IMAGE_ITEM_HEIGHT)
-        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, label)
+        layout.addWidget(label)
+        dialog.setLayout(layout)
+        dialog.setModal(True)
+        dialog.show()
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            dialog = QDialog(self.treeWidget())
-            dialog.setWindowTitle(f"QChat image {self.message.author}")
-            layout = QVBoxLayout()
-            label = QLabel()
-            label.setPixmap(self.pixmap)
-            layout.addWidget(label)
-            dialog.setLayout(layout)
-            dialog.setModal(True)
-            dialog.show()
+            self.show_image()
 
     @property
     def liked_message(self) -> str:
@@ -298,38 +312,49 @@ class QChatGeojsonTreeWidgetItem(QChatTreeWidgetItem):
         )
         self.message = message
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        vector_layer_button = QPushButton(
+            self.tr("Layer '{layer}' (#{nb}) - click to load").format(
+                layer=self.message.layer_name,
+                nb=len(self.message.geojson["features"]),
+                crs=self.message.crs_authid,
+            )
+        )
+        vector_layer_button.setIcon(
+            QIcon(QgsApplication.iconPath("mActionAddLayer.svg"))
+        )
+        vector_layer_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        vector_layer_button.setToolTip(self.liked_message)
+        vector_layer_button.clicked.connect(self.load_layer_from_geojson)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, vector_layer_button)
+
+    def load_layer_from_geojson(self) -> None:
+        temp_directory = Path(tempfile.gettempdir())
+        save_path = temp_directory / f"{self.message.layer_name}.geojson"
+        with open(save_path, "w") as file:
+            json.dump(self.message.geojson, file)
+
+        save_style_path = temp_directory / f"{self.message.layer_name}_style.qml"
+        with open(save_style_path, "w", encoding="utf-8") as style_file:
+            style_file.write(self.message.style)
+
+        layer = QgsVectorLayer(str(save_path), self.message.layer_name, "ogr")
+        layer.setCrs(QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt))
+        layer.loadNamedStyle(
+            str(save_style_path),
+            loadFromLocalDb=False,
+            categories=QgsMapLayer.StyleCategory.AllStyleCategories,
+        )
+        QgsProject.instance().addMapLayer(layer)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # save geojson to temp file
-            save_path = (
-                Path(tempfile.gettempdir()) / f"{self.message.layer_name}.geojson"
-            )
-            with open(save_path, "w") as file:
-                json.dump(self.message.geojson, file)
-
-            # save QML style to temp file
-            save_style_path = (
-                Path(tempfile.gettempdir()) / f"{self.message.layer_name}_style.qml"
-            )
-            with open(save_style_path, "w", encoding="utf-8") as style_file:
-                style_file.write(self.message.style)
-
-            # load geojson file into QGIS
-            layer = QgsVectorLayer(str(save_path), self.message.layer_name, "ogr")
-            layer.setCrs(QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt))
-            layer.loadNamedStyle(
-                str(save_style_path),
-                loadFromLocalDb=False,
-                categories=QgsMapLayer.StyleCategory.AllStyleCategories,
-            )
-            QgsProject.instance().addMapLayer(layer)
+            self.load_layer_from_geojson()
 
     @property
     def liked_message(self) -> str:
@@ -356,18 +381,28 @@ class QChatCrsTreeWidgetItem(QChatTreeWidgetItem):
         )
         self.message = message
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        crs_button = QPushButton(
+            self.tr("CRS ({crs}) - click to set").format(crs=self.message.crs_authid)
+        )
+        crs_button.setIcon(QIcon(QgsApplication.iconPath("mActionSetProjection.svg")))
+        crs_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        crs_button.setToolTip(self.liked_message)
+        crs_button.clicked.connect(self.set_project_crs)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, crs_button)
+
+    def set_project_crs(self) -> None:
+        crs = QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt)
+        QgsProject.instance().setCrs(crs)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # set current QGIS project CRS to the message one
-            crs = QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt)
-            QgsProject.instance().setCrs(crs)
+            self.set_project_crs()
 
     @property
     def liked_message(self) -> str:
@@ -394,28 +429,40 @@ class QChatBboxTreeWidgetItem(QChatTreeWidgetItem):
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        bbox_button = QPushButton(
+            self.tr("BBOX ({crs}) - click to fit").format(crs=self.message.crs_authid)
+        )
+        bbox_button.setIcon(
+            QIcon(QgsApplication.iconPath("mActionViewExtentInCanvas.svg"))
+        )
+        bbox_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        bbox_button.setToolTip(self.liked_message)
+        bbox_button.clicked.connect(self.zoom_to_bbox)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, bbox_button)
+
+    def zoom_to_bbox(self) -> None:
+        project = QgsProject.instance()
+        tr = QgsCoordinateTransform(
+            QgsCoordinateReferenceSystem(self.message.crs_wkt),
+            project.crs(),
+            project,
+        )
+        rect = QgsRectangle(
+            tr.transform(QgsPointXY(self.message.xmin, self.message.ymin)),
+            tr.transform(QgsPointXY(self.message.xmax, self.message.ymax)),
+        )
+        self.canvas.setExtent(rect)
+        self.canvas.refresh()
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # set current canvas extent to the received one
-            project = QgsProject.instance()
-            tr = QgsCoordinateTransform(
-                QgsCoordinateReferenceSystem(self.message.crs_wkt),
-                project.crs(),
-                project,
-            )
-            rect = QgsRectangle(
-                tr.transform(QgsPointXY(self.message.xmin, self.message.ymin)),
-                tr.transform(QgsPointXY(self.message.xmax, self.message.ymax)),
-            )
-            self.canvas.setExtent(rect)
-            self.canvas.refresh()
+            self.zoom_to_bbox()
 
     @property
     def liked_message(self) -> str:
@@ -444,17 +491,26 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
         self.message = message
         self.canvas = canvas
         self.init_time_and_author()
-        self.setText(MESSAGE_COLUMN, self.liked_message)
         self.setToolTip(MESSAGE_COLUMN, self.liked_message)
 
         # set foreground color if sent by user
         if message.author == self.settings.nickname:
             self.set_foreground_color(self.settings.color_self)
 
+        position_button = QPushButton(self.tr("Position - click to move to"))
+        position_button.setIcon(QIcon(QgsApplication.iconPath("mActionPanTo.svg")))
+        position_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        position_button.setToolTip(self.liked_message)
+        position_button.clicked.connect(self.move_to_position)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, position_button)
+
+    def move_to_position(self) -> None:
+        # TODO: move QGIS canvas to received position.
+        print(self.liked_message)
+
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
-            # TODO: move QGIS canvas to received position.
-            print(self.liked_message)
+            self.move_to_position()
 
     @property
     def liked_message(self) -> str:
