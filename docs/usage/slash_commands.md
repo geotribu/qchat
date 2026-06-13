@@ -18,6 +18,7 @@ QChat supports Discord-style slash commands. Type a command starting with `/` in
 | `/flick` | QGIS is flicking the wrist | `/flick Look at the flick of QGIS !` |
 | `/wizz` | QGIS app shakes like MSN effect | `/wizz kikou` |
 | `/vortex` | QGIS is in a vortex | `/vortex Welcome to the vortex !` |
+| `/grid` | Create a square grid | `/grid 12` |
 
 ## Command Details
 
@@ -98,6 +99,18 @@ Back to 2003 and MSN messenger effects !
 ### /vortex
 
 QGIS zooms in and out like it's in a vortex.
+
+### /grid
+
+Create a square grid with a specific size, using the current extent of the map canvas.
+
+Example :
+
+```
+/grid 12
+```
+
+This will create a square grid of size 12, expressed in the coordinates of the current project's projection (e.g. degrees if `EPSG:4326`).
 
 ## Autocomplete
 

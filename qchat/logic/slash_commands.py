@@ -7,6 +7,10 @@ import random
 from dataclasses import dataclass
 from typing import Callable, Optional
 
+import processing
+from qgis.core import QgsProject
+from qgis.utils import iface
+
 from qchat.gui.effects import dizzy, flick_of_the_wrist, vortex, wizz
 
 
@@ -60,6 +64,7 @@ class SlashCommandHandler:
         "dizz": "Let QGIS shake",
         "flick": "Look at QGIS flicking the wrist",
         "wizz": "Make the entire QGIS application shake like MSN effect",
+        "grid": "Generate a grid layer on the current extent",
     }
 
     def __init__(self):
@@ -77,6 +82,7 @@ class SlashCommandHandler:
             "flick": self.cmd_flick,
             "wizz": self.cmd_wizz,
             "vortex": self.cmd_vortex,
+            "grid": self.cmd_grid,
         }
 
     def get_command_list(self) -> list[str]:
@@ -282,6 +288,57 @@ class SlashCommandHandler:
         return SlashCommandResult(
             success=True, local_action=lambda: ("show_message_bar", args)
         )
+
+    def cmd_grid(self, args: str) -> SlashCommandResult:
+        """Grid command, creates a square grid in QGIS, using the extent of the current map canvas.
+
+        :param args: size of the grid cells in map units (e.g., "1000" for 1000x1000 units)
+        :return: SlashCommandResult
+        """
+
+        if not args:
+            return SlashCommandResult(
+                success=False,
+                error="No size provided. Use /grid [size]",
+            )
+
+        try:
+            tokens = args.lower().split(" ")
+
+            if len(tokens) > 1:
+                raise ValueError("Too many arguments")
+
+            size = int(tokens[0])
+
+            alg_params = {
+                "TYPE": 2,  # 0: point, 1: line, 2: rectangle, 3: diamond, 4: hexagon
+                "EXTENT": iface.mapCanvas().extent(),
+                "HSPACING": size,
+                "VSPACING": size,
+                "HOVERLAY": 0,
+                "VOVERLAY": 0,
+                "CRS": QgsProject.instance().crs(),
+                "OUTPUT": "memory:",
+            }
+
+            result = processing.run("qgis:creategrid", alg_params)
+            grid = result["OUTPUT"]
+
+            QgsProject.instance().addMapLayer(grid)
+
+            return SlashCommandResult(
+                success=True,
+                local_action=lambda: (
+                    "show_message_bar",
+                    "Generated a grid with {size} size.".format(size=size),
+                ),
+            )
+
+        except (ValueError, IndexError):
+            return SlashCommandResult(
+                success=False,
+                error="Invalid format. Use /grid [size]",
+            )
 
     def cmd_list(self, args: str) -> SlashCommandResult:
         """List all available commands.
