@@ -505,8 +505,14 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
         self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, position_button)
 
     def move_to_position(self) -> None:
-        # TODO: move QGIS canvas to received position.
-        print(self.liked_message)
+        source_crs = QgsCoordinateReferenceSystem.fromWkt(self.message.crs_wkt)
+        dest_crs = self.canvas.mapSettings().destinationCrs()
+        transform = QgsCoordinateTransform(source_crs, dest_crs, QgsProject.instance())
+
+        point = transform.transform(QgsPointXY(self.message.x, self.message.y))
+
+        self.canvas.setCenter(point)
+        self.canvas.refresh()
 
     def on_click(self, column: int) -> None:
         if column == MESSAGE_COLUMN:
