@@ -16,6 +16,7 @@ from qgis.core import (
     QgsJsonExporter,
     QgsMapLayer,
     QgsPointXY,
+    QgsProcessingAlgorithm,
     QgsProcessingModelAlgorithm,
     QgsProject,
 )
@@ -53,6 +54,7 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_MODEL,
     QCHAT_MESSAGE_TYPE_NEWCOMER,
     QCHAT_MESSAGE_TYPE_POSITION,
+    QCHAT_MESSAGE_TYPE_SCRIPT,
     QCHAT_MESSAGE_TYPE_TEXT,
     QCHAT_NICKNAME_MAXLENGTH_DEFAULT,
     QCHAT_NICKNAME_MINLENGTH,
@@ -69,6 +71,7 @@ from qchat.gui.qchat_tree_widget_items import (
     QChatMessageWrapDelegate,
     QChatModelTreeWidgetItem,
     QChatPositionTreeWidgetItem,
+    QChatScriptTreeWidgetItem,
     QChatTextTreeWidgetItem,
 )
 from qchat.logic.qchat_api_client import QChatApiClient
@@ -83,6 +86,7 @@ from qchat.logic.qchat_messages import (
     QChatNbUsersMessage,
     QChatNewcomerMessage,
     QChatPositionMessage,
+    QChatScriptMessage,
     QChatTextMessage,
     QChatUncompliantMessage,
 )
@@ -98,6 +102,7 @@ MARKER_VALUE = "---"
 try:
     from processing.gui.ContextAction import ContextAction
     from processing.gui.ProviderActions import ProviderContextMenuActions
+    from processing.script import ScriptUtils
 
     class QChatSendModelAction(ContextAction):
         def __init__(self, qchat_widget: "QChatWidget"):
@@ -114,9 +119,28 @@ try:
         def execute(self) -> None:
             self.qchat_widget.on_send_model_to_qchat(self.itemData)
 
+    class QChatSendScriptAction(ContextAction):
+        def __init__(self, qchat_widget: "QChatWidget"):
+            super().__init__()
+            self.name = self.tr("Send on QChat")
+            self.qchat_widget = qchat_widget
+
+        def isEnabled(self) -> bool:
+            return (
+                isinstance(self.itemData, QgsProcessingAlgorithm)
+                and self.itemData.provider().id() == "script"
+            )
+
+        def icon(self) -> QIcon:
+            return QgsApplication.getThemeIcon("mMessageLog.svg")
+
+        def execute(self) -> None:
+            self.qchat_widget.on_send_script_to_qchat(self.itemData)
+
 except ImportError:
     ProviderContextMenuActions = None
     QChatSendModelAction = None
+    QChatSendScriptAction = None
 
 
 class QChatWidget(QgsDockWidget):
@@ -243,6 +267,7 @@ class QChatWidget(QgsDockWidget):
             self.on_position_message_received
         )
         self.qchat_ws.model_message_received.connect(self.on_model_message_received)
+        self.qchat_ws.script_message_received.connect(self.on_script_message_received)
 
         # send message signal listener
         self.lne_message.returnPressed.connect(self.on_send_button_clicked)
@@ -346,6 +371,15 @@ class QChatWidget(QgsDockWidget):
             )
         else:
             self._qchat_send_model_action = None
+
+        # context menu on script in processing toolbox for sending via QChat
+        if QChatSendScriptAction is not None:
+            self._qchat_send_script_action = QChatSendScriptAction(self)
+            ProviderContextMenuActions.registerProviderContextMenuActions(
+                [self._qchat_send_script_action]
+            )
+        else:
+            self._qchat_send_script_action = None
 
         # context menu on right-click on the canvas for sending position in QChat
         self.iface.mapCanvas().contextMenuAboutToShow.connect(
@@ -763,6 +797,13 @@ Channels:
         item = QChatModelTreeWidgetItem(self.twg_chat, message)
         self.add_tree_widget_item(item)
 
+    def on_script_message_received(self, message: QChatScriptMessage) -> None:
+        """
+        Launched when a SCRIPT message is received from the websocket
+        """
+        item = QChatScriptTreeWidgetItem(self.twg_chat, message)
+        self.add_tree_widget_item(item)
+
     # endregion
 
     def on_message_clicked(self, item: QTreeWidgetItem, column: int) -> None:
@@ -1142,6 +1183,13 @@ Are you sure ?"""),
             )
             self._qchat_send_model_action = None
 
+        # remove context menu on script in processing toolbox
+        if self._qchat_send_script_action is not None:
+            ProviderContextMenuActions.deregisterProviderContextMenuActions(
+                [self._qchat_send_script_action]
+            )
+            self._qchat_send_script_action = None
+
     def check_cheatcode(self, text: str) -> bool:
         """
         Checks if a received message contains a cheatcode
@@ -1258,6 +1306,60 @@ Are you sure ?""").format(model_name=model.displayName()),
             model_name=model.displayName(),
             model_group=model.group() or None,
             raw_xml=raw_xml,
+        )
+        self.qchat_ws.send_message(message)
+
+    def on_send_script_to_qchat(self, script: QgsProcessingAlgorithm) -> None:
+        if not self.connected:
+            self.log(
+                message=self.tr(
+                    "Not connected to QChat. Please connect to a channel first"
+                ),
+                application="QChat",
+                log_level=Qgis.MessageLevel.Critical,
+                push=self.settings.notify_push_info,
+                duration=self.settings.notify_push_duration,
+            )
+            return
+
+        script_path = ScriptUtils.findAlgorithmSource(script.name())
+        if not script_path:
+            self.log(
+                message=self.tr(
+                    "Script has no source file. Please save the script before sending it."
+                ),
+                application=self.tr("QChat"),
+                log_level=Qgis.MessageLevel.Critical,
+                push=self.settings.notify_push_info,
+                duration=self.settings.notify_push_duration,
+            )
+            return
+
+        if (
+            self.settings.confirm_before_send
+            and QMessageBox.warning(
+                self,
+                self.tr("Sure ?"),
+                self.tr("""The "{script_name}" script will be sent to QChat.
+
+Are you sure ?""").format(script_name=script.displayName()),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            != QMessageBox.StandardButton.Yes
+        ):
+            return
+
+        with open(script_path, "r", encoding="utf-8") as script_file:
+            raw_pycode = script_file.read()
+
+        message = QChatScriptMessage(
+            type=QCHAT_MESSAGE_TYPE_SCRIPT,
+            id=str(uuid4()),
+            timestamp=int(datetime.now().timestamp()),
+            author=self.settings.nickname,
+            avatar=self.settings.avatar,
+            name=script.displayName(),
+            raw_pycode=raw_pycode,
         )
         self.qchat_ws.send_message(message)
 

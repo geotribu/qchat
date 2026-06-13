@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 from processing.modeler.ModelerUtils import ModelerUtils
+from processing.script import ScriptUtils
 from qgis.core import (
     Qgis,
     QgsApplication,
@@ -610,3 +611,59 @@ class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
 
     def copy_to_clipboard(self) -> None:
         QgsApplication.instance().clipboard().setText(self.message.raw_xml)
+
+
+class QChatScriptTreeWidgetItem(QChatTreeWidgetItem):
+    def __init__(self, parent: QTreeWidget, message):
+        super().__init__(
+            parent,
+            QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
+            message.author,
+            message.avatar,
+        )
+        self.message = message
+        self.init_time_and_author()
+        self.setToolTip(MESSAGE_COLUMN, self.liked_message)
+
+        # set foreground color if sent by user
+        if message.author == self.settings.nickname:
+            self.set_foreground_color(self.settings.color_self)
+
+        script_button = QPushButton(
+            self.tr("Script '{script}' - click to load").format(
+                script=self.message.name,
+            )
+        )
+        script_button.setIcon(QIcon(QgsApplication.iconPath("processingScript.svg")))
+        script_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        script_button.setToolTip(self.liked_message)
+        script_button.clicked.connect(self.load_script)
+        self.treeWidget().setItemWidget(self, MESSAGE_COLUMN, script_button)
+
+    def load_script(self) -> None:
+        temp_file_path = Path(tempfile.gettempdir()) / f"{self.message.name}.py"
+        with open(temp_file_path, "w", encoding="utf-8") as f:
+            f.write(self.message.raw_pycode)
+
+        script_dest_path = (
+            Path(ScriptUtils.scriptsFolders()[0]) / "qchat" / temp_file_path.name
+        )
+        script_dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+        shutil.copyfile(str(temp_file_path), str(script_dest_path))
+        QgsApplication.processingRegistry().providerById("script").refreshAlgorithms()
+
+    def on_click(self, column: int) -> None:
+        if column == MESSAGE_COLUMN:
+            self.load_script()
+
+    @property
+    def liked_message(self) -> str:
+        return f"<SCRIPT {self.message.name}>"
+
+    @property
+    def can_be_copied_to_clipboard(self) -> bool:
+        return True
+
+    def copy_to_clipboard(self) -> None:
+        QgsApplication.instance().clipboard().setText(self.message.raw_pycode)

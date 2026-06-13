@@ -98,3 +98,11 @@ class QChatModelMessage(QChatMessage):
     model_name: str
     model_group: Optional[str]
     raw_xml: str
+
+
+@dataclass(init=True, frozen=True)
+class QChatScriptMessage(QChatMessage):
+    author: str
+    avatar: Optional[str]
+    name: str
+    raw_pycode: str

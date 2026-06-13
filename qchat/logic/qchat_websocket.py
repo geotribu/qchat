@@ -19,6 +19,7 @@ from qchat.constants import (
     QCHAT_MESSAGE_TYPE_NB_USERS,
     QCHAT_MESSAGE_TYPE_NEWCOMER,
     QCHAT_MESSAGE_TYPE_POSITION,
+    QCHAT_MESSAGE_TYPE_SCRIPT,
     QCHAT_MESSAGE_TYPE_TEXT,
     QCHAT_MESSAGE_TYPE_UNCOMPLIANT,
 )
@@ -34,6 +35,7 @@ from qchat.logic.qchat_messages import (
     QChatNbUsersMessage,
     QChatNewcomerMessage,
     QChatPositionMessage,
+    QChatScriptMessage,
     QChatTextMessage,
     QChatUncompliantMessage,
 )
@@ -84,6 +86,7 @@ class QChatWebsocket(QObject):
     nb_users_message_received = pyqtSignal(QChatNbUsersMessage)
     newcomer_message_received = pyqtSignal(QChatNewcomerMessage)
     position_message_received = pyqtSignal(QChatPositionMessage)
+    script_message_received = pyqtSignal(QChatScriptMessage)
     text_message_received = pyqtSignal(QChatTextMessage)
     uncompliant_message_received = pyqtSignal(QChatUncompliantMessage)
 
@@ -168,6 +171,8 @@ class QChatWebsocket(QObject):
                 self.position_message_received.emit(QChatPositionMessage(**message))
             elif msg_type == QCHAT_MESSAGE_TYPE_MODEL:
                 self.model_message_received.emit(QChatModelMessage(**message))
+            elif msg_type == QCHAT_MESSAGE_TYPE_SCRIPT:
+                self.script_message_received.emit(QChatScriptMessage(**message))
         except KeyError:
             text = self.tr(
                 "Unintelligible message received. Please make sure you are using the latest plugin version. (type={type})"
