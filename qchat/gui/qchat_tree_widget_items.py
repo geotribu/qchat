@@ -43,6 +43,7 @@ from qchat.logic.qchat_messages import (
     QChatImageMessage,
     QChatModelMessage,
     QChatPositionMessage,
+    QChatScriptMessage,
     QChatTextMessage,
 )
 from qchat.toolbelt import PlgOptionsManager
@@ -546,12 +547,13 @@ class QChatPositionTreeWidgetItem(QChatTreeWidgetItem):
 
 
 class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
-    def __init__(self, parent: QTreeWidget, message: QChatModelMessage):
+    def __init__(self, parent, message: QChatModelMessage):
         super().__init__(
             parent,
             QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
             message.author,
             message.avatar,
+            message_id=message.id,
         )
         self.message = message
         self.init_time_and_author()
@@ -622,12 +624,13 @@ class QChatModelTreeWidgetItem(QChatTreeWidgetItem):
 
 
 class QChatScriptTreeWidgetItem(QChatTreeWidgetItem):
-    def __init__(self, parent: QTreeWidget, message):
+    def __init__(self, parent, message: QChatScriptMessage):
         super().__init__(
             parent,
             QDateTime.fromSecsSinceEpoch(message.timestamp).toLocalTime(),
             message.author,
             message.avatar,
+            message_id=message.id,
         )
         self.message = message
         self.init_time_and_author()

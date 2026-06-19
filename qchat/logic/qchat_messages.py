@@ -104,6 +104,7 @@ class QChatModelMessage(QChatMessage):
     model_name: str
     model_group: Optional[str]
     raw_xml: str
+    in_reply_to_id: Optional[str] = None
 
 
 @dataclass(init=True, frozen=True)
@@ -112,3 +113,4 @@ class QChatScriptMessage(QChatMessage):
     avatar: Optional[str]
     name: str
     raw_pycode: str
+    in_reply_to_id: Optional[str] = None
