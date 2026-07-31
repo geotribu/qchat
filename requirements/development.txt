@@ -6,7 +6,7 @@ black
 flake8-builtins>=3.1.0
 flake8-eradicate>=1.5
 flake8-isort>=6.1
-flake8-qgis>=1
+flake8-qgis>=2.1.0
 
 isort>=5.13
 pre-commit>=4,<5
