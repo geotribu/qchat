@@ -5,7 +5,7 @@ import tempfile
 from datetime import datetime
 from functools import partial
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union, cast
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -22,7 +22,15 @@ from qgis.core import (
 )
 from qgis.gui import QgisInterface, QgsDockWidget, QgsMapMouseEvent
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QAbstractListModel, QPoint, QStringListModel, Qt, QTimer
+from qgis.PyQt.QtCore import (
+    QAbstractListModel,
+    QEvent,
+    QObject,
+    QPoint,
+    QStringListModel,
+    Qt,
+    QTimer,
+)
 from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -30,6 +38,7 @@ from qgis.PyQt.QtWidgets import (
     QFileDialog,
     QMenu,
     QMessageBox,
+    QTreeWidget,
     QTreeWidgetItem,
     QWidget,
 )
@@ -73,6 +82,7 @@ from qchat.gui.qchat_tree_widget_items import (
     QChatPositionTreeWidgetItem,
     QChatScriptTreeWidgetItem,
     QChatTextTreeWidgetItem,
+    QChatTreeWidgetItem,
 )
 from qchat.logic.qchat_api_client import QChatApiClient
 from qchat.logic.qchat_messages import (
@@ -207,6 +217,11 @@ class QChatWidget(QgsDockWidget):
         self.btn_connect.pressed.connect(self.on_connect_button_clicked)
         self.btn_connect.setIcon(QIcon(QgsApplication.iconPath("mIconConnect.svg")))
 
+        # message id -> tree widget item, used for threading
+        self.message_items: dict[str, QTreeWidgetItem] = {}
+        self.reply_to_id: Optional[str] = None
+        self.reply_to_author: Optional[str] = None
+
         # tree widget initialization
         self.twg_chat.setHeaderLabels(
             [
@@ -268,6 +283,8 @@ class QChatWidget(QgsDockWidget):
         )
         self.qchat_ws.model_message_received.connect(self.on_model_message_received)
         self.qchat_ws.script_message_received.connect(self.on_script_message_received)
+
+        self.lne_message.installEventFilter(self)
 
         # send message signal listener
         self.lne_message.returnPressed.connect(self.on_send_button_clicked)
@@ -389,6 +406,47 @@ class QChatWidget(QgsDockWidget):
         # auto reconnect to channel if needed
         if self.auto_reconnect_channel:
             self.cbb_channel.setCurrentText(self.auto_reconnect_channel)
+
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if (
+            obj is self.lne_message
+            and event.type() == QEvent.Type.KeyPress
+            and event.key() == Qt.Key.Key_Escape
+            and self.reply_to_id
+        ):
+            self.cancel_reply()
+            return True
+        return super().eventFilter(obj, event)
+
+    def _get_message_parent_item(
+        self, in_reply_to_id: Optional[str]
+    ) -> Union[QTreeWidget, QChatTreeWidgetItem]:
+        if in_reply_to_id and in_reply_to_id in self.message_items:
+            target = self.message_items[in_reply_to_id]
+            # If target is already a subitem, attach the reply at the same level
+            # (i.e. return target's parent) to keep thread depth at 1.
+            qt_parent = target.parent()
+            if isinstance(qt_parent, QChatTreeWidgetItem):
+                return cast(QChatTreeWidgetItem, qt_parent)
+            return target
+        return self.twg_chat
+
+    def cancel_reply(self) -> None:
+
+        self.reply_to_id = None
+        self.reply_to_author = None
+        self.lne_message.setPlaceholderText("")
+
+    def on_reply_to_message(self, item: QChatTreeWidgetItem) -> None:
+        """
+        Action called when the "Reply to message" action is triggered
+        """
+        self.reply_to_id = item.message_id
+        self.reply_to_author = item.author
+        self.lne_message.setPlaceholderText(
+            self.tr("< {author}... (Esc to cancel)").format(author=item.author)
+        )
+        self.lne_message.setFocus()
 
     def on_rules_button_clicked(self) -> None:
         """
@@ -565,6 +623,8 @@ Channels:
 
         self.connected = True
         self.twg_chat.clear()
+        self.message_items.clear()
+        self.cancel_reply()
         if self.settings.display_admin_messages:
             self.add_admin_message(
                 self.tr("Connected to channel '{channel}'").format(channel=channel)
@@ -646,7 +706,8 @@ Channels:
         if message.text in CHEATCODES:
             return
 
-        item = QChatTextTreeWidgetItem(self.twg_chat, message)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatTextTreeWidgetItem(parent, message)
 
         # check if message mentions current user
         words = message.text.split(" ")
@@ -668,14 +729,15 @@ Channels:
                         self.settings.ring_tone, self.settings.sound_volume
                     )
 
-        self.add_tree_widget_item(item)
+        self.add_tree_widget_item(item, message.id)
 
     def on_image_message_received(self, message: QChatImageMessage) -> None:
         """
         Launched when an image message is received from the websocket
         """
-        item = QChatImageTreeWidgetItem(self.twg_chat, message)
-        self.add_tree_widget_item(item)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatImageTreeWidgetItem(parent, message)
+        self.add_tree_widget_item(item, message.id)
 
     def on_nb_users_message_received(self, message: QChatNbUsersMessage) -> None:
         """
@@ -764,31 +826,33 @@ Channels:
         """
         Launched when a geojson message is received from the websocket
         """
-        item = QChatGeojsonTreeWidgetItem(self.twg_chat, message)
-        self.add_tree_widget_item(item)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatGeojsonTreeWidgetItem(parent, message)
+        self.add_tree_widget_item(item, message.id)
 
     def on_crs_message_received(self, message: QChatCrsMessage) -> None:
         """
         Launched when a CRS message is received from the websocket
         """
-        item = QChatCrsTreeWidgetItem(self.twg_chat, message)
-        self.add_tree_widget_item(item)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatCrsTreeWidgetItem(parent, message)
+        self.add_tree_widget_item(item, message.id)
 
     def on_bbox_message_received(self, message: QChatBboxMessage) -> None:
         """
         Launched when a BBOX message is received from the websocket
         """
-        item = QChatBboxTreeWidgetItem(self.twg_chat, message, self.iface.mapCanvas())
-        self.add_tree_widget_item(item)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatBboxTreeWidgetItem(parent, message, self.iface.mapCanvas())
+        self.add_tree_widget_item(item, message.id)
 
     def on_position_message_received(self, message: QChatPositionMessage) -> None:
         """
         Launched when a POSITION message is received from the websocket
         """
-        item = QChatPositionTreeWidgetItem(
-            self.twg_chat, message, self.iface.mapCanvas()
-        )
-        self.add_tree_widget_item(item)
+        parent = self._get_message_parent_item(message.in_reply_to_id)
+        item = QChatPositionTreeWidgetItem(parent, message, self.iface.mapCanvas())
+        self.add_tree_widget_item(item, message.id)
 
     def on_model_message_received(self, message: QChatModelMessage) -> None:
         """
@@ -818,10 +882,21 @@ Channels:
         """
         author = item.author
         # do nothing if double click on admin message
-        if author == ADMIN_MESSAGES_NICKNAME or author == self.settings.nickname:
+        if author == ADMIN_MESSAGES_NICKNAME:
             return
+
+        self.reply_to_id = item.message_id
+        self.reply_to_author = author
+        self.lne_message.setPlaceholderText(
+            self.tr("< {author}... (Esc to cancel)").format(author=author)
+        )
+
         text = self.lne_message.text()
-        self.lne_message.setText(f"{text}@{author} ")
+        if author != self.settings.nickname:
+            self.lne_message.setText(f"{text}@{author} ")
+        else:
+            self.lne_message.setText(text)
+
         self.lne_message.setFocus()
 
     def on_like_message(self, liked_author: str, msg: str) -> None:
@@ -846,6 +921,15 @@ Channels:
         item = self.twg_chat.itemAt(point)
 
         menu = QMenu(self.tr("QChat Menu"), self)
+
+        # reply to message action if possible
+        if item.can_be_replied_to:
+            reply_action = QAction(
+                QgsApplication.getThemeIcon("mMessageLog.svg"),
+                self.tr("Reply in thread"),
+            )
+            reply_action.triggered.connect(partial(self.on_reply_to_message, item))
+            menu.addAction(reply_action)
 
         # like message action if possible
         if item.can_be_liked:
@@ -926,6 +1010,8 @@ Channels:
         Action called when the clear chat button is clicked
         """
         self.twg_chat.clear()
+        self.message_items.clear()
+        self.cancel_reply()
 
     def on_send_button_clicked(self) -> None:
         """
@@ -1014,9 +1100,11 @@ Channels:
             author=nickname,
             avatar=avatar,
             text=message_text.strip(),
+            in_reply_to_id=self.reply_to_id,
         )
         self.qchat_ws.send_message(message)
         self.lne_message.setText("")
+        self.cancel_reply()
 
     def on_command_activated(self, completion: str) -> None:
         """
@@ -1157,8 +1245,16 @@ Are you sure ?"""),
         item = QChatAdminTreeWidgetItem(self.twg_chat, text, timestamp)
         self.add_tree_widget_item(item)
 
-    def add_tree_widget_item(self, item: QTreeWidgetItem) -> None:
-        self.twg_chat.addTopLevelItem(item)
+    def add_tree_widget_item(
+        self, item: QTreeWidgetItem, message_id: Optional[str] = None
+    ) -> None:
+        if message_id:
+            self.message_items[message_id] = item
+        parent_item = item.parent()
+        if parent_item:
+            parent_item.setExpanded(True)
+        else:
+            self.twg_chat.addTopLevelItem(item)
         if self.ckb_autoscroll.isChecked():
             self.twg_chat.scrollToItem(item)
 
