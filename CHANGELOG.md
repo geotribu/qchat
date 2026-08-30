@@ -2,6 +2,30 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.7.0 - 2026-08-30
+
+### Features and enhancements 🎉
+
+* build(deps): update qgis-plugin-ci requirement from <3,>=2.8 to >=2.10.0,<3 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/89
+* build(deps-dev): update flake8-qgis requirement from >=1 to >=2.1.0 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/90
+* build(deps): update sphinx-autobuild requirement from >=2024 to >=2025.8.25 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/91
+* feat(qchat): add thread logic by @gounux in https://github.com/geotribu/qchat/pull/72
+
+### Tooling 🔧
+
+* build(deps): bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/87
+* build(deps): bump actions/cache from 5 to 6 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/88
+* build(deps): bump actions/labeler from 6 to 7 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/96
+* build(deps): bump actions/setup-python from 6 to 7 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/95
+
+### Documentation 📖
+
+* chore: bump several requirements versions by @gounux in https://github.com/geotribu/qchat/pull/99
+
+### Other Changes
+
+* [pre-commit.ci] pre-commit autoupdate by @pre-commit-ci[bot] in https://github.com/geotribu/qchat/pull/94
+
 ## 1.6.0 - 2026-06-13
 
 ### Features and enhancements 🎉
