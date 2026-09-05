@@ -138,7 +138,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         return self.plg_settings.get_plg_settings()
 
     def init_time_and_author(self) -> None:
-        self.setText(TIME_COLUMN, self.datetime.toLocalTime().time().toString())
+        self.setText(TIME_COLUMN, self.datetime_format())
         self.setToolTip(TIME_COLUMN, self.datetime.date().toString())
         self.setText(AUTHOR_COLUMN, self.author)
         if self.settings.show_avatars and self.avatar:
@@ -157,6 +157,15 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         :param column: column that has been clicked
         """
         pass
+
+    def datetime_format(self) -> str:
+        """
+        Return datetime (QDatetime) in 'ddd hh:mm'
+        Used in the TIME_COLUMN of the tree widget
+        """
+        datetime_list = self.datetime.toLocalTime().toString().split()
+        datetime_formated = datetime_list[0][:3] + " " + datetime_list[3][:5]
+        return datetime_formated
 
     @property
     def can_be_replied_to(self) -> bool:
