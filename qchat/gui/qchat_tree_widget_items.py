@@ -20,7 +20,7 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtCore import QDateTime, QModelIndex, QSize, Qt
+from qgis.PyQt.QtCore import QDateTime, QLocale, QModelIndex, QSize, Qt
 from qgis.PyQt.QtGui import QBrush, QColor, QFontMetrics, QIcon, QPainter, QPixmap
 from qgis.PyQt.QtWidgets import (
     QApplication,
@@ -163,9 +163,9 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         Return datetime (QDatetime) in 'ddd hh:mm'
         Used in the TIME_COLUMN of the tree widget
         """
-        datetime_list = self.datetime.toLocalTime().toString().split()
-        datetime_formated = datetime_list[0][:3] + " " + datetime_list[3][:5]
-        return datetime_formated
+        local_datetime = self.datetime.toLocalTime()
+        locale = QLocale(QgsApplication.locale())
+        return locale.toString(local_datetime, "ddd hh:mm")
 
     @property
     def can_be_replied_to(self) -> bool:
