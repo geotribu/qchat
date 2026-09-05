@@ -138,7 +138,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         return self.plg_settings.get_plg_settings()
 
     def init_time_and_author(self) -> None:
-        self.setText(TIME_COLUMN, self.datetime_format())
+        self.setText(TIME_COLUMN, self.display_datetime_format())
         self.setToolTip(TIME_COLUMN, self.datetime.date().toString())
         self.setText(AUTHOR_COLUMN, self.author)
         if self.settings.show_avatars and self.avatar:
