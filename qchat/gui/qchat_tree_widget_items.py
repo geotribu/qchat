@@ -158,7 +158,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         pass
 
-    def datetime_format(self) -> str:
+    def display_datetime_format(self) -> str:
         """
         Return datetime (QDatetime) in 'ddd hh:mm'
         Used in the TIME_COLUMN of the tree widget
