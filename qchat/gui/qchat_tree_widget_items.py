@@ -20,7 +20,7 @@ from qgis.core import (
     QgsVectorLayer,
 )
 from qgis.gui import QgsMapCanvas
-from qgis.PyQt.QtCore import QDateTime, QModelIndex, QSize, Qt
+from qgis.PyQt.QtCore import QDateTime, QLocale, QModelIndex, QSize, Qt
 from qgis.PyQt.QtGui import QBrush, QColor, QFontMetrics, QIcon, QPainter, QPixmap
 from qgis.PyQt.QtWidgets import (
     QApplication,
@@ -138,7 +138,7 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         return self.plg_settings.get_plg_settings()
 
     def init_time_and_author(self) -> None:
-        self.setText(TIME_COLUMN, self.datetime.toLocalTime().time().toString())
+        self.setText(TIME_COLUMN, self.display_datetime_format())
         self.setToolTip(TIME_COLUMN, self.datetime.date().toString())
         self.setText(AUTHOR_COLUMN, self.author)
         if self.settings.show_avatars and self.avatar:
@@ -157,6 +157,15 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         :param column: column that has been clicked
         """
         pass
+
+    def display_datetime_format(self) -> str:
+        """
+        Return datetime (QDatetime) in 'ddd hh:mm'
+        Used in the TIME_COLUMN of the tree widget
+        """
+        local_datetime = self.datetime.toLocalTime()
+        locale = QLocale(QgsApplication.locale())
+        return locale.toString(local_datetime, "ddd hh:mm")
 
     @property
     def can_be_replied_to(self) -> bool:
