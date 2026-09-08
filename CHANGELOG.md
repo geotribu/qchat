@@ -2,6 +2,22 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.7.1 - 2026-09-08
+
+### Features and enhancements 🎉
+
+* build(deps-dev): update pre-commit requirement from <5,>=4.6.1 to >=4.6.2,<5 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/103
+* build(deps-dev): update isort requirement from >=8.0.1 to >=9.0.1 in /requirements by @dependabot[bot] in https://github.com/geotribu/qchat/pull/104
+* Change date time format in the tree widget by @antoine2trem in https://github.com/geotribu/qchat/pull/105
+
+### Tooling 🔧
+
+* build(deps): bump dawidd6/action-download-artifact from 21 to 24 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/102
+
+## New Contributors
+
+* @antoine2trem made their first contribution in https://github.com/geotribu/qchat/pull/105
+
 ## 1.7.0 - 2026-08-30
 
 ### Features and enhancements 🎉
