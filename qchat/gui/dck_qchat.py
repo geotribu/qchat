@@ -196,9 +196,7 @@ class QChatWidget(QgsDockWidget):
         # set channel to autoreconnect to when widget will open
         self.auto_reconnect_channel = auto_reconnect_channel
 
-        # rules and status signal listener
-        self.btn_rules.pressed.connect(self.on_rules_button_clicked)
-        self.btn_rules.setIcon(QIcon(QgsApplication.iconPath("processingResult.svg")))
+        # status signal listener
         self.btn_status.pressed.connect(self.on_status_button_clicked)
         self.btn_status.setIcon(QIcon(QgsApplication.iconPath("mIconInfo.svg")))
 
@@ -323,10 +321,6 @@ class QChatWidget(QgsDockWidget):
 
     def load_settings(self) -> None:
         """Load options from QgsSettings into UI form."""
-        parsed_instance_url = urlparse(self.settings.instance_uri)
-        self.grb_instance.setTitle(
-            self.tr("Instance: {uri}").format(uri=parsed_instance_url.netloc)
-        )
         self.grb_user.setTitle(
             self.tr("User: {nickname}").format(nickname=self.settings.nickname)
         )
@@ -448,35 +442,6 @@ class QChatWidget(QgsDockWidget):
             self.tr("< {author}... (Esc to cancel)").format(author=item.author)
         )
         self.lne_message.setFocus()
-
-    def on_rules_button_clicked(self) -> None:
-        """
-        Action called when clicking on "Rules" button
-        """
-        try:
-            rules = self.qchat_client.get_rules()
-            QMessageBox.information(
-                self,
-                self.tr("Instance rules"),
-                self.tr("""Instance rules ({instance_url}):
-
-{rules}
-
-Main language: {main_lang}
-Max message length: {max_message_length}
-Min nickname length: {min_nickname_length}
-Max nickname length: {max_nickname_length}""").format(
-                    instance_url=self.qchat_client.instance_uri,
-                    rules=rules["rules"],
-                    main_lang=rules["main_lang"],
-                    max_message_length=rules["max_message_length"],
-                    min_nickname_length=rules["min_author_length"],
-                    max_nickname_length=rules["max_author_length"],
-                ),
-            )
-        except Exception as exc:
-            self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
-            self.log(message=str(exc), log_level=Qgis.MessageLevel.Critical)
 
     def on_status_button_clicked(self) -> None:
         """
@@ -745,7 +710,10 @@ Channels:
         Launched when a nb_users message is received from the websocket
         """
         self.grb_qchat.setTitle(
-            self.tr("QChat - channel: {channel} - {nb_users} {user_txt}").format(
+            self.tr(
+                "QChat - {instance} - channel: {channel} - {nb_users} {user_txt}"
+            ).format(
+                instance=urlparse(self.settings.instance_uri).netloc,
                 channel=self.current_channel,
                 nb_users=message.nb_users,
                 user_txt=self.tr("user") if message.nb_users <= 1 else self.tr("users"),
