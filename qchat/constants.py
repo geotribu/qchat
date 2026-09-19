@@ -34,6 +34,8 @@ CHEATCODE_10OCLOCK: str = "its10oclock"
 CHEATCODE_QGIS_PRO_LICENSE: str = "qgisprolicense"
 CHEATCODE_WIZZ: str = "wizz"
 CHEATCODE_VORTEX: str = "spaceandtime"
+CHEATCODE_GEOTRIGPT: str = "vAIsectomy"
+CHEATCODE_NOTOKENS: str = "jeanclaude"
 
 CHEATCODES = [
     CHEATCODE_DIZZY,
@@ -43,6 +45,8 @@ CHEATCODES = [
     CHEATCODE_QGIS_PRO_LICENSE,
     CHEATCODE_WIZZ,
     CHEATCODE_VORTEX,
+    CHEATCODE_GEOTRIGPT,
+    CHEATCODE_NOTOKENS,
 ]
 
 # QChat message types

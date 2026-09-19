@@ -50,7 +50,9 @@ from qchat.constants import (
     CHEATCODE_10OCLOCK,
     CHEATCODE_DIZZY,
     CHEATCODE_FLICK,
+    CHEATCODE_GEOTRIGPT,
     CHEATCODE_IAMAROBOT,
+    CHEATCODE_NOTOKENS,
     CHEATCODE_QGIS_PRO_LICENSE,
     CHEATCODE_VORTEX,
     CHEATCODE_WIZZ,
@@ -69,7 +71,14 @@ from qchat.constants import (
     QCHAT_NICKNAME_MINLENGTH,
 )
 from qchat.gui.complete import QChatTextMessageCompleter
-from qchat.gui.effects import dizzy, flick_of_the_wrist, vortex, wizz
+from qchat.gui.effects import (
+    dizzy,
+    flick_of_the_wrist,
+    geotrigpt,
+    jeanclaude,
+    vortex,
+    wizz,
+)
 from qchat.gui.qchat_tree_widget_items import (
     MESSAGE_COLUMN,
     QChatAdminTreeWidgetItem,
@@ -1310,6 +1319,16 @@ Are you sure ?"""),
         # make QGIS canvas zoom in and out like it's in a vortex
         if text == CHEATCODE_VORTEX:
             vortex()
+            return True
+
+        # open GeotriGPT, the AI Agent powered by Geotribu(c)
+        if text == CHEATCODE_GEOTRIGPT:
+            geotrigpt()
+            return True
+
+        # warn that the user has reached the token usage limit
+        if text == CHEATCODE_NOTOKENS:
+            jeanclaude()
             return True
 
         # QGIS pro license expiration message
