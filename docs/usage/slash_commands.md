@@ -19,6 +19,8 @@ QChat supports Discord-style slash commands. Type a command starting with `/` in
 | `/wizz` | QGIS app shakes like MSN effect | `/wizz kikou` |
 | `/vortex` | QGIS is in a vortex | `/vortex Welcome to the vortex !` |
 | `/grid` | Create a square grid | `/grid 12` |
+| `/geotrigpt` | Interact with GeotriGPT, the AI agent powered by Geotribu(c) | `/geotrigpt` |
+| `/jeanclaude` | Warn that you run out of GenAI tokens | `/jeanclaude` |
 
 ## Command Details
 
@@ -111,6 +113,14 @@ Example :
 ```
 
 This will create a square grid of size 12, expressed in the coordinates of the current project's projection (e.g. degrees if `EPSG:4326`).
+
+### /geotrigpt
+
+Interact with GeotriGPT, the AI Agent powered by Geotribu(c).
+
+### /jeanclaude
+
+Warn that you run out of GenAI tokens.
 
 ## Autocomplete
 
