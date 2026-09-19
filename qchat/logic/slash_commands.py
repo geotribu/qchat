@@ -11,7 +11,14 @@ import processing
 from qgis.core import QgsProject
 from qgis.utils import iface
 
-from qchat.gui.effects import dizzy, flick_of_the_wrist, vortex, wizz
+from qchat.gui.effects import (
+    dizzy,
+    flick_of_the_wrist,
+    geotrigpt,
+    jeanclaude,
+    vortex,
+    wizz,
+)
 
 
 @dataclass
@@ -65,6 +72,8 @@ class SlashCommandHandler:
         "flick": "Look at QGIS flicking the wrist",
         "wizz": "Make the entire QGIS application shake like MSN effect",
         "grid": "Generate a grid layer on the current extent",
+        "geotrigpt": "Interact with the GeoTribu AI assistant",
+        "jeanclaude": "Trigger the Jean-Claude(c) cheatcode",
     }
 
     def __init__(self):
@@ -83,6 +92,8 @@ class SlashCommandHandler:
             "wizz": self.cmd_wizz,
             "vortex": self.cmd_vortex,
             "grid": self.cmd_grid,
+            "geotrigpt": self.cmd_geotrigpt,
+            "jeanclaude": self.cmd_jeanclaude,
         }
 
     def get_command_list(self) -> list[str]:
@@ -340,10 +351,44 @@ class SlashCommandHandler:
                 error="Invalid format. Use /grid [size]",
             )
 
-    def cmd_list(self, args: str) -> SlashCommandResult:
+    def cmd_geotrigpt(self, _args: str) -> SlashCommandResult:
+        """Interact with the GeotriGPT, the AI Agent powered by Geotribu(c).
+
+        :param _args: prompt to send to the AI assistant
+        :return: SlashCommandResult
+        """
+
+        geotrigpt()
+
+        return SlashCommandResult(
+            success=True,
+            local_action=lambda: (
+                "show_message_bar",
+                "GeotriGPT Agentic session terminated.",
+            ),
+        )
+
+    def cmd_jeanclaude(self, _args: str) -> SlashCommandResult:
+        """Trigger the Jean-Claude(c) cheatcode.
+
+        :param _args: unused
+        :return: SlashCommandResult
+        """
+
+        jeanclaude()
+
+        return SlashCommandResult(
+            success=True,
+            local_action=lambda: (
+                "show_message_bar",
+                "Token usage limit reached. Please refill or upgrade your account subscription.",
+            ),
+        )
+
+    def cmd_list(self, _args: str) -> SlashCommandResult:
         """List all available commands.
 
-        :param args: unused
+        :param _args: unused
         :return: SlashCommandResult (local action, not sent to chat)
         """
         # Build command list with descriptions

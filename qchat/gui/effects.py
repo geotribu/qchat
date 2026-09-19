@@ -6,7 +6,10 @@ from typing import Tuple
 import numpy as np
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtGui import QTransform
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import iface
+
+from qchat.gui.dlg_geotrigpt import GeotriGPTDialog
 
 
 def dizzy(
@@ -220,3 +223,18 @@ def vortex(
         timer.start()
 
     return timer
+
+
+def geotrigpt() -> None:
+    dialog = GeotriGPTDialog()
+    dialog.exec_()
+
+
+def jeanclaude() -> None:
+    QMessageBox.warning(
+        None,
+        "Token usage limit reached.",
+        "⚠️ Token usage limit reached.\n"
+        "Please refill or upgrade your account subscription.\n"
+        "For more details, visit https://geotribu.fr/about/sponsoring/",
+    )
