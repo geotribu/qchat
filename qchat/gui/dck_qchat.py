@@ -353,6 +353,7 @@ class QChatWidget(QgsDockWidget):
             rules = self.qchat_client.get_rules()
             self.min_author_length = rules["min_author_length"]
             self.max_author_length = rules["max_author_length"]
+            self.lbl_instance_rules.setText(rules["rules"])
         except Exception as exc:
             self.iface.messageBar().pushCritical(self.tr("QChat error"), str(exc))
             self.min_author_length = QCHAT_NICKNAME_MINLENGTH

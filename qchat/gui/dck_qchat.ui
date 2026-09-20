@@ -186,6 +186,13 @@
         </layout>
        </item>
        <item>
+        <widget class="QLabel" name="lbl_instance_rules">
+         <property name="text">
+          <string>QChat instance rules</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QTreeWidget" name="twg_chat">
          <property name="uniformRowHeights">
           <bool>true</bool>
