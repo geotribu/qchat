@@ -173,4 +173,4 @@ jobs:
           channel: ${{ secrets.PUBLISH_MATRIX_CHANNEL }}
           message: |
             💬 QChat ${{ github.ref_name }} !\
-            -> https://plugins.qgis.org/plugins/qchat/
+            -> https://github.com/geotribu/qchat/releases
