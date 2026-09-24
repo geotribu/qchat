@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.8.0 - 2026-09-24
+
+### Features and enhancements 🎉
+
+* feat: display instance rules on top on the chat widget by @gounux in https://github.com/geotribu/qchat/pull/107
+* ui: revamp QChat dock widget by @gounux in https://github.com/geotribu/qchat/pull/108
+* feat: add AI-powered© slash commands by @gounux in https://github.com/geotribu/qchat/pull/109
+
 ## 1.7.1 - 2026-09-08
 
 ### Features and enhancements 🎉
