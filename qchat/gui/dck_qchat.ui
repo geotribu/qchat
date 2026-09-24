@@ -49,48 +49,6 @@
      <number>10</number>
     </property>
     <item>
-     <widget class="QgsCollapsibleGroupBox" name="grb_instance">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title">
-       <string>Instance</string>
-      </property>
-      <layout class="QFormLayout" name="formLayout_3">
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="hly_instance">
-         <item>
-          <widget class="QPushButton" name="btn_rules">
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="text">
-            <string>Rules</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btn_status">
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string>Check instance status</string>
-           </property>
-           <property name="text">
-            <string>Status</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
      <widget class="QgsCollapsibleGroupBox" name="grb_qchat">
       <property name="enabled">
        <bool>true</bool>
@@ -183,7 +141,32 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="btn_status">
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="toolTip">
+            <string>Check instance status</string>
+           </property>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </widget>
+         </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="lbl_instance_rules">
+         <property name="font">
+          <font>
+           <italic>true</italic>
+          </font>
+         </property>
+         <property name="text">
+          <string>QChat instance rules</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QTreeWidget" name="twg_chat">
@@ -375,7 +358,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>grb_instance</tabstop>
   <tabstop>grb_qchat</tabstop>
   <tabstop>grb_user</tabstop>
  </tabstops>
