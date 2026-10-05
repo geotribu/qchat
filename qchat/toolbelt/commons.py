@@ -10,11 +10,11 @@ from qchat.toolbelt.log_handler import PlgLogger
 
 # conditional import depending on Qt version
 if int(QT_VERSION_STR.split(".")[0]) == 5:
-    from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer  # noqa QGS103
+    from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 elif int(QT_VERSION_STR.split(".")[0]) == 6:
     # see: https://doc.qt.io/qt-6/qtmultimedia-changes-qt6.html
     QMediaContent = QUrl
-    from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer  # noqa QGS103
+    from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 
     qt6_player = QMediaPlayer()
     qt6_audio_output = QAudioOutput()

@@ -44,11 +44,11 @@ from qchat.toolbelt.exceptions import QChatMessageCanNotBeParsedException
 
 # conditional import depending on Qt version
 if int(QT_VERSION_STR.split(".")[0]) == 5:
-    from PyQt5.QtWebSockets import QWebSocket, QWebSocketProtocol  # noqa QGS103
+    from PyQt5.QtWebSockets import QWebSocket, QWebSocketProtocol
 
     WS_PROTOCOL_VERSION = QWebSocketProtocol.Version13
 elif int(QT_VERSION_STR.split(".")[0]) == 6:
-    from PyQt6.QtWebSockets import QWebSocket, QWebSocketProtocol  # noqa QGS103
+    from PyQt6.QtWebSockets import QWebSocket, QWebSocketProtocol
 
     WS_PROTOCOL_VERSION = QWebSocketProtocol.Version.Version13
 
