@@ -4,8 +4,8 @@ Provides Discord-style slash commands for fun interactions and utilities.
 """
 
 import random
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 import processing
 from qgis.core import QgsProject
@@ -26,9 +26,9 @@ class SlashCommandResult:
     """Result of a slash command execution."""
 
     success: bool
-    message_text: Optional[str] = None  # Text to send to chat
-    local_action: Optional[Callable] = None  # Local action to execute
-    error: Optional[str] = None
+    message_text: str | None = None  # Text to send to chat
+    local_action: Callable | None = None  # Local action to execute
+    error: str | None = None
 
 
 class SlashCommandHandler:
@@ -341,7 +341,7 @@ class SlashCommandHandler:
                 success=True,
                 local_action=lambda: (
                     "show_message_bar",
-                    "Generated a grid with {size} size.".format(size=size),
+                    f"Generated a grid with {size} size.",
                 ),
             )
 

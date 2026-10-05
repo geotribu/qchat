@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(init=True, frozen=True)
@@ -17,17 +16,17 @@ class QChatUncompliantMessage(QChatMessage):
 @dataclass(init=True, frozen=True)
 class QChatTextMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     text: str
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatImageMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     image_data: str
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
@@ -55,62 +54,62 @@ class QChatLikeMessage(QChatMessage):
 @dataclass(init=True, frozen=True)
 class QChatGeojsonMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     layer_name: str
     crs_wkt: str
     crs_authid: str
     geojson: dict
-    style: Optional[str]
-    in_reply_to_id: Optional[str] = None
+    style: str | None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatCrsMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     crs_wkt: str
     crs_authid: str
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatBboxMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     crs_wkt: str
     crs_authid: str
     xmin: float
     xmax: float
     ymin: float
     ymax: float
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatPositionMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     crs_wkt: str
     crs_authid: str
     x: float
     y: float
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatModelMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     model_name: str
-    model_group: Optional[str]
+    model_group: str | None
     raw_xml: str
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None
 
 
 @dataclass(init=True, frozen=True)
 class QChatScriptMessage(QChatMessage):
     author: str
-    avatar: Optional[str]
+    avatar: str | None
     name: str
     raw_pycode: str
-    in_reply_to_id: Optional[str] = None
+    in_reply_to_id: str | None = None

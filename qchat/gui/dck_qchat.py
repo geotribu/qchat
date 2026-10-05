@@ -5,7 +5,7 @@ import tempfile
 from datetime import datetime
 from functools import partial
 from pathlib import Path
-from typing import Optional, Union, cast
+from typing import cast
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -165,7 +165,7 @@ except ImportError:
 class QChatWidget(QgsDockWidget):
     initialized: bool = False
     connected: bool = False
-    current_channel: Optional[str] = None
+    current_channel: str | None = None
 
     qchat_client: QChatApiClient
     qchat_ws: QChatWebsocket
@@ -176,8 +176,8 @@ class QChatWidget(QgsDockWidget):
     def __init__(
         self,
         iface: QgisInterface,
-        parent: Optional[QWidget] = None,
-        auto_reconnect_channel: Optional[str] = None,
+        parent: QWidget | None = None,
+        auto_reconnect_channel: str | None = None,
     ):
         """QWidget to see and post messages on chat
 
@@ -226,8 +226,8 @@ class QChatWidget(QgsDockWidget):
 
         # message id -> tree widget item, used for threading
         self.message_items: dict[str, QTreeWidgetItem] = {}
-        self.reply_to_id: Optional[str] = None
-        self.reply_to_author: Optional[str] = None
+        self.reply_to_id: str | None = None
+        self.reply_to_author: str | None = None
 
         # tree widget initialization
         self.twg_chat.setHeaderLabels(
@@ -423,8 +423,8 @@ class QChatWidget(QgsDockWidget):
         return super().eventFilter(obj, event)
 
     def _get_message_parent_item(
-        self, in_reply_to_id: Optional[str]
-    ) -> Union[QTreeWidget, QChatTreeWidgetItem]:
+        self, in_reply_to_id: str | None
+    ) -> QTreeWidget | QChatTreeWidgetItem:
         if in_reply_to_id and in_reply_to_id in self.message_items:
             target = self.message_items[in_reply_to_id]
             # If target is already a subitem, attach the reply at the same level
@@ -1216,7 +1216,7 @@ Are you sure ?"""),
         )
         self.qchat_ws.send_message(message)
 
-    def add_admin_message(self, text: str, timestamp: Optional[int] = None) -> None:
+    def add_admin_message(self, text: str, timestamp: int | None = None) -> None:
         """
         Adds an admin message to QTreeWidget chat
         """
@@ -1224,7 +1224,7 @@ Are you sure ?"""),
         self.add_tree_widget_item(item)
 
     def add_tree_widget_item(
-        self, item: QTreeWidgetItem, message_id: Optional[str] = None
+        self, item: QTreeWidgetItem, message_id: str | None = None
     ) -> None:
         if message_id:
             self.message_items[message_id] = item
