@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 """
 Perform network request.
@@ -11,7 +11,6 @@ Perform network request.
 # Standard library
 import logging
 from functools import lru_cache
-from typing import Optional
 from urllib.parse import urlparse, urlunparse
 
 # PyQGIS
@@ -87,11 +86,11 @@ class NetworkRequestsManager:
 
     def get_from_source(
         self,
-        url: Optional[str] = None,
-        headers: Optional[dict] = None,
+        url: str | None = None,
+        headers: dict | None = None,
         response_expected_content_type: str = "application/xml",
         use_cache: bool = True,
-    ) -> Optional[QByteArray]:
+    ) -> QByteArray | None:
         """Method to retrieve a RSS feed from a referenced source in preferences. \
         Can use cache if wanted, or not.
 
