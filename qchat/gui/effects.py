@@ -1,7 +1,6 @@
 import math
 import random
 from datetime import datetime, timedelta
-from typing import Tuple
 
 import numpy as np
 from qgis.PyQt.QtCore import QTimer
@@ -65,7 +64,7 @@ def dizzy(
     return timer
 
 
-def coords8(size: int, nb_points: int = 100) -> Tuple[int, int]:
+def coords8(size: int, nb_points: int = 100) -> tuple[int, int]:
     t = np.linspace(0, 2 * np.pi, nb_points)
     x = size * np.sin(t)
     y = size * np.cos(t) / 2
