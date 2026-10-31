@@ -36,6 +36,7 @@ CHEATCODE_WIZZ: str = "wizz"
 CHEATCODE_VORTEX: str = "spaceandtime"
 CHEATCODE_GEOTRIGPT: str = "vAIsectomy"
 CHEATCODE_NOTOKENS: str = "jeanclaude"
+CHEATCODE_GALETTE_SAUCISSE: str = "galette-saucisse"
 
 CHEATCODES = [
     CHEATCODE_DIZZY,
@@ -47,6 +48,7 @@ CHEATCODES = [
     CHEATCODE_VORTEX,
     CHEATCODE_GEOTRIGPT,
     CHEATCODE_NOTOKENS,
+    CHEATCODE_GALETTE_SAUCISSE,
 ]
 
 # QChat message types

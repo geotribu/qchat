@@ -2,6 +2,16 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.8.1 - 2026-10-15
+
+### Features and enhancements 🎉
+
+* New orange logo by @antoine2trem in https://github.com/geotribu/qchat/pull/113
+
+### Tooling 🔧
+
+* build(deps): bump dawidd6/action-download-artifact from 24 to 26 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/111
+
 ## 1.8.0 - 2026-09-24
 
 ### Features and enhancements 🎉

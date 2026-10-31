@@ -237,3 +237,13 @@ def jeanclaude() -> None:
         "Please refill or upgrade your account subscription.\n"
         "For more details, visit https://geotribu.fr/about/sponsoring/",
     )
+
+
+def galette_saucisse() -> None:
+    QMessageBox.information(
+        None,
+        "Time for galette-saucisse?",
+        "A strike notice has just been submitted to the relevant authorities.\n\n"
+        "The geopackages have just formed a trade union. Will the PostGIS databases join the movement? The shapefiles out there don't seem to be making much of an effort...\n\n"
+        "Please save your data.",
+    )
