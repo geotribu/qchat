@@ -50,6 +50,7 @@ from qchat.constants import (
     CHEATCODE_10OCLOCK,
     CHEATCODE_DIZZY,
     CHEATCODE_FLICK,
+    CHEATCODE_GALETTE_SAUCISSE,
     CHEATCODE_GEOTRIGPT,
     CHEATCODE_IAMAROBOT,
     CHEATCODE_NOTOKENS,
@@ -74,6 +75,7 @@ from qchat.gui.complete import QChatTextMessageCompleter
 from qchat.gui.effects import (
     dizzy,
     flick_of_the_wrist,
+    galette_saucisse,
     geotrigpt,
     jeanclaude,
     vortex,
@@ -1298,6 +1300,11 @@ Are you sure ?"""),
         # warn that the user has reached the token usage limit
         if text == CHEATCODE_NOTOKENS:
             jeanclaude()
+            return True
+
+        # some galette-saucisses, or is it "galettes-saucisses" ?
+        if text == CHEATCODE_GALETTE_SAUCISSE:
+            galette_saucisse()
             return True
 
         # QGIS pro license expiration message
