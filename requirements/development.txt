@@ -9,4 +9,4 @@ flake8-isort>=7.0.0
 flake8-qgis>=2.1.0
 
 isort>=9.0.1
-pre-commit>=4.6.2,<5
+pre-commit>=4.7.0,<5
