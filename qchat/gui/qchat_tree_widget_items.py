@@ -3,7 +3,7 @@ import json
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 from processing.modeler.ModelerUtils import ModelerUtils
 from processing.script import ScriptUtils
@@ -123,8 +123,8 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         parent: Union[QTreeWidget, "QChatTreeWidgetItem"],
         datetime: QDateTime,
         author: str,
-        avatar: Optional[str],
-        message_id: Optional[str] = None,
+        avatar: str | None,
+        message_id: str | None = None,
     ) -> None:
         super().__init__(parent)
         self.plg_settings = PlgOptionsManager()
@@ -156,7 +156,6 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         Empty because this is the expected behaviour
         :param column: column that has been clicked
         """
-        pass
 
     def display_datetime_format(self) -> str:
         """
@@ -183,7 +182,6 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         """
         Returns the text message that was liked
         """
-        pass
 
     @property
     def can_be_mentioned(self) -> bool:
@@ -204,14 +202,13 @@ class QChatTreeWidgetItem(QTreeWidgetItem):
         Performs action of copying message to clipboard
         If the can_be_copied_to_clipboard is enabled ofc
         """
-        pass
 
     def tr(self, text: str) -> str:
         return self.treeWidget().tr(text)
 
 
 class QChatAdminTreeWidgetItem(QChatTreeWidgetItem):
-    def __init__(self, parent: QTreeWidget, text: str, timestamp: Optional[int] = None):
+    def __init__(self, parent: QTreeWidget, text: str, timestamp: int | None = None):
         if timestamp is None:
             datetime = QDateTime.currentDateTime()
         else:

@@ -1,4 +1,4 @@
-#! python3  # noqa: E265
+#! python3
 
 """Main plugin module."""
 
@@ -112,9 +112,7 @@ class QChatPlugin:
             self.iface.mainWindow(),
         )
         self.action_settings.triggered.connect(
-            lambda: self.iface.showOptionsDialog(
-                currentPage="mOptionsPage{}".format(__title__)
-            )
+            lambda: self.iface.showOptionsDialog(currentPage=f"mOptionsPage{__title__}")
         )
 
         # -- Menu
@@ -216,7 +214,7 @@ class QChatPlugin:
             )
         except Exception as err:
             self.log(
-                message=self.tr("Houston, we've got a problem: {}".format(err)),
+                message=self.tr(f"Houston, we've got a problem: {err}"),
                 log_level=2,
                 push=True,
             )

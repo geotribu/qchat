@@ -5,9 +5,7 @@ from pathlib import Path
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog
 
-FORM_CLASS, _ = uic.loadUiType(
-    Path(__file__).parent / "{}.ui".format(Path(__file__).stem)
-)
+FORM_CLASS, _ = uic.loadUiType(Path(__file__).parent / f"{Path(__file__).stem}.ui")
 
 POOL = string.ascii_letters + string.digits + string.punctuation
 
