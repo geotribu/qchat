@@ -2,6 +2,17 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.8.2 - 2026-11-13
+
+### Features and enhancements 🎉
+
+* feat: introduce the `galette-saucisse` within QChat by @gounux in https://github.com/geotribu/qchat/pull/115
+* chore: bump versions in requirements by @gounux in https://github.com/geotribu/qchat/pull/120
+
+### Tooling 🔧
+
+* build(deps): bump dawidd6/action-download-artifact from 26 to 27 by @dependabot[bot] in https://github.com/geotribu/qchat/pull/116
+
 ## 1.8.1 - 2026-10-15
 
 ### Features and enhancements 🎉
