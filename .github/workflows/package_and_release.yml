@@ -161,8 +161,7 @@ jobs:
           qgis-plugin-ci
           release ${GITHUB_REF/refs\/tags\//}
           --allow-uncommitted-changes
-          --osgeo-username ${{ secrets.OSGEO_USER }}
-          --osgeo-password ${{ secrets.OSGEO_PASSWORD }}
+          --qgis-token ${{ secrets.QGIS_TOKEN }}
 
       - name: Send notification on matrix
         id: matrix-notification
